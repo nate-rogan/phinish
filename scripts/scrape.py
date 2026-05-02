@@ -31,6 +31,9 @@ from scripts.utils import (
     SETLISTS_PATH,
     SONGS_PATH,
     VENUES_PATH,
+    Show,
+    SongCatalogEntry,
+    VenueRecord,
     canonicalize_song,
     day_of_week,
     load_json,
@@ -55,7 +58,13 @@ def get_api_key() -> str:
 
 
 def fetch(client: httpx.Client, path: str, key: str) -> list[dict]:
-    """GET an API path and return its `data` payload, retrying transient errors."""
+    """GET an API path and return its `data` payload, retrying transient errors.
+
+    Retries network errors and 5xx/429 responses with exponential backoff,
+    honoring `Retry-After` on 429. 4xx responses (other than 429) are fatal
+    and raised immediately — retrying a bad API key wastes the rate budget
+    Phish.net warns about in their terms.
+    """
     url = f"{API_BASE}/{path.lstrip('/')}"
     last_err: Exception | None = None
     for attempt in range(RETRIES):
@@ -66,14 +75,24 @@ def fetch(client: httpx.Client, path: str, key: str) -> list[dict]:
             if payload.get("error"):
                 raise RuntimeError(f"{path}: {payload.get('error_message')}")
             return payload.get("data", []) or []
-        except (httpx.HTTPError, RuntimeError) as e:
+        except httpx.HTTPStatusError as e:
+            status = e.response.status_code
+            if 400 <= status < 500 and status != 429:
+                raise RuntimeError(f"{path}: {status} {e.response.text[:200]}") from e
+            last_err = e
+            if attempt < RETRIES - 1:
+                wait = float(
+                    e.response.headers.get("Retry-After", RETRY_BACKOFF_BASE ** attempt)
+                )
+                time.sleep(wait)
+        except (httpx.RequestError, RuntimeError) as e:
             last_err = e
             if attempt < RETRIES - 1:
                 time.sleep(RETRY_BACKOFF_BASE ** attempt)
     raise RuntimeError(f"Failed after {RETRIES} attempts: {path}: {last_err}")
 
 
-def group_into_shows(rows: list[dict], canonical: dict[str, str]) -> list[dict]:
+def group_into_shows(rows: list[dict], canonical: dict[str, str]) -> list[Show]:
     """Collapse Phish.net per-song rows into per-show records sorted by date."""
     shows: dict[str, dict] = {}
     for row in rows:
@@ -121,7 +140,7 @@ def group_into_shows(rows: list[dict], canonical: dict[str, str]) -> list[dict]:
     return out
 
 
-def merge_setlists(existing: list[dict], new: list[dict]) -> list[dict]:
+def merge_setlists(existing: list[Show], new: list[Show]) -> list[Show]:
     """Merge new shows into existing, replacing duplicates by show_id."""
     by_id = {s["show_id"]: s for s in existing}
     for s in new:
@@ -129,7 +148,7 @@ def merge_setlists(existing: list[dict], new: list[dict]) -> list[dict]:
     return sorted(by_id.values(), key=lambda s: s["date"])
 
 
-def normalize_songs(rows: list[dict]) -> list[dict]:
+def normalize_songs(rows: list[dict]) -> list[SongCatalogEntry]:
     """Reshape Phish.net song catalog rows into the project's schema."""
     out = []
     for r in rows:
@@ -147,7 +166,7 @@ def normalize_songs(rows: list[dict]) -> list[dict]:
     return out
 
 
-def normalize_venues(rows: list[dict]) -> dict[str, dict]:
+def normalize_venues(rows: list[dict]) -> dict[str, VenueRecord]:
     """Reshape Phish.net venue rows into the project's `{venue_id: ...}` schema."""
     venues: dict[str, dict] = {}
     for r in rows:

@@ -21,6 +21,8 @@ from scripts.utils import (
     SET_DISPLAY,
     STATE_DIR,
     VALID_DATE,
+    Prediction,
+    Usage,
     check_rate_limit,
     load_json,
     parse_issue_form,
@@ -69,7 +71,7 @@ def _set_table(items: list[dict]) -> list[str]:
     return rows
 
 
-def format_comment(prediction: dict) -> str:
+def format_comment(prediction: Prediction) -> str:
     """Render a prediction as a markdown comment for posting on a GitHub issue."""
     venue = prediction.get("venue", "")
     date_str = prediction.get("date", "")
@@ -93,7 +95,7 @@ def format_comment(prediction: dict) -> str:
     return "\n".join(parts)
 
 
-def append_reasons(prediction: dict, issue_number: int, author: str) -> None:
+def append_reasons(prediction: Prediction, issue_number: int, author: str) -> None:
     """Append a one-paragraph audit entry for this prediction to reasons.md."""
     REASONS_PATH.parent.mkdir(parents=True, exist_ok=True)
     today = date.today().isoformat()
@@ -147,7 +149,7 @@ def _persist_outputs(prediction: dict, req: _IssueRequest, usage: dict) -> None:
 
 
 def main() -> None:
-    """Action entry point: validate the issue, run predict, post comment, persist."""
+    """Validate the issue, run predict, post the comment, and persist outputs."""
     req = _read_request()
     fields = parse_issue_form(req.body)
     date_str = sanitize(fields.get("show date", ""), 32)
@@ -159,7 +161,7 @@ def main() -> None:
     if not venue:
         _fail(req, "❌ Missing venue.")
 
-    usage = load_json(USAGE_PATH) if USAGE_PATH.exists() else {}
+    usage: Usage = load_json(USAGE_PATH) if USAGE_PATH.exists() else {}
     ok, reason = check_rate_limit(usage, req.author)
     if not ok:
         _fail(req, f"⏳ Rate limited: {reason}")

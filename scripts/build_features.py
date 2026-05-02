@@ -21,6 +21,12 @@ from scripts.utils import (
     SET_TO_INT,
     SETLISTS_PATH,
     SONGS_PATH,
+    Show,
+    SongCatalogEntry,
+    SongGap,
+    SongStats,
+    TransitionMatrix,
+    VenueHistory,
     load_json,
     save_json,
     show_song_set,
@@ -30,7 +36,7 @@ LAPLACE_K = 0.01
 RECENT_WINDOWS = (50, 20)
 
 
-def build_song_gaps(shows: list[dict]) -> dict:
+def build_song_gaps(shows: list[Show]) -> dict[str, SongGap]:
     """Compute current rotation gap (shows since last play) for each song."""
     last_played: dict[str, str] = {}
     last_shown_idx: dict[str, int] = {}
@@ -45,8 +51,31 @@ def build_song_gaps(shows: list[dict]) -> dict:
     }
 
 
-def build_song_stats(shows: list[dict], songs_catalog: list[dict]) -> dict:
-    """Aggregate per-song frequencies, set placement, opener/closer rates."""
+def build_song_stats(
+    shows: list[Show], songs_catalog: list[SongCatalogEntry],
+) -> dict[str, SongStats]:
+    """Aggregate per-song play statistics from the full setlist history.
+
+    Single streaming pass over ``shows`` accumulating play counts, set
+    placement, opener/closer rates, and recent-window frequencies. Then
+    a second pass assembles one record per song.
+
+    Parameters
+    ----------
+    shows
+        Full list of historical show dicts in chronological order.
+    songs_catalog
+        Phish.net song catalog used to flag covers (``is_original`` field).
+
+    Returns
+    -------
+    dict[str, dict]
+        Mapping ``song_name -> stats``. Each stats dict has
+        ``total_plays``, ``lifetime_frequency``, ``recent_frequency_<W>``
+        for each ``W`` in ``RECENT_WINDOWS``, ``avg_set_position``,
+        ``typical_set``, ``set_distribution``, ``opener_frequency``,
+        ``closer_frequency``, ``is_cover``, and ``debut_year``.
+    """
     total_shows = len(shows)
     if total_shows == 0:
         return {}
@@ -116,7 +145,7 @@ def _normalize(counts: Counter[str], vocab_size: int) -> dict[str, float]:
     return {k: (v + LAPLACE_K) / total for k, v in counts.items()}
 
 
-def build_transition_matrix(shows: list[dict]) -> dict:
+def build_transition_matrix(shows: list[Show]) -> TransitionMatrix:
     """Build order-1 and order-2 song-transition probabilities (Laplace smoothed)."""
     order1: dict[str, Counter[str]] = defaultdict(Counter)
     order2: dict[str, Counter[str]] = defaultdict(Counter)
@@ -149,7 +178,7 @@ def build_transition_matrix(shows: list[dict]) -> dict:
     }
 
 
-def build_venue_history(shows: list[dict]) -> dict:
+def build_venue_history(shows: list[Show]) -> dict[str, VenueHistory]:
     """Aggregate per-venue song frequencies and common opener/closer picks."""
     per_venue: dict[str, dict] = {}
     for show in shows:

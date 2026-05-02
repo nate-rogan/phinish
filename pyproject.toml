@@ -51,7 +51,7 @@ ignore = [
 "scripts/*.py" = ["D102", "D105", "D106"]  # methods/dunders/nested classes optional
 
 [tool.ruff.lint.pydocstyle]
-convention = "google"
+convention = "numpy"
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

@@ -31,6 +31,8 @@ from scripts.utils import (
     SET_TO_INT,
     SETLISTS_PATH,
     SONGS_PATH,
+    Show,
+    SongCatalogEntry,
     day_of_week,
     load_json,
     save_json,
@@ -101,7 +103,7 @@ class StreamingState:
     )
     tour_show_count: Counter[str] = field(default_factory=Counter)
 
-    def update(self, show: dict) -> None:
+    def update(self, show: Show) -> None:
         played = show_song_set(show)
         self.plays.update(played)
         for song in played:
@@ -142,8 +144,33 @@ def days_between(d1: str, d2: str) -> int:
     return abs((date.fromisoformat(d2) - date.fromisoformat(d1)).days)
 
 
-def featurize(state: StreamingState, show: dict, song: str, cover_set: set[str]) -> list[float]:
-    """Build the XGBoost feature vector for one (state, show, song) triple."""
+def featurize(state: StreamingState, show: Show, song: str, cover_set: set[str]) -> list[float]:
+    """Build the XGBoost feature vector for one (state, show, song) triple.
+
+    Order matches ``feature_names()`` exactly. Mixes rotation features
+    (gap, log_gap, is_bustout), play-rate features (lifetime, recent_50,
+    recent_20), set-placement (typical_set, opener/closer rates),
+    venue/tour history, and calendar flags (NYE, Halloween, weekend, dow).
+
+    Parameters
+    ----------
+    state
+        Streaming statistics accumulated from all shows strictly before ``show``.
+        Reading from ``state`` here must not include any data from ``show``
+        itself, to avoid temporal leakage.
+    show
+        The target show being scored; only its date / venue / tour fields
+        are read.
+    song
+        Candidate song name.
+    cover_set
+        Set of song names considered covers (artist != Phish).
+
+    Returns
+    -------
+    list[float]
+        Feature vector aligned positionally with ``feature_names()``.
+    """
     last_idx = state.last_played_idx.get(song)
     gap = state.n - last_idx if last_idx is not None else state.n + 100
     plays = state.plays.get(song, 0)
@@ -204,7 +231,7 @@ def featurize(state: StreamingState, show: dict, song: str, cover_set: set[str])
 
 
 def build_training_matrix(
-    shows: list[dict], cover_set: set[str], min_year: int, max_year: int
+    shows: list[Show], cover_set: set[str], min_year: int, max_year: int,
 ) -> tuple[np.ndarray, np.ndarray, list[str]]:
     """Replay shows; for each show in [min_year, max_year] emit one row per candidate."""
     state = StreamingState()
@@ -231,7 +258,9 @@ def main() -> None:
     if not SETLISTS_PATH.exists():
         raise SystemExit(f"Missing {SETLISTS_PATH}; run scrape.py first.")
     shows = load_json(SETLISTS_PATH)
-    songs_catalog = load_json(SONGS_PATH) if SONGS_PATH.exists() else []
+    songs_catalog: list[SongCatalogEntry] = (
+        load_json(SONGS_PATH) if SONGS_PATH.exists() else []
+    )
     cover_set = {s["name"] for s in songs_catalog if not s.get("is_original", True)}
 
     print("Building training matrix (train < 2024)...", flush=True)

@@ -13,10 +13,19 @@ from pathlib import Path
 if __package__ is None:
     sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-from scripts.utils import FEATURES_DIR, MODELS_DIR, load_json, save_json
+from scripts.utils import (
+    FEATURES_DIR,
+    MODELS_DIR,
+    SongGap,
+    SongStats,
+    load_json,
+    save_json,
+)
 
 
-def gap_weighted_score(stats: dict, gaps: dict) -> dict[str, float]:
+def gap_weighted_score(
+    stats: dict[str, SongStats], gaps: dict[str, SongGap],
+) -> dict[str, float]:
     """Score = recent play frequency boosted by log(gap), reflecting overdue songs."""
     out: dict[str, float] = {}
     for song, s in stats.items():
@@ -25,7 +34,7 @@ def gap_weighted_score(stats: dict, gaps: dict) -> dict[str, float]:
     return out
 
 
-def frequency_score(stats: dict) -> dict[str, float]:
+def frequency_score(stats: dict[str, SongStats]) -> dict[str, float]:
     """Baseline score: lifetime play frequency per song."""
     return {song: s.get("lifetime_frequency", 0.0) for song, s in stats.items()}
 

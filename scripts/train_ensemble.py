@@ -30,6 +30,11 @@ from scripts.utils import (
     SETLISTS_PATH,
     SONGS_PATH,
     TOP_K,
+    Show,
+    SongGap,
+    SongStats,
+    TransitionMatrix,
+    VenueHistory,
     load_json,
     min_max_normalize,
     save_json,
@@ -42,7 +47,7 @@ SCORE_DIMS = ("xgb", "markov", "gap", "venue")
 DEFAULT_WEIGHTS = {"w_xgboost": 0.5, "w_markov": 0.1, "w_gap": 0.3, "w_venue": 0.1}
 
 
-def markov_score_per_song(matrix: dict) -> dict[str, float]:
+def markov_score_per_song(matrix: TransitionMatrix) -> dict[str, float]:
     """Marginal song score = mean opener probability across set keys."""
     openers = matrix.get("set_openers", {})
     if not openers:
@@ -54,7 +59,9 @@ def markov_score_per_song(matrix: dict) -> dict[str, float]:
     return {song: s / len(openers) for song, s in scores.items()}
 
 
-def gap_score_per_song(stats: dict, gaps: dict) -> dict[str, float]:
+def gap_score_per_song(
+    stats: dict[str, SongStats], gaps: dict[str, SongGap],
+) -> dict[str, float]:
     """Per-song score = recent frequency * log(current gap)."""
     return {
         song: s.get("recent_frequency_50", 0.0) * math.log(gaps.get(song, {}).get("gap", 1) + 2)
@@ -76,13 +83,13 @@ def _normalize_per_record(records: list[dict]) -> None:
 
 
 def _build_val_records(
-    shows: list[dict],
+    shows: list[Show],
     cover_set: set[str],
     xgb,
     calibrator,
-    venue_history: dict,
-    markov: dict,
-    gap_scores: dict,
+    venue_history: dict[str, VenueHistory],
+    markov: dict[str, float],
+    gap_scores: dict[str, float],
 ) -> list[dict]:
     state = StreamingState()
     val_records: list[dict] = []

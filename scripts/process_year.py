@@ -166,7 +166,7 @@ def _fail(gh: _GhContext, msg: str) -> NoReturn:
 
 
 def main() -> None:
-    """Action entry point: scrape, build features, train all models, evaluate, report."""
+    """Run the full pipeline (scrape → features → train → evaluate) and post results."""
     gh = _GhContext(
         issue_number=int(os.environ.get("ISSUE_NUMBER", "0")),
         token=os.environ.get("GITHUB_TOKEN", ""),

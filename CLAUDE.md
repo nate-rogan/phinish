@@ -17,11 +17,43 @@ When editing this codebase, invoke these skills before writing code (they auto-t
 
 ## Docstring policy
 
+Use **NumPy-style** docstrings (enforced by ruff `D` rules with `convention = "numpy"`).
+
 - **Module**: one-line `"""..."""` at the top describing what the module does. Required for every script.
-- **Public functions** (no leading underscore): one-line docstring stating purpose. Required.
-- **Non-trivial functions** (>30 lines, multi-step, or non-obvious behavior): full docstring with Args/Returns. Optional but encouraged.
+- **Public functions** (no leading underscore): one-line summary. Required.
+- **Non-trivial functions** (>30 lines, multi-step, or non-obvious behavior): full NumPy-style docstring with `Parameters`, `Returns`, and `Raises` sections where applicable. Encouraged.
 - **Private helpers** (`_foo`): docstring optional; skip if the name + signature is self-explanatory.
 - **Inline comments** stay rare — WHY only, never WHAT (the existing system-prompt rule).
+
+**NumPy-style example:**
+
+```python
+def featurize(state: StreamingState, show: dict, song: str, cover_set: set[str]) -> list[float]:
+    """Build the XGBoost feature vector for one (state, show, song) triple.
+
+    Parameters
+    ----------
+    state
+        Streaming statistics accumulated from all shows strictly before `show`.
+    show
+        The target show being scored; only its date/venue/tour fields are read.
+    song
+        Candidate song name.
+    cover_set
+        Set of song names considered covers (non-Phish originals).
+
+    Returns
+    -------
+    list[float]
+        A 31-element feature vector aligned with `feature_names()`.
+    """
+```
+
+NumPy convention rules (the ones ruff enforces):
+- Summary on the first line (D200, D205).
+- Section headers (`Parameters`, `Returns`, `Raises`, etc.) underlined with `----`.
+- Parameter names without type after them — types come from the signature.
+- Blank line between summary and the first section.
 
 ## Function size
 

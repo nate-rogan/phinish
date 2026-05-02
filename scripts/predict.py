@@ -32,6 +32,15 @@ from scripts.utils import (
     SONGS_PATH,
     VALID_DATE,
     VENUES_PATH,
+    EnsembleWeights,
+    Prediction,
+    PredictionItem,
+    Show,
+    SongGap,
+    SongStats,
+    TransitionMatrix,
+    VenueHistory,
+    VenueRecord,
     day_of_week,
     fuzzy_venue_match,
     load_json,
@@ -48,13 +57,13 @@ OPENER_BLEND = 0.5
 
 @dataclass(slots=True)
 class _Artifacts:
-    shows: list[dict]
-    venues: dict
-    stats: dict
-    gaps: dict
-    transition: dict
-    venue_history: dict
-    weights: dict
+    shows: list[Show]
+    venues: dict[str, VenueRecord]
+    stats: dict[str, SongStats]
+    gaps: dict[str, SongGap]
+    transition: TransitionMatrix
+    venue_history: dict[str, VenueHistory]
+    weights: EnsembleWeights
     cover_set: set[str]
     markov: dict[str, float]
     gap_scores: dict[str, float]
@@ -62,7 +71,7 @@ class _Artifacts:
     calibrator: Any | None
 
 
-def synthetic_show(date_str: str, venue_name: str, venues: dict) -> dict:
+def synthetic_show(date_str: str, venue_name: str, venues: dict[str, VenueRecord]) -> Show:
     """Build a stand-in show dict matching the historical show schema for inference."""
     vid = fuzzy_venue_match(venue_name, venues) or venue_id(venue_name)
     flags = special_show_flags(date_str)
@@ -86,14 +95,16 @@ def synthetic_show(date_str: str, venue_name: str, venues: dict) -> dict:
     }
 
 
-def _build_state(shows: list[dict]) -> StreamingState:
+def _build_state(shows: list[Show]) -> StreamingState:
     state = StreamingState()
     for show in shows:
         state.update(show)
     return state
 
 
-def _split_by_typical_set(stats: dict, candidates: list[str]) -> dict[str, list[str]]:
+def _split_by_typical_set(
+    stats: dict[str, SongStats], candidates: list[str],
+) -> dict[str, list[str]]:
     buckets: dict[str, list[str]] = {"1": [], "2": [], "encore": []}
     for song in candidates:
         ts = stats.get(song, {}).get("typical_set", 1)
@@ -109,7 +120,7 @@ def _split_by_typical_set(stats: dict, candidates: list[str]) -> dict[str, list[
 def _sequence(
     pool_scores: list[tuple[str, float]],
     target_len: int,
-    transition: dict,
+    transition: TransitionMatrix,
     set_key: str,
 ) -> list[str]:
     pool = dict(pool_scores)
@@ -178,7 +189,7 @@ def _load_artifacts() -> _Artifacts:
 
 
 def _score_candidates(
-    state: StreamingState, show: dict, candidates: list[str], art: _Artifacts,
+    state: StreamingState, show: Show, candidates: list[str], art: _Artifacts,
 ) -> list[dict]:
     X = np.array(
         [featurize(state, show, song, art.cover_set) for song in candidates],
@@ -217,8 +228,8 @@ def _score_candidates(
 
 
 def _assemble_setlist(
-    scored: list[dict], stats: dict, transition: dict,
-) -> dict[str, list[dict]]:
+    scored: list[dict], stats: dict[str, SongStats], transition: TransitionMatrix,
+) -> dict[str, list[PredictionItem]]:
     buckets = _split_by_typical_set(stats, [s["song"] for s in scored])
     score_lookup = {s["song"]: s["ensemble"] for s in scored}
     confidence_lookup = {s["song"]: s["confidence"] for s in scored}
@@ -248,8 +259,38 @@ def _assemble_setlist(
     return setlist
 
 
-def predict(show_date: str, venue: str, city: str | None = None) -> dict[str, Any]:
-    """Produce a structured 3-set prediction for a given date and venue."""
+def predict(show_date: str, venue: str, city: str | None = None) -> Prediction:
+    """Produce a structured 3-set prediction for a given date and venue.
+
+    Loads all model artifacts, replays history through `StreamingState`,
+    scores every candidate song with the calibrated XGBoost model blended
+    with Markov / gap / venue signals, then assembles a Set 1 / Set 2 /
+    Encore lineup ordered by transition probabilities.
+
+    Parameters
+    ----------
+    show_date
+        Target show date in YYYY-MM-DD format.
+    venue
+        Venue name (fuzzy-matched against the venue catalog).
+    city
+        Optional city; only used if the venue catalog has no city for the match.
+
+    Returns
+    -------
+    dict
+        Prediction payload: ``date``, ``venue``, ``venue_id``, ``city``,
+        ``setlist`` (per-set lists of ``{song, confidence, gap}``),
+        ``avg_confidence``, ``model_version``, and ``weights``.
+
+    Raises
+    ------
+    ValueError
+        If ``show_date`` is not a valid YYYY-MM-DD string.
+    RuntimeError
+        If no candidate songs are available — typically means models
+        haven't been trained yet.
+    """
     if not VALID_DATE.match(show_date):
         raise ValueError(f"Invalid date format: {show_date!r} (expected YYYY-MM-DD)")
 
@@ -288,7 +329,7 @@ def predict(show_date: str, venue: str, city: str | None = None) -> dict[str, An
     }
 
 
-def _format_text(prediction: dict) -> str:
+def _format_text(prediction: Prediction) -> str:
     lines = [
         f"Phinish Prediction — {prediction['venue']} — {prediction['date']}",
         f"Avg confidence: {prediction['avg_confidence']:.1%}",
