@@ -1,0 +1,321 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Phinish — Phish Setlist Predictions</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<style>
+  :root {
+    --bg: #0e1117;
+    --surface: #161b22;
+    --border: #30363d;
+    --text: #e6edf3;
+    --muted: #8b949e;
+    --accent: #f78166;
+    --green: #3fb950;
+    --amber: #d29922;
+    --red: #f85149;
+    --shadow: 0 1px 0 rgba(255,255,255,.04), 0 4px 20px rgba(0,0,0,.4);
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    font-family: 'Inter', system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.5;
+  }
+  .container { max-width: 1100px; margin: 0 auto; padding: 32px 20px 80px; }
+  header {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 32px; flex-wrap: wrap; gap: 12px;
+  }
+  h1 { font-size: 28px; font-weight: 700; margin: 0; }
+  h1 .accent { color: var(--accent); }
+  header p { color: var(--muted); margin: 4px 0 0; font-size: 14px; }
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  .links { font-size: 14px; color: var(--muted); }
+  .links a { margin-left: 12px; }
+
+  section { margin: 32px 0; }
+  .section-title { font-size: 18px; font-weight: 700; margin: 0 0 12px; }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: var(--shadow);
+  }
+
+  .stats {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 12px;
+  }
+  .stat { padding: 16px; }
+  .stat .num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 28px; font-weight: 700; color: var(--text);
+  }
+  .stat .label { font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: .04em; margin-top: 4px; }
+
+  form { display: grid; grid-template-columns: 1fr 1fr 1fr auto; gap: 12px; align-items: end; }
+  @media (max-width: 700px) { form { grid-template-columns: 1fr; } }
+  label { display: block; font-size: 12px; color: var(--muted); margin-bottom: 4px; text-transform: uppercase; letter-spacing: .04em; }
+  input {
+    width: 100%; background: var(--bg); color: var(--text);
+    border: 1px solid var(--border); border-radius: 6px;
+    padding: 10px 12px; font-family: inherit; font-size: 14px;
+  }
+  input:focus { outline: none; border-color: var(--accent); }
+  button {
+    background: var(--accent); color: #0e1117; font-weight: 700;
+    border: 0; border-radius: 6px; padding: 10px 18px;
+    cursor: pointer; font-family: inherit; font-size: 14px;
+  }
+  button:hover { filter: brightness(1.1); }
+
+  .setlist-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; }
+  .setlist h3 { font-size: 14px; color: var(--muted); margin: 0 0 8px; text-transform: uppercase; letter-spacing: .04em; }
+  .song-row { display: grid; grid-template-columns: 24px 1fr auto auto; gap: 8px; padding: 6px 0; align-items: center; font-size: 14px; border-bottom: 1px solid rgba(255,255,255,.04); }
+  .song-row:last-child { border-bottom: 0; }
+  .song-row .pos { color: var(--muted); font-family: 'JetBrains Mono', monospace; }
+  .song-row .conf { font-family: 'JetBrains Mono', monospace; font-size: 12px; padding: 2px 8px; border-radius: 99px; }
+  .conf.high { background: rgba(63,185,80,.15); color: var(--green); }
+  .conf.mid { background: rgba(210,153,34,.15); color: var(--amber); }
+  .conf.low { background: rgba(248,81,73,.15); color: var(--red); }
+  .song-row .gap { color: var(--muted); font-size: 12px; font-family: 'JetBrains Mono', monospace; }
+
+  .empty { color: var(--muted); font-style: italic; padding: 12px 0; }
+  .chart-wrap { height: 300px; }
+  footer { color: var(--muted); font-size: 12px; text-align: center; margin-top: 60px; }
+  code { font-family: 'JetBrains Mono', monospace; background: rgba(255,255,255,.06); padding: 1px 6px; border-radius: 4px; font-size: 12px; }
+
+  .how-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; }
+  .step { padding: 16px; }
+  .step .n { font-family: 'JetBrains Mono', monospace; font-size: 24px; color: var(--accent); font-weight: 700; }
+  .step h4 { margin: 4px 0 8px; font-size: 15px; }
+  .step p { margin: 0; font-size: 13px; color: var(--muted); }
+</style>
+</head>
+<body>
+<div class="container">
+
+<header>
+  <div>
+    <h1>🎸 Phin<span class="accent">ish</span></h1>
+    <p>ML-powered Phish setlist predictions, served from a GitHub repo.</p>
+  </div>
+  <div class="links">
+    <a id="repo-link" href="#">Repo</a>
+    <a id="actions-link" href="#">Actions</a>
+    <a id="predictions-link" href="#">Past predictions</a>
+  </div>
+</header>
+
+<section class="card">
+  <div class="section-title">Request a prediction</div>
+  <form id="predict-form">
+    <div>
+      <label for="date">Show date</label>
+      <input id="date" type="date" required />
+    </div>
+    <div>
+      <label for="venue">Venue</label>
+      <input id="venue" type="text" placeholder="Madison Square Garden" required />
+    </div>
+    <div>
+      <label for="city">City (optional)</label>
+      <input id="city" type="text" placeholder="New York, NY" />
+    </div>
+    <button type="submit">Predict</button>
+  </form>
+  <p style="margin: 12px 0 0; color: var(--muted); font-size: 12px;">
+    Submitting opens a pre-filled GitHub issue. After you click "Submit new issue," the prediction posts as a comment in ~30 seconds. <a id="actions-watch" href="#">Watch live →</a>
+  </p>
+</section>
+
+<section>
+  <div class="stats">
+    <div class="card stat"><div class="num" id="stat-shows">—</div><div class="label">Shows in dataset</div></div>
+    <div class="card stat"><div class="num" id="stat-precision">—</div><div class="label">Ensemble Precision@25</div></div>
+    <div class="card stat"><div class="num" id="stat-predictions">—</div><div class="label">Predictions served</div></div>
+    <div class="card stat"><div class="num" id="stat-opener">—</div><div class="label">Opener accuracy</div></div>
+  </div>
+</section>
+
+<section class="card">
+  <div class="section-title">Latest prediction</div>
+  <div id="latest"></div>
+</section>
+
+<section class="card">
+  <div class="section-title">Overdue songs</div>
+  <div class="chart-wrap"><canvas id="gap-chart"></canvas></div>
+</section>
+
+<section class="card">
+  <div class="section-title">Precision@25 over time</div>
+  <div class="chart-wrap"><canvas id="accuracy-chart"></canvas></div>
+</section>
+
+<section class="card">
+  <div class="section-title">How it works</div>
+  <div class="how-grid">
+    <div class="step"><div class="n">01</div><h4>You file an issue</h4><p>Pick a date and venue. The form opens a pre-filled GitHub issue.</p></div>
+    <div class="step"><div class="n">02</div><h4>Actions runs</h4><p>The <code>predict</code> label fires a workflow on GitHub's runners.</p></div>
+    <div class="step"><div class="n">03</div><h4>Ensemble scores</h4><p>XGBoost + Markov + gap heuristic + venue history vote on each song.</p></div>
+    <div class="step"><div class="n">04</div><h4>Comment posted</h4><p>The setlist appears as a comment with calibrated confidences. Issue closes.</p></div>
+  </div>
+</section>
+
+<footer>
+  Phinish — built on GitHub Actions and Phish.net data ·
+  <a href="../tree/main/docs/specs/SPEC.md">spec</a> ·
+  <a href="../tree/main/models/model_card.md">model card</a>
+</footer>
+
+</div>
+
+<script>
+(function () {
+  function detectRepo() {
+    const host = location.hostname;
+    const path = location.pathname.replace(/^\/|\/$/g, '');
+    if (host.endsWith('github.io')) {
+      const owner = host.split('.')[0];
+      const repo = path.split('/')[0] || 'phinish';
+      return { owner, repo };
+    }
+    return { owner: 'YOUR_USERNAME', repo: 'phinish' };
+  }
+  const { owner, repo } = detectRepo();
+  const repoUrl = `https://github.com/${owner}/${repo}`;
+  const rawBase = `https://raw.githubusercontent.com/${owner}/${repo}/main`;
+
+  document.getElementById('repo-link').href = repoUrl;
+  document.getElementById('actions-link').href = `${repoUrl}/actions`;
+  document.getElementById('predictions-link').href = `${repoUrl}/issues?q=label%3Apredicted`;
+  document.getElementById('actions-watch').href = `${repoUrl}/actions`;
+
+  document.getElementById('predict-form').addEventListener('submit', function (e) {
+    e.preventDefault();
+    const date = document.getElementById('date').value;
+    const venue = document.getElementById('venue').value;
+    const city = document.getElementById('city').value;
+    const title = `Predict: ${venue} — ${date}`;
+    const body = `### Show Date\n\n${date}\n\n### Venue\n\n${venue}\n\n### City\n\n${city || '_No response_'}\n`;
+    const url = `${repoUrl}/issues/new?labels=predict&title=${encodeURIComponent(title)}&body=${encodeURIComponent(body)}`;
+    window.open(url, '_blank');
+  });
+
+  function confClass(c) { return c >= 0.5 ? 'high' : c >= 0.25 ? 'mid' : 'low'; }
+  function fmtPct(p) { return (p * 100).toFixed(0) + '%'; }
+
+  function renderLatest(p) {
+    const el = document.getElementById('latest');
+    if (!p || !p.setlist) {
+      el.innerHTML = '<div class="empty">No predictions yet. Be the first — file an issue above.</div>';
+      return;
+    }
+    const sets = [['1', 'Set 1'], ['2', 'Set 2'], ['encore', 'Encore']];
+    const venueLine = `<p style="color: var(--muted); margin: 0 0 16px; font-size: 14px;">${p.venue || ''} ${p.city ? '· ' + p.city : ''} · ${p.date || ''}</p>`;
+    let html = venueLine + '<div class="setlist-grid">';
+    for (const [k, label] of sets) {
+      const songs = (p.setlist[k] || []);
+      html += `<div class="setlist"><h3>${label}</h3>`;
+      if (!songs.length) { html += '<div class="empty">—</div>'; }
+      songs.forEach((s, i) => {
+        html += `<div class="song-row">
+          <span class="pos">${i + 1}</span>
+          <span>${s.song}</span>
+          <span class="conf ${confClass(s.confidence || 0)}">${fmtPct(s.confidence || 0)}</span>
+          <span class="gap">${s.gap || 0}</span>
+        </div>`;
+      });
+      html += '</div>';
+    }
+    html += '</div>';
+    el.innerHTML = html;
+  }
+
+  function renderGapChart(gaps) {
+    const top = Object.entries(gaps || {})
+      .map(([song, v]) => ({ song, gap: v.gap || 0 }))
+      .sort((a, b) => b.gap - a.gap)
+      .slice(0, 12);
+    const ctx = document.getElementById('gap-chart').getContext('2d');
+    new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: top.map(t => t.song),
+        datasets: [{ data: top.map(t => t.gap), backgroundColor: '#f78166', borderRadius: 4 }],
+      },
+      options: {
+        indexAxis: 'y', responsive: true, maintainAspectRatio: false,
+        plugins: { legend: { display: false } },
+        scales: {
+          x: { ticks: { color: '#8b949e' }, grid: { color: 'rgba(255,255,255,.04)' } },
+          y: { ticks: { color: '#e6edf3' }, grid: { display: false } },
+        },
+      },
+    });
+  }
+
+  function renderAccuracyChart(log) {
+    const points = (log || []).slice(-20).map(r => ({
+      x: r.generated_at || r.date, y: (r.avg_confidence || 0) * 100,
+    }));
+    const ctx = document.getElementById('accuracy-chart').getContext('2d');
+    new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: points.map(p => p.x),
+        datasets: [{
+          label: 'Avg confidence (%)', data: points.map(p => p.y),
+          borderColor: '#f78166', backgroundColor: 'rgba(247,129,102,.15)',
+          fill: true, tension: 0.3, pointRadius: 3,
+        }],
+      },
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        plugins: { legend: { labels: { color: '#e6edf3' } } },
+        scales: {
+          x: { ticks: { color: '#8b949e' }, grid: { color: 'rgba(255,255,255,.04)' } },
+          y: { ticks: { color: '#8b949e' }, grid: { color: 'rgba(255,255,255,.04)' }, min: 0, max: 100 },
+        },
+      },
+    });
+  }
+
+  function fetchJson(path) {
+    return fetch(`${rawBase}/${path}?t=${Date.now()}`)
+      .then(r => r.ok ? r.json() : null)
+      .catch(() => null);
+  }
+
+  Promise.all([
+    fetchJson('state/latest_prediction.json'),
+    fetchJson('state/predictions_log.json'),
+    fetchJson('state/features/song_gaps.json'),
+    fetchJson('data/processed/setlists.json'),
+    fetchJson('models/evaluation.json'),
+  ]).then(([latest, log, gaps, setlists, evalData]) => {
+    document.getElementById('stat-shows').textContent = setlists ? setlists.length.toLocaleString() : '—';
+    document.getElementById('stat-predictions').textContent = log ? log.length.toLocaleString() : '0';
+    const ens = evalData && evalData.summary && evalData.summary.ensemble;
+    document.getElementById('stat-precision').textContent = ens && ens.precision_at_25 ? fmtPct(ens.precision_at_25) : '—';
+    document.getElementById('stat-opener').textContent = ens && ens.opener_accuracy ? fmtPct(ens.opener_accuracy) : '—';
+    renderLatest(latest);
+    renderGapChart(gaps);
+    renderAccuracyChart(log);
+  });
+})();
+</script>
+</body>
+</html>
