@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Browse all predictions
+    url: ../../issues?q=label%3Apredicted
+    about: See past predictions and their outcomes
+  - name: View live workflow runs
+    url: ../../actions
+    about: Watch the prediction or retrain pipeline run in real time

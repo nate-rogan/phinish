@@ -1,0 +1,16 @@
+name: 🔄 Process a Year
+description: Scrape a year's data from Phish.net and retrain all models
+labels: ["process"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        This pulls a year of setlists, rebuilds all features, retrains every model, runs evaluation, and commits the artifacts. Takes ~2–3 minutes.
+  - type: input
+    id: year
+    attributes:
+      label: Year
+      description: "Year to scrape and process (1983–present)"
+      placeholder: "2025"
+    validations:
+      required: true
