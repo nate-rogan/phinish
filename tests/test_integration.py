@@ -2,8 +2,11 @@
 
 import json
 
-from phinish import build_features
-from phinish.train_xgboost import StreamingState
+import msgspec
+
+from phinish import artifacts
+from phinish.features import build as build_features
+from phinish.train import StreamingState
 
 
 def test_data_to_features_pipeline(tmp_path, monkeypatch, tiny_shows, songs_catalog):
@@ -13,12 +16,13 @@ def test_data_to_features_pipeline(tmp_path, monkeypatch, tiny_shows, songs_cata
 
     setlists_path = data_dir / "setlists.json"
     songs_path = data_dir / "songs.json"
-    setlists_path.write_text(json.dumps(tiny_shows), encoding="utf-8")
-    songs_path.write_text(json.dumps(songs_catalog), encoding="utf-8")
+    setlists_path.write_bytes(msgspec.json.encode(tiny_shows))
+    songs_path.write_bytes(msgspec.json.encode(songs_catalog))
 
     monkeypatch.setattr(build_features, "SETLISTS_PATH", setlists_path)
-    monkeypatch.setattr(build_features, "SONGS_PATH", songs_path)
     monkeypatch.setattr(build_features, "FEATURES_DIR", features_dir)
+    monkeypatch.setattr(artifacts, "SETLISTS_PATH", setlists_path)
+    monkeypatch.setattr(artifacts, "SONGS_PATH", songs_path)
 
     build_features.main()
 

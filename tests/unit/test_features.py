@@ -1,10 +1,13 @@
 """Unit tests for build_features."""
 
-from phinish.build_features import (
+import msgspec
+
+from phinish.features.build import (
     build_song_gaps,
     build_song_stats,
     build_transition_matrix,
 )
+from phinish.scrape.types import SongCatalogEntry
 
 
 def test_song_gap_against_hand_verified(tiny_shows):
@@ -14,11 +17,11 @@ def test_song_gap_against_hand_verified(tiny_shows):
     # B last in show 5 (idx 4) -> gap 0
     # D last in show 3 (idx 2) -> gap 2
     # E last in show 2 (idx 1) -> gap 3
-    assert gaps["A"]["gap"] == 1
-    assert gaps["B"]["gap"] == 0
-    assert gaps["D"]["gap"] == 2
-    assert gaps["E"]["gap"] == 3
-    assert gaps["A"]["last_played"] == "2024-01-04"
+    assert gaps["A"].gap == 1
+    assert gaps["B"].gap == 0
+    assert gaps["D"].gap == 2
+    assert gaps["E"].gap == 3
+    assert gaps["A"].last_played == "2024-01-04"
 
 
 def test_transition_probabilities_smoothed(tiny_shows):
@@ -27,7 +30,7 @@ def test_transition_probabilities_smoothed(tiny_shows):
     # Show 1 set 1: A->B
     # Show 2 set 1: A->B
     # Show 4 set 1: A->F
-    a_dist = matrix["order_1"]["A"]
+    a_dist = matrix.order_1["A"]
     # Each emitted prob in (0, 1); B should outweigh F from A.
     assert all(0 < p < 1 for p in a_dist.values())
     assert a_dist["B"] > a_dist["F"]
@@ -45,18 +48,21 @@ def test_song_stats_schema(tiny_shows, songs_catalog):
         "is_cover", "debut_year",
     }
     for song, s in stats.items():
-        missing = required - s.keys()
+        actual = {f.name for f in msgspec.structs.fields(s)}
+        missing = required - actual
         assert not missing, f"{song} missing keys {missing}"
-        assert 0.0 <= s["lifetime_frequency"] <= 1.0
-        assert 0.0 <= s["opener_frequency"] <= 1.0
-        assert s["typical_set"] in (1, 2, 3)
+        assert 0.0 <= s.lifetime_frequency <= 1.0
+        assert 0.0 <= s.opener_frequency <= 1.0
+        assert s.typical_set in (1, 2, 3)
 
 
 def test_song_with_zero_plays_excluded(tiny_shows, songs_catalog):
     extended_catalog = [
         *songs_catalog,
-        {"song_id": "g", "name": "G", "slug": "g", "artist": "Phish",
-         "is_original": True, "debut": "", "last_played": "", "times_played": 0},
+        SongCatalogEntry(
+            song_id="g", name="G", slug="g", artist="Phish",
+            is_original=True, debut="", last_played="", times_played=0,
+        ),
     ]
     stats = build_song_stats(tiny_shows, extended_catalog)
     assert "G" not in stats
