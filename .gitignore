@@ -1,0 +1,28 @@
+__pycache__/
+*.py[cod]
+*$py.class
+
+.pytest_cache/
+.ruff_cache/
+.pixi/
+
+*.egg-info/
+.venv/
+venv/
+
+.env
+.env.local
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+
+# Logs
+*.log
+
+# Local raw API cache — committed processed data lives in data/processed/
+data/raw/
