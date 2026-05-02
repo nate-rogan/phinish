@@ -7,15 +7,15 @@ requires-python = ">=3.12"
 
 [project.scripts]
 phinish-scrape = "phinish.scrape:cli"
-phinish-build-features = "phinish.build_features:main"
-phinish-train-baseline = "phinish.train_baseline:main"
-phinish-train-markov = "phinish.train_markov:main"
-phinish-train-xgboost = "phinish.train_xgboost:main"
-phinish-train-ensemble = "phinish.train_ensemble:main"
+phinish-build-features = "phinish.features.build:main"
+phinish-train-baseline = "phinish.train.baseline:main"
+phinish-train-markov = "phinish.train.markov:main"
+phinish-train-xgboost = "phinish.train.xgboost:main"
+phinish-train-ensemble = "phinish.train.ensemble:main"
 phinish-evaluate = "phinish.evaluate:main"
 phinish-predict = "phinish.predict:cli"
-phinish-process-issue = "phinish.process_issue:main"
-phinish-process-year = "phinish.process_year:main"
+phinish-process-issue = "phinish.process.issue:main"
+phinish-process-year = "phinish.process.year:main"
 
 [build-system]
 requires = ["hatchling"]
@@ -36,6 +36,9 @@ scikit-learn = ">=1.4"
 xgboost = ">=2.0"
 httpx = ">=0.27"
 stamina = ">=24.3"
+python-dotenv = ">=1.0"
+msgspec = ">=0.18"
+structlog = ">=25.0"
 
 [tool.pixi.pypi-dependencies]
 phinish = { path = ".", editable = true }
@@ -49,10 +52,30 @@ default = { solve-group = "default" }
 dev = { features = ["dev"], solve-group = "default" }
 
 [tool.pixi.tasks]
+# --- Quality ---
 lint = "ruff check ."
 fmt = "ruff format ."
 test = "pytest"
 check = { depends-on = ["lint", "test"] }
+
+# --- Pipeline stages (each maps to the matching [project.scripts] entry) ---
+scrape = "phinish-scrape"                  # full pull; pass --year YYYY for incremental
+features = "phinish-build-features"
+train-baseline = "phinish-train-baseline"
+train-markov = "phinish-train-markov"
+train-xgboost = "phinish-train-xgboost"
+train-ensemble = "phinish-train-ensemble"
+evaluate = "phinish-evaluate"
+predict = "phinish-predict"                # pass --date YYYY-MM-DD --venue "..."
+
+# --- Composed pipelines ---
+train = { depends-on = ["train-baseline", "train-markov", "train-xgboost", "train-ensemble"] }
+bootstrap = { depends-on = ["scrape", "features", "train", "evaluate"] }
+retrain = { depends-on = ["features", "train", "evaluate"] }   # uses existing setlists.json
+
+# --- GitHub Actions wrappers (run the same entry the workflows run) ---
+process-year = "phinish-process-year"      # ISSUE_NUMBER, ISSUE_BODY, GITHUB_TOKEN, GITHUB_REPOSITORY env
+process-issue = "phinish-process-issue"    # adds ISSUE_AUTHOR env
 
 [tool.ruff]
 target-version = "py312"
@@ -70,8 +93,8 @@ ignore = [
 
 [tool.ruff.lint.per-file-ignores]
 "tests/**" = ["D"]  # tests are self-documenting via test names
-"src/phinish/__init__.py" = ["D"]
-"src/phinish/*.py" = ["D102", "D105", "D106"]  # methods/dunders/nested classes optional
+"src/phinish/**/__init__.py" = ["D"]  # init files are pure re-exports
+"src/phinish/**/*.py" = ["D102", "D105", "D106"]  # methods/dunders/nested classes optional
 
 [tool.ruff.lint.pydocstyle]
 convention = "numpy"
