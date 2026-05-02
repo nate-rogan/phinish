@@ -67,22 +67,30 @@ The strongest single predictor is the **rotation gap** — Phish almost never re
 ┌──────────────────────────────────────────────────────┐
 │                    GitHub Repository                  │
 │                                                      │
-│  data/processed/     Canonical dataset (~2,100 shows)│
-│  state/features/     Precomputed feature store       │
-│  models/             Trained model artifacts         │
-│  scripts/            Pipeline code                   │
+│  src/phinish/        Pipeline code (editable install)│
+│  state/features/     Aggregate feature artifacts     │
+│  models/             Trained models + state snapshot │
 │  docs/               Dashboard (GitHub Pages)        │
 │                                                      │
+│  data/processed/     Raw setlists — NOT committed    │
+│                      (gitignored per Phish.net ToS)  │
 └──────┬──────────────────┬────────────────────────────┘
        │                  │
   Issue: predict     Issue: process
        │                  │
        ▼                  ▼
-  Load models,       Scrape → features →
-  run ensemble,      retrain all models →
-  post comment,      commit artifacts,
+  Load committed     Cache-restore data → scrape
+  state.pkl + models,  requested year → rebuild features →
+  run ensemble,      retrain all → commit
+  post comment,      models + features,
   close issue        close issue
 ```
+
+The same pipeline can be run locally end-to-end via `pixi run bootstrap`
+or per-stage via the individual pixi tasks listed below. The Actions
+workflows are thin wrappers — they call `pixi run process-year` /
+`pixi run process-issue`, which means changes to pipeline orchestration
+happen in `pyproject.toml`, not in YAML.
 
 ---
 
@@ -90,29 +98,39 @@ The strongest single predictor is the **rotation gap** — Phish almost never re
 
 ```
 phinish/
-├── .github/workflows/
-│   ├── ci.yml              # Lint + test on push
-│   ├── predict.yml         # Issue-triggered inference
-│   └── process.yml         # Issue-triggered retrain
-├── data/processed/         # Canonical setlist data
-├── state/features/         # Precomputed feature store
-├── models/                 # Trained model artifacts + model card
-├── scripts/
-│   ├── scrape.py           # Phish.net data collection
-│   ├── build_features.py   # Feature engineering
-│   ├── train_baseline.py   # Frequency + gap baselines
-│   ├── train_xgboost.py    # Song selection model
-│   ├── train_markov.py     # Transition model
-│   ├── train_ensemble.py   # Weight optimization
-│   ├── predict.py          # Inference pipeline + CLI
-│   ├── evaluate.py         # Backtesting + metrics
-│   ├── process_issue.py    # Actions: prediction handler
-│   └── process_year.py     # Actions: retrain handler
-├── docs/index.html         # Dashboard
-├── tests/                  # pytest suite
-├── SPEC.md                 # Full system design
-└── PLAN.md                 # Build plan
+├── .github/
+│   ├── ISSUE_TEMPLATE/         # predict-show.yml, process-year.yml
+│   └── workflows/
+│       ├── ci.yml              # Lint + test on push
+│       ├── predict.yml         # Issue-triggered inference (wraps `pixi run process-issue`)
+│       └── process.yml         # Issue-triggered retrain   (wraps `pixi run process-year`)
+├── src/phinish/                # Importable package, installed editable via pixi
+│   ├── utils.py                # Generic helpers (json, paths, sanitize, venue resolution)
+│   ├── scrape/                 # api.py, types.py — Phish.net ingestion
+│   ├── features/               # build.py, types.py — gaps / stats / transitions / venue history
+│   ├── train/                  # state.py, baseline.py, markov.py, xgboost.py, ensemble.py, types.py
+│   ├── predict/                # pipeline.py, types.py — inference + CLI
+│   ├── evaluate/               # backtest.py — temporal-holdout metrics
+│   └── process/                # issue.py, year.py, types.py — Actions entry points
+├── data/
+│   ├── canonical_names.json    # Song-name normalization mapping
+│   └── processed/              # Raw setlists — NOT committed (gitignored per Phish.net API ToS)
+├── models/                     # Trained model artifacts + state snapshot + manifest (committed)
+├── state/features/             # Aggregate features (committed; derived from setlists)
+├── docs/
+│   ├── index.html              # Dashboard (GitHub Pages)
+│   ├── plans/PLAN.md           # Phased build plan
+│   └── specs/SPEC.md           # Full system specification
+├── tests/                      # pytest suite (test_features, test_predict, test_integration)
+├── pyproject.toml              # pixi config, ruff config, [project.scripts] entry points
+└── CLAUDE.md                   # Project conventions for AI-assisted development
 ```
+
+**Architecture posture:** raw setlist data is never committed (per the
+Phish.net API terms). Trained models, feature aggregates, and a
+`StreamingState` snapshot are committed — those are derivative aggregates,
+similar to the model files. Predictions in Actions load the snapshot
+directly and require no scraping.
 
 ---
 
@@ -137,30 +155,53 @@ The API gives the *current* gap. Training requires the gap *at the time of each 
 Requires [pixi](https://pixi.sh).
 
 ```bash
-# Clone
 git clone https://github.com/YOUR_USERNAME/phinish.git
 cd phinish
-
-# Install (creates .pixi/ with conda-forge env)
-pixi install
-
-# Predict
-pixi run python scripts/predict.py --date 2026-12-31 --venue "Madison Square Garden"
-
-# Retrain (after adding new data)
-pixi run python scripts/train_baseline.py
-pixi run python scripts/train_xgboost.py
-pixi run python scripts/train_markov.py
-pixi run python scripts/train_ensemble.py
-pixi run python scripts/evaluate.py
+pixi install -e dev               # creates .pixi/ + editable-installs the phinish package
+export PHISHNET_API_KEY=...        # required for any task that scrapes
 ```
+
+**Pixi tasks** (run with `pixi run <task>`):
+
+| Task | What it does |
+|---|---|
+| `bootstrap` | Full setup: scrape (1983→today) → build features → train all models → evaluate. ~3-5 min. |
+| `retrain` | Rebuild features + retrain + evaluate from existing `setlists.json`. No scraping. |
+| `scrape` | Pull from Phish.net. Pass `--year YYYY` for one-year incremental merge. |
+| `features` | Rebuild aggregate features from current `setlists.json`. |
+| `train` | Run all four trainers (baseline, markov, xgboost, ensemble). |
+| `train-baseline` / `train-markov` / `train-xgboost` / `train-ensemble` | Individual trainers. |
+| `evaluate` | Backtest on the test holdout; updates `models/evaluation.json`. |
+| `predict` | Single-show prediction. Pass `--date YYYY-MM-DD --venue "..."`. |
+| `process-year` | Same entry the GitHub `process` workflow runs. Reads `ISSUE_NUMBER` / `ISSUE_BODY` from env. |
+| `process-issue` | Same entry the GitHub `predict` workflow runs. |
+| `lint` / `fmt` / `test` / `check` | ruff lint, ruff format, pytest, lint+test. |
+
+**Day-to-day examples:**
+
+```bash
+# First time on a fresh checkout
+pixi run bootstrap
+
+# Predict tomorrow's MSG show
+pixi run predict --date 2026-12-31 --venue "Madison Square Garden"
+
+# After Phish plays a few new shows in 2026, pull just that year and retrain
+pixi run scrape --year 2026
+pixi run retrain
+```
+
+`process-year` and `process-issue` are the same entries GitHub Actions runs;
+calling them locally with the right environment variables exercises the
+exact code path the workflow takes (useful for debugging an issue
+template change before pushing).
 
 ---
 
 ## Full Documentation
 
-- **[SPEC.md](SPEC.md)** — complete system specification: architecture, data schemas, model details, security model, evaluation framework
-- **[PLAN.md](PLAN.md)** — phased build plan
+- **[SPEC.md](docs/specs/SPEC.md)** — complete system specification: architecture, data schemas, model details, security model, evaluation framework
+- **[PLAN.md](docs/plans/PLAN.md)** — phased build plan
 - **[models/model_card.md](models/model_card.md)** — model version, training data, metrics, changelog
 
 ---
