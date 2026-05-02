@@ -47,6 +47,7 @@ RETRY_BACKOFF_BASE = 2.0
 
 
 def get_api_key() -> str:
+    """Read PHISHNET_API_KEY from the environment or exit with a clear message."""
     key = os.environ.get("PHISHNET_API_KEY")
     if not key:
         raise SystemExit("PHISHNET_API_KEY environment variable is required.")
@@ -54,6 +55,7 @@ def get_api_key() -> str:
 
 
 def fetch(client: httpx.Client, path: str, key: str) -> list[dict]:
+    """GET an API path and return its `data` payload, retrying transient errors."""
     url = f"{API_BASE}/{path.lstrip('/')}"
     last_err: Exception | None = None
     for attempt in range(RETRIES):
@@ -72,6 +74,7 @@ def fetch(client: httpx.Client, path: str, key: str) -> list[dict]:
 
 
 def group_into_shows(rows: list[dict], canonical: dict[str, str]) -> list[dict]:
+    """Collapse Phish.net per-song rows into per-show records sorted by date."""
     shows: dict[str, dict] = {}
     for row in rows:
         sid = str(row.get("showid", ""))
@@ -119,6 +122,7 @@ def group_into_shows(rows: list[dict], canonical: dict[str, str]) -> list[dict]:
 
 
 def merge_setlists(existing: list[dict], new: list[dict]) -> list[dict]:
+    """Merge new shows into existing, replacing duplicates by show_id."""
     by_id = {s["show_id"]: s for s in existing}
     for s in new:
         by_id[s["show_id"]] = s
@@ -126,6 +130,7 @@ def merge_setlists(existing: list[dict], new: list[dict]) -> list[dict]:
 
 
 def normalize_songs(rows: list[dict]) -> list[dict]:
+    """Reshape Phish.net song catalog rows into the project's schema."""
     out = []
     for r in rows:
         artist = (r.get("artist") or r.get("artist_name") or "").strip()
@@ -143,6 +148,7 @@ def normalize_songs(rows: list[dict]) -> list[dict]:
 
 
 def normalize_venues(rows: list[dict]) -> dict[str, dict]:
+    """Reshape Phish.net venue rows into the project's `{venue_id: ...}` schema."""
     venues: dict[str, dict] = {}
     for r in rows:
         name = r.get("venuename") or r.get("name") or ""
@@ -161,6 +167,7 @@ def normalize_venues(rows: list[dict]) -> dict[str, dict]:
 
 
 def main(year: int | None) -> None:
+    """Pull setlists/songs/venues from Phish.net and persist to data/processed/."""
     key = get_api_key()
     canonical = load_json(CANONICAL_NAMES_PATH) if CANONICAL_NAMES_PATH.exists() else {}
     DATA_DIR.mkdir(parents=True, exist_ok=True)

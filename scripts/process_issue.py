@@ -7,10 +7,10 @@ from __future__ import annotations
 import os
 import sys
 import traceback
+from dataclasses import dataclass
 from datetime import date
 from pathlib import Path
-
-import httpx
+from typing import NoReturn
 
 if __package__ is None:
     sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
@@ -18,11 +18,13 @@ if __package__ is None:
 from scripts.predict import predict
 from scripts.utils import (
     ROOT,
+    SET_DISPLAY,
     STATE_DIR,
     VALID_DATE,
     check_rate_limit,
     load_json,
     parse_issue_form,
+    post_issue_comment,
     sanitize,
     save_json,
     update_usage,
@@ -34,6 +36,19 @@ USAGE_PATH = STATE_DIR / "usage.json"
 REASONS_PATH = ROOT / "reasons.md"
 
 
+@dataclass(slots=True)
+class _IssueRequest:
+    issue_number: int
+    body: str
+    author: str
+    token: str
+    repo: str
+
+    @property
+    def can_post(self) -> bool:
+        return bool(self.token and self.repo and self.issue_number)
+
+
 def _conf_emoji(p: float) -> str:
     if p >= 0.5:
         return "🟢"
@@ -42,26 +57,31 @@ def _conf_emoji(p: float) -> str:
     return "🔴"
 
 
+def _set_table(items: list[dict]) -> list[str]:
+    rows = ["| # | Song | Confidence | Gap |\n|---|------|-----------|-----|"]
+    for i, item in enumerate(items, 1):
+        conf = item.get("confidence", 0.0)
+        gap = item.get("gap", 0)
+        rows.append(
+            f"| {i} | {item['song']} | {_conf_emoji(conf)} {conf:.0%} | "
+            f"{gap} show{'s' if gap != 1 else ''} |"
+        )
+    return rows
+
+
 def format_comment(prediction: dict) -> str:
+    """Render a prediction as a markdown comment for posting on a GitHub issue."""
     venue = prediction.get("venue", "")
     date_str = prediction.get("date", "")
     city = prediction.get("city", "")
     venue_line = f"{venue}{(' — ' + city) if city else ''} — {date_str}"
-    header = f"## 🎸 Phinish Prediction\n\n**{venue_line}**\n"
-    parts = [header]
-    for set_key, label in (("1", "Set 1"), ("2", "Set 2"), ("encore", "Encore")):
+    parts = [f"## 🎸 Phinish Prediction\n\n**{venue_line}**\n"]
+    for set_key, label in SET_DISPLAY:
         items = prediction.get("setlist", {}).get(set_key, [])
         if not items:
             continue
         parts.append(f"\n### {label}\n")
-        parts.append("| # | Song | Confidence | Gap |\n|---|------|-----------|-----|")
-        for i, item in enumerate(items, 1):
-            conf = item.get("confidence", 0.0)
-            gap = item.get("gap", 0)
-            parts.append(
-                f"| {i} | {item['song']} | {_conf_emoji(conf)} {conf:.0%} | "
-                f"{gap} show{'s' if gap != 1 else ''} |"
-            )
+        parts.extend(_set_table(items))
         parts.append("")
     weights = prediction.get("weights", {})
     parts.append(
@@ -73,93 +93,48 @@ def format_comment(prediction: dict) -> str:
     return "\n".join(parts)
 
 
-def post_comment(repo: str, issue_number: int, body: str, token: str) -> None:
-    r = httpx.post(
-        f"https://api.github.com/repos/{repo}/issues/{issue_number}/comments",
-        headers={
-            "Authorization": f"Bearer {token}",
-            "Accept": "application/vnd.github+json",
-            "X-GitHub-Api-Version": "2022-11-28",
-        },
-        json={"body": body},
-        timeout=30.0,
-    )
-    r.raise_for_status()
-
-
 def append_reasons(prediction: dict, issue_number: int, author: str) -> None:
+    """Append a one-paragraph audit entry for this prediction to reasons.md."""
     REASONS_PATH.parent.mkdir(parents=True, exist_ok=True)
     today = date.today().isoformat()
     venue = prediction.get("venue", "")
     avg = prediction.get("avg_confidence", 0.0)
+    top_picks = ", ".join(
+        item["song"]
+        for set_key, _ in SET_DISPLAY
+        for item in prediction.get("setlist", {}).get(set_key, [])[:2]
+    )
     line = (
         f"\n## #{issue_number} — {prediction.get('date', '')} @ {venue} "
         f"(@{author}, generated {today})\n\n"
-        f"Avg confidence: {avg:.0%}. Top picks across sets: "
-        + ", ".join(
-            item["song"]
-            for set_key in ("1", "2", "encore")
-            for item in prediction.get("setlist", {}).get(set_key, [])[:2]
-        )
-        + ".\n"
+        f"Avg confidence: {avg:.0%}. Top picks across sets: {top_picks}.\n"
     )
     with REASONS_PATH.open("a", encoding="utf-8") as f:
         f.write(line)
 
 
-def main() -> None:
-    issue_number = int(os.environ.get("ISSUE_NUMBER", "0"))
-    body = os.environ.get("ISSUE_BODY", "")
-    author = sanitize(os.environ.get("ISSUE_AUTHOR", "anonymous"), 64)
-    token = os.environ.get("GITHUB_TOKEN", "")
-    repo = os.environ.get("GITHUB_REPOSITORY", "")
+def _read_request() -> _IssueRequest:
+    return _IssueRequest(
+        issue_number=int(os.environ.get("ISSUE_NUMBER", "0")),
+        body=os.environ.get("ISSUE_BODY", ""),
+        author=sanitize(os.environ.get("ISSUE_AUTHOR", "anonymous"), 64),
+        token=os.environ.get("GITHUB_TOKEN", ""),
+        repo=os.environ.get("GITHUB_REPOSITORY", ""),
+    )
 
-    fields = parse_issue_form(body)
-    date_str = sanitize(fields.get("show date", ""), 32)
-    venue = sanitize(fields.get("venue", ""), 200)
-    city = sanitize(fields.get("city", ""), 200) or None
 
-    if not VALID_DATE.match(date_str):
-        msg = f"❌ Invalid or missing date: `{date_str}`. Expected `YYYY-MM-DD`."
-        if token and repo and issue_number:
-            post_comment(repo, issue_number, msg, token)
-        raise SystemExit(msg)
-    if not venue:
-        msg = "❌ Missing venue."
-        if token and repo and issue_number:
-            post_comment(repo, issue_number, msg, token)
-        raise SystemExit(msg)
+def _fail(req: _IssueRequest, msg: str) -> NoReturn:
+    if req.can_post:
+        post_issue_comment(req.repo, req.issue_number, msg, req.token)
+    raise SystemExit(msg)
 
-    usage = load_json(USAGE_PATH) if USAGE_PATH.exists() else {}
-    ok, reason = check_rate_limit(usage, author)
-    if not ok:
-        msg = f"⏳ Rate limited: {reason}"
-        if token and repo and issue_number:
-            post_comment(repo, issue_number, msg, token)
-        raise SystemExit(msg)
 
-    try:
-        prediction = predict(date_str, venue, city)
-    except Exception as e:
-        tb = traceback.format_exc()
-        print(tb, file=sys.stderr)
-        if token and repo and issue_number:
-            post_comment(repo, issue_number,
-                         f"❌ Prediction failed: `{type(e).__name__}: {e}`")
-        raise
-
-    comment_body = format_comment(prediction)
-    if token and repo and issue_number:
-        post_comment(repo, issue_number, comment_body, token)
-    else:
-        print(comment_body)
-
+def _persist_outputs(prediction: dict, req: _IssueRequest, usage: dict) -> None:
     save_json(LATEST_PATH, prediction)
-
     log = load_json(LOG_PATH) if LOG_PATH.exists() else []
     log.append({
-        "issue_number": issue_number,
-        "author": author,
+        "issue_number": req.issue_number,
+        "author": req.author,
         "date": prediction["date"],
         "venue": prediction["venue"],
         "venue_id": prediction.get("venue_id", ""),
@@ -167,10 +142,46 @@ def main() -> None:
         "generated_at": date.today().isoformat(),
     })
     save_json(LOG_PATH, log)
+    save_json(USAGE_PATH, update_usage(usage, req.author))
+    append_reasons(prediction, req.issue_number, req.author)
 
-    save_json(USAGE_PATH, update_usage(usage, author))
-    append_reasons(prediction, issue_number, author)
-    print(f"prediction posted to issue #{issue_number}")
+
+def main() -> None:
+    """Action entry point: validate the issue, run predict, post comment, persist."""
+    req = _read_request()
+    fields = parse_issue_form(req.body)
+    date_str = sanitize(fields.get("show date", ""), 32)
+    venue = sanitize(fields.get("venue", ""), 200)
+    city = sanitize(fields.get("city", ""), 200) or None
+
+    if not VALID_DATE.match(date_str):
+        _fail(req, f"❌ Invalid or missing date: `{date_str}`. Expected `YYYY-MM-DD`.")
+    if not venue:
+        _fail(req, "❌ Missing venue.")
+
+    usage = load_json(USAGE_PATH) if USAGE_PATH.exists() else {}
+    ok, reason = check_rate_limit(usage, req.author)
+    if not ok:
+        _fail(req, f"⏳ Rate limited: {reason}")
+
+    try:
+        prediction = predict(date_str, venue, city)
+    except Exception as e:
+        print(traceback.format_exc(), file=sys.stderr)
+        if req.can_post:
+            post_issue_comment(req.repo, req.issue_number,
+                               f"❌ Prediction failed: `{type(e).__name__}: {e}`",
+                               req.token)
+        raise
+
+    comment_body = format_comment(prediction)
+    if req.can_post:
+        post_issue_comment(req.repo, req.issue_number, comment_body, req.token)
+    else:
+        print(comment_body)
+
+    _persist_outputs(prediction, req, usage)
+    print(f"prediction posted to issue #{req.issue_number}")
 
 
 if __name__ == "__main__":

@@ -10,10 +10,11 @@ from __future__ import annotations
 import os
 import sys
 import traceback
+from collections.abc import Callable
+from dataclasses import dataclass
 from datetime import date
 from pathlib import Path
-
-import httpx
+from typing import NoReturn
 
 if __package__ is None:
     sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
@@ -33,36 +34,39 @@ from scripts.utils import (
     VALID_YEAR,
     load_json,
     parse_issue_form,
+    post_issue_comment,
     sanitize,
 )
 
 MODEL_CARD = MODELS_DIR / "model_card.md"
 
-
-def post_comment(repo: str, issue_number: int, body: str, token: str) -> None:
-    r = httpx.post(
-        f"https://api.github.com/repos/{repo}/issues/{issue_number}/comments",
-        headers={
-            "Authorization": f"Bearer {token}",
-            "Accept": "application/vnd.github+json",
-            "X-GitHub-Api-Version": "2022-11-28",
-        },
-        json={"body": body},
-        timeout=30.0,
-    )
-    r.raise_for_status()
+METRIC_LABELS: tuple[tuple[str, str], ...] = (
+    ("Frequency baseline", "frequency"),
+    ("Gap-weighted baseline", "gap_weighted"),
+    ("XGBoost (solo)", "xgboost"),
+    ("Markov (solo)", "markov"),
+    ("**Ensemble**", "ensemble"),
+)
 
 
-def update_model_card(year: int, summary: dict) -> None:
-    today = date.today().isoformat()
+@dataclass(slots=True)
+class _GhContext:
+    issue_number: int
+    token: str
+    repo: str
+
+    @property
+    def can_post(self) -> bool:
+        return bool(self.token and self.repo and self.issue_number)
+
+    def post(self, body: str) -> None:
+        if self.can_post:
+            post_issue_comment(self.repo, self.issue_number, body, self.token)
+
+
+def _metric_rows(summary: dict) -> list[str]:
     rows = []
-    for label, key in (
-        ("Frequency baseline", "frequency"),
-        ("Gap-weighted baseline", "gap_weighted"),
-        ("XGBoost (solo)", "xgboost"),
-        ("Markov (solo)", "markov"),
-        ("**Ensemble**", "ensemble"),
-    ):
+    for label, key in METRIC_LABELS:
         m = summary.get(key, {})
         if m.get("n_shows", 0) == 0:
             rows.append(f"| {label} | — | — | — | — | — |")
@@ -71,9 +75,12 @@ def update_model_card(year: int, summary: dict) -> None:
             f"| {label} | {m['precision_at_25']:.1%} | {m.get('recall', 0):.1%} | "
             f"{m.get('f1', 0):.1%} | {m.get('opener_accuracy', 0):.1%} | — |"
         )
+    return rows
 
-    n_shows = summary.get("ensemble", {}).get("n_shows", 0)
-    body = f"""# Phinish Model Card
+
+def _render_card(year: int, today: str, n_shows: int, rows: list[str]) -> str:
+    rows_block = "\n".join(rows)
+    return f"""# Phinish Model Card
 
 **Status:** Trained — last retrained from year `{year}` on {today}.
 
@@ -93,7 +100,7 @@ Evaluated on temporal holdout (test ≥ 2025), {n_shows} shows.
 
 | Model | Precision@25 | Recall | F1 | Opener Acc | Pair Match |
 |---|---|---|---|---|---|
-{chr(10).join(rows)}
+{rows_block}
 
 ## Hyperparameters
 
@@ -106,51 +113,72 @@ Evaluated on temporal holdout (test ≥ 2025), {n_shows} shows.
 
 - {today}: retrained from year `{year}`.
 """
+
+
+def update_model_card(year: int, summary: dict) -> None:
+    """Render and persist models/model_card.md from the latest evaluation."""
+    today = date.today().isoformat()
+    n_shows = summary.get("ensemble", {}).get("n_shows", 0)
+    body = _render_card(year, today, n_shows, _metric_rows(summary))
     MODEL_CARD.write_text(body, encoding="utf-8")
 
 
-def main() -> None:
-    issue_number = int(os.environ.get("ISSUE_NUMBER", "0"))
-    body = os.environ.get("ISSUE_BODY", "")
-    token = os.environ.get("GITHUB_TOKEN", "")
-    repo = os.environ.get("GITHUB_REPOSITORY", "")
+def _pipeline_steps(year: int) -> list[tuple[str, Callable[[], None]]]:
+    return [
+        (f"scrape year {year}", lambda: scrape.main(year=year)),
+        ("build_features", build_features.main),
+        ("train_baseline", train_baseline.main),
+        ("train_markov", train_markov.main),
+        ("train_xgboost", train_xgboost.main),
+        ("train_ensemble", train_ensemble.main),
+        ("evaluate", evaluate.main),
+    ]
 
-    fields = parse_issue_form(body)
+
+def _run_pipeline(year: int) -> None:
+    for name, step in _pipeline_steps(year):
+        print(f"=== {name} ===", flush=True)
+        step()
+
+
+def _success_comment(year: int, n_shows: int, ensemble: dict) -> str:
+    return (
+        f"## ✅ Process Complete — year `{year}`\n\n"
+        f"- Dataset: **{n_shows}** shows\n"
+        f"- Test shows: **{ensemble.get('n_shows', 0)}** (since 2025)\n"
+        f"- Ensemble Precision@25: **{ensemble.get('precision_at_25', 0):.1%}**\n"
+        f"- Ensemble Opener Accuracy: **{ensemble.get('opener_accuracy', 0):.1%}**\n\n"
+        "See [`models/model_card.md`](../blob/main/models/model_card.md) for full metrics."
+    )
+
+
+def _read_year_from_env(gh: _GhContext) -> int:
+    fields = parse_issue_form(os.environ.get("ISSUE_BODY", ""))
     year_str = sanitize(fields.get("year", ""), 8)
     if not VALID_YEAR.match(year_str):
-        msg = f"❌ Invalid year: `{year_str}`. Expected `YYYY`."
-        if token and repo and issue_number:
-            post_comment(repo, issue_number, msg, token)
-        raise SystemExit(msg)
-    year = int(year_str)
+        _fail(gh, f"❌ Invalid year: `{year_str}`. Expected `YYYY`.")
+    return int(year_str)
+
+
+def _fail(gh: _GhContext, msg: str) -> NoReturn:
+    gh.post(msg)
+    raise SystemExit(msg)
+
+
+def main() -> None:
+    """Action entry point: scrape, build features, train all models, evaluate, report."""
+    gh = _GhContext(
+        issue_number=int(os.environ.get("ISSUE_NUMBER", "0")),
+        token=os.environ.get("GITHUB_TOKEN", ""),
+        repo=os.environ.get("GITHUB_REPOSITORY", ""),
+    )
+    year = _read_year_from_env(gh)
 
     try:
-        print(f"=== scrape year {year} ===", flush=True)
-        scrape.main(year=year)
-
-        print("=== build_features ===", flush=True)
-        build_features.main()
-
-        print("=== train_baseline ===", flush=True)
-        train_baseline.main()
-
-        print("=== train_markov ===", flush=True)
-        train_markov.main()
-
-        print("=== train_xgboost ===", flush=True)
-        train_xgboost.main()
-
-        print("=== train_ensemble ===", flush=True)
-        train_ensemble.main()
-
-        print("=== evaluate ===", flush=True)
-        evaluate.main()
+        _run_pipeline(year)
     except Exception as e:
-        tb = traceback.format_exc()
-        print(tb, file=sys.stderr)
-        if token and repo and issue_number:
-            post_comment(repo, issue_number,
-                         f"❌ Pipeline failed at step: `{type(e).__name__}: {e}`")
+        print(traceback.format_exc(), file=sys.stderr)
+        gh.post(f"❌ Pipeline failed at step: `{type(e).__name__}: {e}`")
         raise
 
     eval_path = MODELS_DIR / "evaluation.json"
@@ -158,20 +186,12 @@ def main() -> None:
     update_model_card(year, summary)
 
     n_shows = len(load_json(SETLISTS_PATH)) if SETLISTS_PATH.exists() else 0
-    ens = summary.get("ensemble", {})
-    comment = (
-        f"## ✅ Process Complete — year `{year}`\n\n"
-        f"- Dataset: **{n_shows}** shows\n"
-        f"- Test shows: **{ens.get('n_shows', 0)}** (since 2025)\n"
-        f"- Ensemble Precision@25: **{ens.get('precision_at_25', 0):.1%}**\n"
-        f"- Ensemble Opener Accuracy: **{ens.get('opener_accuracy', 0):.1%}**\n\n"
-        "See [`models/model_card.md`](../blob/main/models/model_card.md) for full metrics."
-    )
-    if token and repo and issue_number:
-        post_comment(repo, issue_number, comment, token)
+    comment = _success_comment(year, n_shows, summary.get("ensemble", {}))
+    if gh.can_post:
+        gh.post(comment)
     else:
         print(comment)
-    print(f"process complete for issue #{issue_number}")
+    print(f"process complete for issue #{gh.issue_number}")
 
 
 if __name__ == "__main__":

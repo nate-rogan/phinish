@@ -16,6 +16,7 @@ from scripts.utils import MODELS_DIR, SETLISTS_PATH, load_json, save_json
 
 
 def main() -> None:
+    """Train and persist the order-2 Markov transition matrix to models/."""
     if not SETLISTS_PATH.exists():
         raise SystemExit(f"Missing {SETLISTS_PATH}; run scrape.py first.")
     shows = load_json(SETLISTS_PATH)

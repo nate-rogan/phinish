@@ -1,0 +1,35 @@
+# Phinish — Working Notes for Claude
+
+## Skills to invoke
+
+When editing this codebase, invoke these skills before writing code (they auto-trigger on description match, but reinforce here):
+
+- **python-modern** — any `.py` file. Covers idioms, function decomposition, cross-module reuse.
+- **pytest-modern** — any file under `tests/`. Use parametrize for multi-case tests; use `tmp_path` and `monkeypatch` instead of manual setup.
+- **simplify** — after a meaningful change, run `/simplify` to catch reuse, quality, and efficiency issues across the diff.
+
+## Project rules
+
+- **Run via pixi**: `pixi run -e dev pytest`, `pixi run -e dev ruff check .`. Never invoke a bare `python` or `pytest` — they pick up the wrong env.
+- **Pipeline scripts** in `scripts/` are invoked both via `python -m scripts.foo` (from `process_year.py`) and `python scripts/foo.py` (from CLI/docs). Keep the `if __package__ is None: sys.path.insert(...)` bootstrap.
+- **Shared helpers go in `scripts/utils.py`** — see `show_song_set`, `min_max_normalize`, `post_issue_comment`, `SET_KEYS`, `SET_TO_INT`, `SET_DISPLAY`. Don't re-implement these per module.
+- **Verify before claiming done**: run `pixi run -e dev ruff check . && pixi run -e dev pytest` and confirm both pass.
+
+## Docstring policy
+
+- **Module**: one-line `"""..."""` at the top describing what the module does. Required for every script.
+- **Public functions** (no leading underscore): one-line docstring stating purpose. Required.
+- **Non-trivial functions** (>30 lines, multi-step, or non-obvious behavior): full docstring with Args/Returns. Optional but encouraged.
+- **Private helpers** (`_foo`): docstring optional; skip if the name + signature is self-explanatory.
+- **Inline comments** stay rare — WHY only, never WHAT (the existing system-prompt rule).
+
+## Function size
+
+- `main()` should orchestrate, not implement. If `main()` has 5+ phases, extract each as a `_named_phase()` helper.
+- Don't decompose single conceptual operations (one feature vector, one streaming accumulator) — splitting by category just scatters context.
+
+## Testing
+
+- Hand-verified expected values for feature engineering live in `tests/conftest.py::tiny_shows`.
+- New helpers in `scripts/utils.py` should get a unit test before they get a second caller.
+- For the predict pipeline, prefer testing the public API (`predict()`, `format_comment()`) over internals.

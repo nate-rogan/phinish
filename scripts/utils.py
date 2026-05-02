@@ -8,6 +8,8 @@ from difflib import SequenceMatcher
 from pathlib import Path
 from typing import Any
 
+import httpx
+
 ROOT = Path(__file__).resolve().parents[1]
 DATA_DIR = ROOT / "data" / "processed"
 FEATURES_DIR = ROOT / "state" / "features"
@@ -22,12 +24,20 @@ CANONICAL_NAMES_PATH = ROOT / "data" / "canonical_names.json"
 VALID_DATE = re.compile(r"^\d{4}-\d{2}-\d{2}$")
 VALID_YEAR = re.compile(r"^\d{4}$")
 
+SET_KEYS: tuple[str, ...] = ("1", "2", "3", "encore")
+SET_DISPLAY: tuple[tuple[str, str], ...] = (("1", "Set 1"), ("2", "Set 2"), ("encore", "Encore"))
+SET_TO_INT: dict[str, int] = {"1": 1, "2": 2, "3": 3, "encore": 3}
+TOP_K: int = 25
+FUZZY_VENUE_THRESHOLD: float = 0.7
+
 
 def load_json(path: Path | str) -> Any:
+    """Read and parse a JSON file as UTF-8."""
     return json.loads(Path(path).read_text(encoding="utf-8"))
 
 
 def save_json(path: Path | str, data: Any, indent: int = 2, sort_keys: bool = False) -> None:
+    """Write `data` as JSON to `path`, creating parent directories as needed."""
     p = Path(path)
     p.parent.mkdir(parents=True, exist_ok=True)
     p.write_text(
@@ -37,6 +47,7 @@ def save_json(path: Path | str, data: Any, indent: int = 2, sort_keys: bool = Fa
 
 
 def sanitize(raw: str, max_length: int = 500) -> str:
+    """Trim, length-cap, and strip shell-metachars from untrusted user input."""
     cleaned = raw.strip()[:max_length]
     return re.sub(r"[;&|`$(){}]", "", cleaned)
 
@@ -55,6 +66,7 @@ def parse_issue_form(body: str) -> dict[str, str]:
 
 
 def normalize_venue_name(name: str) -> str:
+    """Lowercase, snake-case, and resolve common aliases (MSG, SPAC, etc)."""
     s = re.sub(r"[^a-z0-9]+", "_", (name or "").lower()).strip("_")
     aliases = {
         "madison_square_garden": "msg",
@@ -65,10 +77,12 @@ def normalize_venue_name(name: str) -> str:
 
 
 def venue_id(name: str) -> str:
+    """Return the canonical `v_<slug>` venue identifier for a venue name."""
     return "v_" + normalize_venue_name(name)
 
 
 def fuzzy_venue_match(target: str, venues: dict[str, dict]) -> str | None:
+    """Resolve `target` to a known venue id, falling back to fuzzy matching."""
     if not target:
         return None
     direct = venue_id(target)
@@ -83,12 +97,13 @@ def fuzzy_venue_match(target: str, venues: dict[str, dict]) -> str | None:
         score = SequenceMatcher(None, target_norm, cand).ratio()
         if score > best_score:
             best_score, best_id = score, vid
-    return best_id if best_score >= 0.7 else None
+    return best_id if best_score >= FUZZY_VENUE_THRESHOLD else None
 
 
 def check_rate_limit(
     usage: dict, user: str, max_per_day: int = 20, max_per_user: int = 3
 ) -> tuple[bool, str | None]:
+    """Return (ok, reason) for a prediction request given the day's usage."""
     today = date.today().isoformat()
     if usage.get("date") != today:
         return True, None
@@ -100,6 +115,7 @@ def check_rate_limit(
 
 
 def update_usage(usage: dict, user: str) -> dict:
+    """Increment today's prediction counters, resetting on a date rollover."""
     today = date.today().isoformat()
     if usage.get("date") != today:
         usage = {"date": today, "total": 0, "by_user": {}}
@@ -109,6 +125,7 @@ def update_usage(usage: dict, user: str) -> dict:
 
 
 def day_of_week(date_str: str) -> str:
+    """Return the lowercase day name ('monday', ...) for an ISO date string."""
     return date.fromisoformat(date_str).strftime("%A").lower()
 
 
@@ -116,6 +133,7 @@ FESTIVAL_KEYWORDS = ("festival", "it ", "magnaball", "curveball", "dick's")
 
 
 def special_show_flags(date_str: str, tour_name: str = "") -> dict[str, bool]:
+    """Flag NYE, Halloween, and festival shows by date and tour name."""
     _, m, d = date_str.split("-")
     tour_lower = (tour_name or "").lower()
     return {
@@ -126,6 +144,7 @@ def special_show_flags(date_str: str, tour_name: str = "") -> dict[str, bool]:
 
 
 def canonicalize_song(name: str, canonical_map: dict[str, str] | None = None) -> str:
+    """Resolve a raw song name to its canonical form via the alias map."""
     if not name:
         return ""
     raw = name.strip()
@@ -134,3 +153,32 @@ def canonicalize_song(name: str, canonical_map: dict[str, str] | None = None) ->
     if canonical_map and raw.lower() in canonical_map:
         return canonical_map[raw.lower()]
     return raw
+
+
+def show_song_set(show: dict) -> set[str]:
+    """Return the unique set of songs played across all sets of one show."""
+    return {s["song"] for songs in show.get("sets", {}).values() for s in songs}
+
+
+def min_max_normalize(values: list[float]) -> list[float]:
+    """Rescale values to [0, 1]; constant or empty input maps to all zeros."""
+    if not values:
+        return values
+    lo, hi = min(values), max(values)
+    rng = (hi - lo) or 1.0
+    return [(v - lo) / rng for v in values]
+
+
+def post_issue_comment(repo: str, issue_number: int, body: str, token: str) -> None:
+    """Post a markdown comment to a GitHub issue via the REST API."""
+    r = httpx.post(
+        f"https://api.github.com/repos/{repo}/issues/{issue_number}/comments",
+        headers={
+            "Authorization": f"Bearer {token}",
+            "Accept": "application/vnd.github+json",
+            "X-GitHub-Api-Version": "2022-11-28",
+        },
+        json={"body": body},
+        timeout=30.0,
+    )
+    r.raise_for_status()

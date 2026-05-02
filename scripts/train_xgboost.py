@@ -27,11 +27,14 @@ if __package__ is None:
 
 from scripts.utils import (
     MODELS_DIR,
+    SET_KEYS,
+    SET_TO_INT,
     SETLISTS_PATH,
     SONGS_PATH,
     day_of_week,
     load_json,
     save_json,
+    show_song_set,
     special_show_flags,
 )
 
@@ -54,11 +57,8 @@ XGB_PARAMS = dict(
 )
 
 
-def show_song_set(show: dict) -> set[str]:
-    return {s["song"] for songs in show.get("sets", {}).values() for s in songs}
-
-
 def feature_names() -> list[str]:
+    """Return the ordered list of feature names produced by `featurize()`."""
     base = [
         "gap", "log_gap", "is_bustout", "lifetime_freq",
         "recent_freq_50", "recent_freq_20",
@@ -107,7 +107,7 @@ class StreamingState:
         for song in played:
             self.last_played_idx[song] = self.n
             self.last_played_date[song] = show.get("date", "")
-        for set_key in ("1", "2", "3", "encore"):
+        for set_key in SET_KEYS:
             songs = show.get("sets", {}).get(set_key, [])
             n = len(songs)
             if n == 0:
@@ -136,12 +136,14 @@ class StreamingState:
 
 
 def days_between(d1: str, d2: str) -> int:
+    """Absolute day count between two ISO dates; 0 if either is empty."""
     if not d1 or not d2:
         return 0
     return abs((date.fromisoformat(d2) - date.fromisoformat(d1)).days)
 
 
 def featurize(state: StreamingState, show: dict, song: str, cover_set: set[str]) -> list[float]:
+    """Build the XGBoost feature vector for one (state, show, song) triple."""
     last_idx = state.last_played_idx.get(song)
     gap = state.n - last_idx if last_idx is not None else state.n + 100
     plays = state.plays.get(song, 0)
@@ -154,7 +156,7 @@ def featurize(state: StreamingState, show: dict, song: str, cover_set: set[str])
         typical_key = max(typical_set_counts.items(), key=lambda kv: kv[1])[0]
     else:
         typical_key = "1"
-    typical_set = {"1": 1, "2": 2, "3": 3, "encore": 3}.get(typical_key, 1)
+    typical_set = SET_TO_INT.get(typical_key, 1)
     avg_pos = state.set_pos_sum[song] / state.set_pos_n[song] if state.set_pos_n[song] else 0.5
 
     vid = show.get("venue_id", "")
@@ -204,6 +206,7 @@ def featurize(state: StreamingState, show: dict, song: str, cover_set: set[str])
 def build_training_matrix(
     shows: list[dict], cover_set: set[str], min_year: int, max_year: int
 ) -> tuple[np.ndarray, np.ndarray, list[str]]:
+    """Replay shows; for each show in [min_year, max_year] emit one row per candidate."""
     state = StreamingState()
     rows: list[list[float]] = []
     labels: list[int] = []
@@ -224,6 +227,7 @@ def build_training_matrix(
 
 
 def main() -> None:
+    """Train XGBoost song selector with temporal split and Platt calibration."""
     if not SETLISTS_PATH.exists():
         raise SystemExit(f"Missing {SETLISTS_PATH}; run scrape.py first.")
     shows = load_json(SETLISTS_PATH)

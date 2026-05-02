@@ -17,22 +17,21 @@ if __package__ is None:
 
 from scripts.utils import (
     FEATURES_DIR,
+    SET_KEYS,
+    SET_TO_INT,
     SETLISTS_PATH,
     SONGS_PATH,
     load_json,
     save_json,
+    show_song_set,
 )
 
 LAPLACE_K = 0.01
 RECENT_WINDOWS = (50, 20)
-SET_KEYS = ("1", "2", "3", "encore")
-
-
-def show_song_set(show: dict) -> set[str]:
-    return {s["song"] for songs in show.get("sets", {}).values() for s in songs}
 
 
 def build_song_gaps(shows: list[dict]) -> dict:
+    """Compute current rotation gap (shows since last play) for each song."""
     last_played: dict[str, str] = {}
     last_shown_idx: dict[str, int] = {}
     for idx, show in enumerate(shows):
@@ -47,6 +46,7 @@ def build_song_gaps(shows: list[dict]) -> dict:
 
 
 def build_song_stats(shows: list[dict], songs_catalog: list[dict]) -> dict:
+    """Aggregate per-song frequencies, set placement, opener/closer rates."""
     total_shows = len(shows)
     if total_shows == 0:
         return {}
@@ -86,18 +86,20 @@ def build_song_stats(shows: list[dict], songs_catalog: list[dict]) -> dict:
             for song in show_song_set(show):
                 recent_appearances[w][song] += 1
 
-    set_to_int = {"1": 1, "2": 2, "3": 3, "encore": 3}
     out: dict = {}
     for song, count in plays.items():
         sets_played = set_counts[song]
         typical_key = max(sets_played.items(), key=lambda kv: kv[1])[0] if sets_played else "1"
+        recent_freqs = {
+            f"recent_frequency_{w}": recent_appearances[w][song] / min(w, total_shows)
+            for w in RECENT_WINDOWS
+        }
         out[song] = {
             "total_plays": count,
             "lifetime_frequency": count / total_shows,
-            "recent_frequency_50": recent_appearances[50][song] / min(50, total_shows),
-            "recent_frequency_20": recent_appearances[20][song] / min(20, total_shows),
+            **recent_freqs,
             "avg_set_position": pos_sum[song] / pos_n[song] if pos_n[song] else 0.5,
-            "typical_set": set_to_int.get(typical_key, 1),
+            "typical_set": SET_TO_INT.get(typical_key, 1),
             "set_distribution": {k: sets_played[k] / count for k in sets_played},
             "opener_frequency": opener_counts[song] / count,
             "closer_frequency": closer_counts[song] / count,
@@ -115,6 +117,7 @@ def _normalize(counts: Counter[str], vocab_size: int) -> dict[str, float]:
 
 
 def build_transition_matrix(shows: list[dict]) -> dict:
+    """Build order-1 and order-2 song-transition probabilities (Laplace smoothed)."""
     order1: dict[str, Counter[str]] = defaultdict(Counter)
     order2: dict[str, Counter[str]] = defaultdict(Counter)
     set_openers: dict[str, Counter[str]] = {k: Counter() for k in SET_KEYS}
@@ -147,6 +150,7 @@ def build_transition_matrix(shows: list[dict]) -> dict:
 
 
 def build_venue_history(shows: list[dict]) -> dict:
+    """Aggregate per-venue song frequencies and common opener/closer picks."""
     per_venue: dict[str, dict] = {}
     for show in shows:
         vid = show.get("venue_id", "")
@@ -186,6 +190,7 @@ def build_venue_history(shows: list[dict]) -> dict:
 
 
 def main() -> None:
+    """Build all feature artifacts from the canonical setlist data."""
     if not SETLISTS_PATH.exists():
         raise SystemExit(f"Missing {SETLISTS_PATH}; run scrape.py first.")
     shows = load_json(SETLISTS_PATH)

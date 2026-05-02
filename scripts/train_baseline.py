@@ -17,6 +17,7 @@ from scripts.utils import FEATURES_DIR, MODELS_DIR, load_json, save_json
 
 
 def gap_weighted_score(stats: dict, gaps: dict) -> dict[str, float]:
+    """Score = recent play frequency boosted by log(gap), reflecting overdue songs."""
     out: dict[str, float] = {}
     for song, s in stats.items():
         gap = gaps.get(song, {}).get("gap", 1)
@@ -25,10 +26,12 @@ def gap_weighted_score(stats: dict, gaps: dict) -> dict[str, float]:
 
 
 def frequency_score(stats: dict) -> dict[str, float]:
+    """Baseline score: lifetime play frequency per song."""
     return {song: s.get("lifetime_frequency", 0.0) for song, s in stats.items()}
 
 
 def main() -> None:
+    """Compute baseline reference scores and write models/baselines.json."""
     stats = load_json(FEATURES_DIR / "song_stats.json")
     gaps = load_json(FEATURES_DIR / "song_gaps.json")
     out = {

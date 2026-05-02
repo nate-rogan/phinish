@@ -3,8 +3,9 @@ from __future__ import annotations
 
 import pytest
 
-from scripts.predict import _norm, _split_by_typical_set, predict, synthetic_show
+from scripts.predict import _split_by_typical_set, predict, synthetic_show
 from scripts.process_issue import format_comment
+from scripts.utils import min_max_normalize
 
 
 @pytest.mark.parametrize("vals,expected", [
@@ -14,7 +15,7 @@ from scripts.process_issue import format_comment
     pytest.param([2.0, 2.0, 2.0], [0.0, 0.0, 0.0], id="constant_input"),
 ])
 def test_norm_to_unit_range(vals, expected):
-    assert _norm(vals) == expected
+    assert min_max_normalize(vals) == expected
 
 
 def test_split_by_typical_set():
