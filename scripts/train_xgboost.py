@@ -14,6 +14,8 @@ import math
 import pickle
 import sys
 from collections import Counter, defaultdict, deque
+from dataclasses import dataclass, field
+from datetime import date
 from pathlib import Path
 
 import numpy as np
@@ -70,28 +72,34 @@ def feature_names() -> list[str]:
     return base + [f"dow_{d}" for d in DAYS]
 
 
+@dataclass(slots=True)
 class StreamingState:
     """Incremental statistics over shows seen so far."""
 
-    def __init__(self) -> None:
-        self.n = 0
-        self.plays: Counter[str] = Counter()
-        self.last_played_idx: dict[str, int] = {}
-        self.last_played_date: dict[str, str] = {}
-        self.set_pos_sum: dict[str, float] = defaultdict(float)
-        self.set_pos_n: dict[str, int] = defaultdict(int)
-        self.typical_set_counts: dict[str, Counter[str]] = defaultdict(Counter)
-        self.opener_counts: Counter[str] = Counter()
-        self.closer_counts: Counter[str] = Counter()
-        self.recent_50: deque[set[str]] = deque(maxlen=50)
-        self.recent_20: deque[set[str]] = deque(maxlen=20)
-        self.last_show_set: set[str] = set()
-        self.last_3_shows: deque[set[str]] = deque(maxlen=3)
-        self.last_show_date: str = ""
-        self.venue_shows: Counter[str] = Counter()
-        self.venue_song_counts: dict[str, Counter[str]] = defaultdict(Counter)
-        self.tour_song_plays: dict[str, Counter[str]] = defaultdict(Counter)
-        self.tour_show_count: Counter[str] = Counter()
+    n: int = 0
+    plays: Counter[str] = field(default_factory=Counter)
+    last_played_idx: dict[str, int] = field(default_factory=dict)
+    last_played_date: dict[str, str] = field(default_factory=dict)
+    set_pos_sum: dict[str, float] = field(default_factory=lambda: defaultdict(float))
+    set_pos_n: dict[str, int] = field(default_factory=lambda: defaultdict(int))
+    typical_set_counts: dict[str, Counter[str]] = field(
+        default_factory=lambda: defaultdict(Counter)
+    )
+    opener_counts: Counter[str] = field(default_factory=Counter)
+    closer_counts: Counter[str] = field(default_factory=Counter)
+    recent_50: deque[set[str]] = field(default_factory=lambda: deque(maxlen=50))
+    recent_20: deque[set[str]] = field(default_factory=lambda: deque(maxlen=20))
+    last_show_set: set[str] = field(default_factory=set)
+    last_3_shows: deque[set[str]] = field(default_factory=lambda: deque(maxlen=3))
+    last_show_date: str = ""
+    venue_shows: Counter[str] = field(default_factory=Counter)
+    venue_song_counts: dict[str, Counter[str]] = field(
+        default_factory=lambda: defaultdict(Counter)
+    )
+    tour_song_plays: dict[str, Counter[str]] = field(
+        default_factory=lambda: defaultdict(Counter)
+    )
+    tour_show_count: Counter[str] = field(default_factory=Counter)
 
     def update(self, show: dict) -> None:
         played = show_song_set(show)
@@ -130,10 +138,7 @@ class StreamingState:
 def days_between(d1: str, d2: str) -> int:
     if not d1 or not d2:
         return 0
-    from datetime import date as _date
-    a = _date(*(int(x) for x in d1.split("-")))
-    b = _date(*(int(x) for x in d2.split("-")))
-    return abs((b - a).days)
+    return abs((date.fromisoformat(d2) - date.fromisoformat(d1)).days)
 
 
 def featurize(state: StreamingState, show: dict, song: str, cover_set: set[str]) -> list[float]:
@@ -250,10 +255,8 @@ def main() -> None:
         print("(skipping calibration: no validation rows)")
 
     MODELS_DIR.mkdir(parents=True, exist_ok=True)
-    with open(MODELS_DIR / "xgboost_song_selector.pkl", "wb") as f:
-        pickle.dump(model, f)
-    with open(MODELS_DIR / "calibrator.pkl", "wb") as f:
-        pickle.dump(calibrator, f)
+    (MODELS_DIR / "xgboost_song_selector.pkl").write_bytes(pickle.dumps(model))
+    (MODELS_DIR / "calibrator.pkl").write_bytes(pickle.dumps(calibrator))
     save_json(MODELS_DIR / "xgboost_meta.json", {
         "feature_names": feature_names(),
         "n_train_rows": int(X_train.shape[0]),

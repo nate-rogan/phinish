@@ -3,9 +3,7 @@ from __future__ import annotations
 
 import json
 import re
-import subprocess
-import sys
-from datetime import date as _date
+from datetime import date
 from difflib import SequenceMatcher
 from pathlib import Path
 from typing import Any
@@ -91,7 +89,7 @@ def fuzzy_venue_match(target: str, venues: dict[str, dict]) -> str | None:
 def check_rate_limit(
     usage: dict, user: str, max_per_day: int = 20, max_per_user: int = 3
 ) -> tuple[bool, str | None]:
-    today = _date.today().isoformat()
+    today = date.today().isoformat()
     if usage.get("date") != today:
         return True, None
     if usage.get("total", 0) >= max_per_day:
@@ -102,7 +100,7 @@ def check_rate_limit(
 
 
 def update_usage(usage: dict, user: str) -> dict:
-    today = _date.today().isoformat()
+    today = date.today().isoformat()
     if usage.get("date") != today:
         usage = {"date": today, "total": 0, "by_user": {}}
     usage["total"] = usage.get("total", 0) + 1
@@ -111,8 +109,7 @@ def update_usage(usage: dict, user: str) -> dict:
 
 
 def day_of_week(date_str: str) -> str:
-    y, m, d = (int(x) for x in date_str.split("-"))
-    return _date(y, m, d).strftime("%A").lower()
+    return date.fromisoformat(date_str).strftime("%A").lower()
 
 
 FESTIVAL_KEYWORDS = ("festival", "it ", "magnaball", "curveball", "dick's")
@@ -137,13 +134,3 @@ def canonicalize_song(name: str, canonical_map: dict[str, str] | None = None) ->
     if canonical_map and raw.lower() in canonical_map:
         return canonical_map[raw.lower()]
     return raw
-
-
-def run_script(module: str, *args: str) -> None:
-    subprocess.run([sys.executable, "-m", f"scripts.{module}", *args], check=True, cwd=ROOT)
-
-
-def ensure_path() -> None:
-    """Allow `python scripts/foo.py` invocation by putting repo root on sys.path."""
-    if str(ROOT) not in sys.path:
-        sys.path.insert(0, str(ROOT))

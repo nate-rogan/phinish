@@ -17,7 +17,7 @@ import argparse
 import os
 import sys
 import time
-from datetime import date as _date
+from datetime import date
 from pathlib import Path
 
 import httpx
@@ -167,7 +167,7 @@ def main(year: int | None) -> None:
 
     with httpx.Client() as client:
         if year is None:
-            years = range(FIRST_YEAR, _date.today().year + 1)
+            years = range(FIRST_YEAR, date.today().year + 1)
             all_rows: list[dict] = []
             for y in years:
                 print(f"  fetching setlists for {y}...", flush=True)

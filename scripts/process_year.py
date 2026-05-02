@@ -10,7 +10,7 @@ from __future__ import annotations
 import os
 import sys
 import traceback
-from datetime import date as _date
+from datetime import date
 from pathlib import Path
 
 import httpx
@@ -54,7 +54,7 @@ def post_comment(repo: str, issue_number: int, body: str, token: str) -> None:
 
 
 def update_model_card(year: int, summary: dict) -> None:
-    today = _date.today().isoformat()
+    today = date.today().isoformat()
     rows = []
     for label, key in (
         ("Frequency baseline", "frequency"),

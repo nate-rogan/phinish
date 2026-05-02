@@ -79,13 +79,9 @@ def main() -> None:
     songs_catalog = load_json(SONGS_PATH) if SONGS_PATH.exists() else []
     cover_set = {s["name"] for s in songs_catalog if not s.get("is_original", True)}
 
-    with open(MODELS_DIR / "xgboost_song_selector.pkl", "rb") as f:
-        xgb = pickle.load(f)
-    try:
-        with open(MODELS_DIR / "calibrator.pkl", "rb") as f:
-            calibrator = pickle.load(f)
-    except FileNotFoundError:
-        calibrator = None
+    xgb = pickle.loads((MODELS_DIR / "xgboost_song_selector.pkl").read_bytes())
+    calibrator_path = MODELS_DIR / "calibrator.pkl"
+    calibrator = pickle.loads(calibrator_path.read_bytes()) if calibrator_path.exists() else None
 
     transition = load_json(FEATURES_DIR / "transition_matrix.json")
     venue_history = load_json(FEATURES_DIR / "venue_history.json")
@@ -142,13 +138,13 @@ def main() -> None:
         wx, wm, wg, wv = (x / total for x in w)
         precisions = []
         for r in val_records:
-            def combined(s: dict, _wx=wx, _wm=wm, _wg=wg, _wv=wv) -> float:
-                return (
-                    _wx * s["xgb_n"] + _wm * s["markov_n"]
-                    + _wg * s["gap_n"] + _wv * s["venue_n"]
-                )
-            ranked = sorted(r["scores"], key=combined, reverse=True)
-            precisions.append(precision_at_k([s["song"] for s in ranked], set(r["actual"])))
+            scored = [
+                (s["song"], wx * s["xgb_n"] + wm * s["markov_n"]
+                            + wg * s["gap_n"] + wv * s["venue_n"])
+                for s in r["scores"]
+            ]
+            scored.sort(key=lambda pair: pair[1], reverse=True)
+            precisions.append(precision_at_k([song for song, _ in scored], set(r["actual"])))
         avg = sum(precisions) / len(precisions)
         if avg > best_score:
             best_score = avg

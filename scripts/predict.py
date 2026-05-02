@@ -8,6 +8,7 @@ from __future__ import annotations
 import argparse
 import pickle
 import sys
+from datetime import date
 from pathlib import Path
 from typing import Any
 
@@ -53,12 +54,13 @@ def _norm(vals: list[float]) -> list[float]:
 def synthetic_show(date_str: str, venue_name: str, venues: dict) -> dict:
     vid = fuzzy_venue_match(venue_name, venues) or venue_id(venue_name)
     flags = special_show_flags(date_str)
+    d = date.fromisoformat(date_str)
     return {
         "show_id": "predict",
         "date": date_str,
-        "year": int(date_str[:4]),
-        "month": int(date_str[5:7]),
-        "day": int(date_str[8:10]),
+        "year": d.year,
+        "month": d.month,
+        "day": d.day,
         "day_of_week": day_of_week(date_str),
         "venue_id": vid,
         "venue_name": venue_name,
@@ -116,11 +118,12 @@ def _sequence(
         order2 = transition.get("order_2", {}).get(f"{prev2}|{prev1}", {}) if prev2 else {}
         order1 = transition.get("order_1", {}).get(prev1, {})
 
-        def score(song: str, _o2=order2, _o1=order1, _pool=pool) -> float:
-            markov_p = _o2.get(song, _o1.get(song, 0.0))
-            return MARKOV_BLEND * markov_p + (1 - MARKOV_BLEND) * _pool[song]
-
-        best = max(pool, key=score)
+        scored = [
+            (song, MARKOV_BLEND * order2.get(song, order1.get(song, 0.0))
+                   + (1 - MARKOV_BLEND) * pool_score)
+            for song, pool_score in pool.items()
+        ]
+        best, _ = max(scored, key=lambda pair: pair[1])
         sequence.append(best)
         pool.pop(best)
 
@@ -149,13 +152,9 @@ def predict(date: str, venue: str, city: str | None = None) -> dict[str, Any]:
     gap_scores = gap_score_per_song(stats, gaps)
     wx, wm, wg, wv = weights["w_xgboost"], weights["w_markov"], weights["w_gap"], weights["w_venue"]
 
-    with open(MODELS_DIR / "xgboost_song_selector.pkl", "rb") as f:
-        xgb = pickle.load(f)
-    try:
-        with open(MODELS_DIR / "calibrator.pkl", "rb") as f:
-            calibrator = pickle.load(f)
-    except FileNotFoundError:
-        calibrator = None
+    xgb = pickle.loads((MODELS_DIR / "xgboost_song_selector.pkl").read_bytes())
+    calibrator_path = MODELS_DIR / "calibrator.pkl"
+    calibrator = pickle.loads(calibrator_path.read_bytes()) if calibrator_path.exists() else None
 
     state = _build_state(shows)
     show = synthetic_show(date, venue, venues)

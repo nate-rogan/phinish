@@ -57,13 +57,9 @@ def main() -> None:
     songs_catalog = load_json(SONGS_PATH) if SONGS_PATH.exists() else []
     cover_set = {s["name"] for s in songs_catalog if not s.get("is_original", True)}
 
-    with open(MODELS_DIR / "xgboost_song_selector.pkl", "rb") as f:
-        xgb = pickle.load(f)
-    try:
-        with open(MODELS_DIR / "calibrator.pkl", "rb") as f:
-            calibrator = pickle.load(f)
-    except FileNotFoundError:
-        calibrator = None
+    xgb = pickle.loads((MODELS_DIR / "xgboost_song_selector.pkl").read_bytes())
+    calibrator_path = MODELS_DIR / "calibrator.pkl"
+    calibrator = pickle.loads(calibrator_path.read_bytes()) if calibrator_path.exists() else None
 
     transition = load_json(FEATURES_DIR / "transition_matrix.json")
     venue_history = load_json(FEATURES_DIR / "venue_history.json")
@@ -103,13 +99,16 @@ def main() -> None:
                 vid = show.get("venue_id", "")
                 venue_freq = venue_history.get(vid, {}).get("song_freq", {})
 
-                lifetime_freq = lambda s: stats.get(s, {}).get("lifetime_frequency", 0.0)  # noqa: E731
                 xgb_pairs = sorted(
                     zip(xgb_probs, candidates, strict=True),
                     reverse=True, key=lambda t: t[0],
                 )
                 rankings = {
-                    "frequency": sorted(candidates, key=lifetime_freq, reverse=True),
+                    "frequency": sorted(
+                        candidates,
+                        key=lambda s: stats.get(s, {}).get("lifetime_frequency", 0.0),
+                        reverse=True,
+                    ),
                     "gap_weighted": sorted(
                         candidates, key=lambda s: gap_scores.get(s, 0.0), reverse=True,
                     ),

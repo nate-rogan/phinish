@@ -7,7 +7,7 @@ from __future__ import annotations
 import os
 import sys
 import traceback
-from datetime import date as _date
+from datetime import date
 from pathlib import Path
 
 import httpx
@@ -89,7 +89,7 @@ def post_comment(repo: str, issue_number: int, body: str, token: str) -> None:
 
 def append_reasons(prediction: dict, issue_number: int, author: str) -> None:
     REASONS_PATH.parent.mkdir(parents=True, exist_ok=True)
-    today = _date.today().isoformat()
+    today = date.today().isoformat()
     venue = prediction.get("venue", "")
     avg = prediction.get("avg_confidence", 0.0)
     line = (
@@ -164,7 +164,7 @@ def main() -> None:
         "venue": prediction["venue"],
         "venue_id": prediction.get("venue_id", ""),
         "avg_confidence": prediction.get("avg_confidence", 0.0),
-        "generated_at": _date.today().isoformat(),
+        "generated_at": date.today().isoformat(),
     })
     save_json(LOG_PATH, log)
 

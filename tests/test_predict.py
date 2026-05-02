@@ -1,14 +1,20 @@
 """Unit tests for predict.py helpers and output structure."""
 from __future__ import annotations
 
-from scripts.predict import _norm, _split_by_typical_set, synthetic_show
+import pytest
+
+from scripts.predict import _norm, _split_by_typical_set, predict, synthetic_show
 from scripts.process_issue import format_comment
 
 
-def test_norm_to_unit_range():
-    assert _norm([1.0, 2.0, 3.0]) == [0.0, 0.5, 1.0]
-    assert _norm([5.0]) == [0.0]
-    assert _norm([]) == []
+@pytest.mark.parametrize("vals,expected", [
+    pytest.param([1.0, 2.0, 3.0], [0.0, 0.5, 1.0], id="three_values"),
+    pytest.param([5.0], [0.0], id="single_value_collapses_to_zero"),
+    pytest.param([], [], id="empty"),
+    pytest.param([2.0, 2.0, 2.0], [0.0, 0.0, 0.0], id="constant_input"),
+])
+def test_norm_to_unit_range(vals, expected):
+    assert _norm(vals) == expected
 
 
 def test_split_by_typical_set():
@@ -24,6 +30,12 @@ def test_split_by_typical_set():
     assert buckets["encore"] == ["C"]
 
 
+@pytest.mark.parametrize("bad_date", ["2026/12/31", "12-31-2026", "not-a-date", "", "2026-13-01x"])
+def test_predict_rejects_invalid_date(bad_date):
+    with pytest.raises(ValueError, match="Invalid date format"):
+        predict(bad_date, "MSG")
+
+
 def test_synthetic_show_resolves_venue():
     venues = {"v_msg": {"venue_id": "v_msg", "name": "Madison Square Garden",
                         "city": "New York", "state": "NY", "country": "USA"}}
@@ -32,6 +44,8 @@ def test_synthetic_show_resolves_venue():
     assert show["venue_id"] == "v_msg"
     assert show["is_nye"] is True
     assert show["year"] == 2026
+    assert show["month"] == 12
+    assert show["day"] == 31
 
 
 def test_format_comment_well_formed():
