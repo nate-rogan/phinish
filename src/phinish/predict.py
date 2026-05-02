@@ -1,29 +1,24 @@
 """Inference pipeline: produce a structured setlist for a given date + venue.
 
 CLI:
-  pixi run python scripts/predict.py --date 2026-12-31 --venue "MSG"
+  pixi run phinish-predict --date 2026-12-31 --venue "MSG"
 """
 
 import argparse
 import pickle
-import sys
 from dataclasses import dataclass
 from datetime import date
-from pathlib import Path
 from typing import Any
 
 import numpy as np
 
-if __package__ is None:
-    sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
-
-from scripts.train_ensemble import gap_score_per_song, markov_score_per_song
-from scripts.train_xgboost import (
+from phinish.train_ensemble import gap_score_per_song, markov_score_per_song
+from phinish.train_xgboost import (
     MIN_PLAYS_FOR_CANDIDATE,
     StreamingState,
     featurize,
 )
-from scripts.utils import (
+from phinish.utils import (
     FEATURES_DIR,
     MODELS_DIR,
     SET_DISPLAY,
@@ -401,8 +396,8 @@ def _format_text(prediction: Prediction) -> str:
     return "\n".join(lines)
 
 
-def main() -> None:
-    """CLI entry point: parse args and print a formatted prediction."""
+def cli() -> None:
+    """Console-script entry point: parse args, run ``predict``, and print."""
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--date", required=True, help="YYYY-MM-DD")
     parser.add_argument("--venue", required=True)
@@ -414,4 +409,4 @@ def main() -> None:
 
 
 if __name__ == "__main__":
-    main()
+    cli()

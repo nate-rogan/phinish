@@ -8,14 +8,10 @@ import sys
 import traceback
 from dataclasses import dataclass
 from datetime import date
-from pathlib import Path
 from typing import NoReturn
 
-if __package__ is None:
-    sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
-
-from scripts.predict import predict
-from scripts.utils import (
+from phinish.predict import predict
+from phinish.utils import (
     ROOT,
     SET_DISPLAY,
     STATE_DIR,
@@ -82,7 +78,7 @@ def format_comment(prediction: Prediction) -> str:
     Parameters
     ----------
     prediction
-        The structured prediction returned by ``scripts.predict.predict``.
+        The structured prediction returned by ``phinish.predict.predict``.
 
     Returns
     -------
@@ -124,7 +120,7 @@ def append_reasons(prediction: Prediction, issue_number: int, author: str) -> No
     Parameters
     ----------
     prediction
-        The prediction payload returned by ``scripts.predict.predict``.
+        The prediction payload returned by ``phinish.predict.predict``.
     issue_number
         GitHub issue id this prediction was generated for; used as the
         anchor in the audit log header.

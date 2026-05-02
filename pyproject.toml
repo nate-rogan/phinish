@@ -5,6 +5,25 @@ description = "ML-powered Phish setlist predictions running entirely from a GitH
 readme = "README.md"
 requires-python = ">=3.12"
 
+[project.scripts]
+phinish-scrape = "phinish.scrape:cli"
+phinish-build-features = "phinish.build_features:main"
+phinish-train-baseline = "phinish.train_baseline:main"
+phinish-train-markov = "phinish.train_markov:main"
+phinish-train-xgboost = "phinish.train_xgboost:main"
+phinish-train-ensemble = "phinish.train_ensemble:main"
+phinish-evaluate = "phinish.evaluate:main"
+phinish-predict = "phinish.predict:cli"
+phinish-process-issue = "phinish.process_issue:main"
+phinish-process-year = "phinish.process_year:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/phinish"]
+
 [tool.pixi.workspace]
 channels = ["conda-forge"]
 platforms = ["win-64", "linux-64", "osx-arm64"]
@@ -17,6 +36,9 @@ scikit-learn = ">=1.4"
 xgboost = ">=2.0"
 httpx = ">=0.27"
 stamina = ">=24.3"
+
+[tool.pixi.pypi-dependencies]
+phinish = { path = ".", editable = true }
 
 [tool.pixi.feature.dev.dependencies]
 ruff = "*"
@@ -48,8 +70,8 @@ ignore = [
 
 [tool.ruff.lint.per-file-ignores]
 "tests/**" = ["D"]  # tests are self-documenting via test names
-"scripts/__init__.py" = ["D"]
-"scripts/*.py" = ["D102", "D105", "D106"]  # methods/dunders/nested classes optional
+"src/phinish/__init__.py" = ["D"]
+"src/phinish/*.py" = ["D102", "D105", "D106"]  # methods/dunders/nested classes optional
 
 [tool.ruff.lint.pydocstyle]
 convention = "numpy"
@@ -57,5 +79,5 @@ convention = "numpy"
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 python_files = "test_*.py"
-pythonpath = ["."]
+pythonpath = ["src"]
 addopts = "-v"

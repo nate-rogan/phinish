@@ -9,21 +9,16 @@ Writes models/ensemble_weights.json.
 
 import math
 import pickle
-import sys
 from itertools import product
-from pathlib import Path
 
 import numpy as np
 
-if __package__ is None:
-    sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
-
-from scripts.train_xgboost import (
+from phinish.train_xgboost import (
     MIN_PLAYS_FOR_CANDIDATE,
     StreamingState,
     featurize,
 )
-from scripts.utils import (
+from phinish.utils import (
     FEATURES_DIR,
     MODELS_DIR,
     SETLISTS_PATH,

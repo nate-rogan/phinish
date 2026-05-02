@@ -4,21 +4,16 @@ Writes models/evaluation.json and prints a comparison table.
 """
 
 import pickle
-import sys
-from pathlib import Path
 
 import numpy as np
 
-if __package__ is None:
-    sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
-
-from scripts.train_ensemble import gap_score_per_song, markov_score_per_song
-from scripts.train_xgboost import (
+from phinish.train_ensemble import gap_score_per_song, markov_score_per_song
+from phinish.train_xgboost import (
     MIN_PLAYS_FOR_CANDIDATE,
     StreamingState,
     featurize,
 )
-from scripts.utils import (
+from phinish.utils import (
     FEATURES_DIR,
     MODELS_DIR,
     SETLISTS_PATH,

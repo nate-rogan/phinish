@@ -1,6 +1,6 @@
 """Unit tests for build_features."""
 
-from scripts.build_features import (
+from phinish.build_features import (
     build_song_gaps,
     build_song_stats,
     build_transition_matrix,

@@ -2,9 +2,9 @@
 
 import pytest
 
-from scripts.predict import _split_by_typical_set, predict, synthetic_show
-from scripts.process_issue import format_comment
-from scripts.utils import min_max_normalize
+from phinish.predict import _split_by_typical_set, predict, synthetic_show
+from phinish.process_issue import format_comment
+from phinish.utils import min_max_normalize
 
 
 @pytest.mark.parametrize("vals,expected", [

@@ -12,13 +12,9 @@ import traceback
 from collections.abc import Callable
 from dataclasses import dataclass
 from datetime import datetime
-from pathlib import Path
 from typing import NoReturn
 
-if __package__ is None:
-    sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
-
-from scripts import (
+from phinish import (
     build_features,
     evaluate,
     scrape,
@@ -27,7 +23,7 @@ from scripts import (
     train_markov,
     train_xgboost,
 )
-from scripts.utils import (
+from phinish.utils import (
     MANIFEST_PATH,
     MODELS_DIR,
     SETLISTS_PATH,

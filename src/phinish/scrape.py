@@ -6,33 +6,26 @@ Pulls setlists, songs, venues and writes:
   data/processed/venues.json
 
 Usage:
-  pixi run python scripts/scrape.py              # full pull (1983-present)
-  pixi run python scripts/scrape.py --year 2025  # one year, merged into existing
+  pixi run python -m phinish.scrape              # full pull (1983-present)
+  pixi run python -m phinish.scrape --year 2025  # one year, merged into existing
 
 Requires PHISHNET_API_KEY environment variable.
 """
 
 import argparse
 import os
-import sys
 from datetime import date
-from pathlib import Path
 
 import httpx
 import stamina
 
-if __package__ is None:
-    sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
-
-from scripts.utils import (
+from phinish.models import Show, SongCatalogEntry, SongEntry, VenueRecord
+from phinish.utils import (
     CANONICAL_NAMES_PATH,
     DATA_DIR,
     SETLISTS_PATH,
     SONGS_PATH,
     VENUES_PATH,
-    Show,
-    SongCatalogEntry,
-    VenueRecord,
     canonicalize_song,
     day_of_week,
     load_json,
@@ -146,50 +139,67 @@ def group_into_shows(rows: list[dict], canonical: dict[str, str]) -> list[Show]:
         present), ``total_songs`` populated, and special-show flags
         (``is_nye``, ``is_halloween``, ``is_festival``) merged in.
     """
-    shows: dict[str, dict] = {}
+    shows: dict[str, Show] = {}
     for row in rows:
         sid = str(row.get("showid", ""))
         if not sid:
             continue
         if sid not in shows:
-            d = str(row.get("showdate", ""))
-            shows[sid] = {
-                "show_id": sid,
-                "date": d,
-                "year": int(d[:4]) if len(d) >= 4 else 0,
-                "month": int(d[5:7]) if len(d) >= 7 else 0,
-                "day": int(d[8:10]) if len(d) >= 10 else 0,
-                "day_of_week": day_of_week(d) if len(d) == 10 else "",
-                "venue_id": venue_id(row.get("venue", "")),
-                "venue_name": row.get("venue", "") or "",
-                "city": row.get("city", "") or "",
-                "state": row.get("state", "") or "",
-                "country": row.get("country", "") or "",
-                "tour": row.get("tourname", "") or "",
-                "tour_id": str(row.get("tourid", "") or ""),
-                "sets": {},
-            }
-        show = shows[sid]
-        set_raw = str(row.get("set", "1"))
-        set_key = "encore" if set_raw.lower() in ("e", "encore") else set_raw
-        show["sets"].setdefault(set_key, []).append({
-            "song": canonicalize_song(row.get("song", ""), canonical),
-            "song_id": str(row.get("songid", "") or ""),
-            "position": int(row.get("position", 0) or 0),
-            "transition": (row.get("trans_mark") or row.get("transition") or ",").strip() or ",",
-            "is_jam": str(row.get("isjam", "0")) == "1",
-            "is_reprise": str(row.get("isreprise", "0")) == "1",
-        })
+            shows[sid] = _new_show(sid, row)
+        _append_song(shows[sid]["sets"], row, canonical)
 
-    out: list[dict] = []
+    out: list[Show] = []
     for show in shows.values():
-        cleaned = {k: sorted(v, key=lambda s: s["position"]) for k, v in show["sets"].items() if v}
-        show["sets"] = cleaned
-        show["total_songs"] = sum(len(v) for v in cleaned.values())
-        show.update(special_show_flags(show["date"], show["tour"]))
+        show["sets"] = {
+            k: sorted(v, key=lambda s: s["position"])
+            for k, v in show["sets"].items() if v
+        }
+        show["total_songs"] = sum(len(v) for v in show["sets"].values())
+        show.update(special_show_flags(show["date"], show["tour"]))  # type: ignore[typeddict-item]
         out.append(show)
     out.sort(key=lambda s: s["date"])
     return out
+
+
+def _new_show(sid: str, row: dict) -> Show:
+    """Build the ``Show`` skeleton; ``sets`` get populated by ``_append_song``."""
+    d = str(row.get("showdate", ""))
+    return Show(
+        show_id=sid,
+        date=d,
+        year=int(d[:4]) if len(d) >= 4 else 0,
+        month=int(d[5:7]) if len(d) >= 7 else 0,
+        day=int(d[8:10]) if len(d) >= 10 else 0,
+        day_of_week=day_of_week(d) if len(d) == 10 else "",
+        venue_id=venue_id(row.get("venue", "")),
+        venue_name=row.get("venue", "") or "",
+        city=row.get("city", "") or "",
+        state=row.get("state", "") or "",
+        country=row.get("country", "") or "",
+        tour=row.get("tourname", "") or "",
+        tour_id=str(row.get("tourid", "") or ""),
+        sets={},
+        is_nye=False,
+        is_halloween=False,
+        is_festival=False,
+    )
+
+
+def _append_song(
+    sets: dict[str, list[SongEntry]], row: dict, canonical: dict[str, str],
+) -> None:
+    """Append one ``SongEntry`` to its set bucket on ``sets``."""
+    set_raw = str(row.get("set", "1"))
+    set_key = "encore" if set_raw.lower() in ("e", "encore") else set_raw
+    entry = SongEntry(
+        song=canonicalize_song(row.get("song", ""), canonical),
+        song_id=str(row.get("songid", "") or ""),
+        position=int(row.get("position", 0) or 0),
+        transition=(row.get("trans_mark") or row.get("transition") or ",").strip() or ",",
+        is_jam=str(row.get("isjam", "0")) == "1",
+        is_reprise=str(row.get("isreprise", "0")) == "1",
+    )
+    sets.setdefault(set_key, []).append(entry)
 
 
 def merge_setlists(existing: list[Show], new: list[Show]) -> list[Show]:
@@ -238,19 +248,19 @@ def normalize_songs(rows: list[dict]) -> list[SongCatalogEntry]:
         One typed entry per song. ``is_original`` is derived from the
         artist field — covers (artist != Phish) get ``False``.
     """
-    out = []
+    out: list[SongCatalogEntry] = []
     for r in rows:
         artist = (r.get("artist") or r.get("artist_name") or "").strip()
-        out.append({
-            "song_id": str(r.get("songid") or r.get("id") or ""),
-            "name": r.get("song") or r.get("name") or "",
-            "slug": r.get("slug", ""),
-            "artist": artist,
-            "is_original": artist.lower() == "phish",
-            "debut": r.get("debut", "") or "",
-            "last_played": r.get("last_played", "") or "",
-            "times_played": int(r.get("times_played", 0) or 0),
-        })
+        out.append(SongCatalogEntry(
+            song_id=str(r.get("songid") or r.get("id") or ""),
+            name=r.get("song") or r.get("name") or "",
+            slug=r.get("slug", ""),
+            artist=artist,
+            is_original=artist.lower() == "phish",
+            debut=r.get("debut", "") or "",
+            last_played=r.get("last_played", "") or "",
+            times_played=int(r.get("times_played", 0) or 0),
+        ))
     return out
 
 
@@ -269,25 +279,33 @@ def normalize_venues(rows: list[dict]) -> dict[str, VenueRecord]:
         Rows without a usable name are skipped (the API occasionally
         ships placeholder rows).
     """
-    venues: dict[str, dict] = {}
+    venues: dict[str, VenueRecord] = {}
     for r in rows:
         name = r.get("venuename") or r.get("name") or ""
         if not name:
             continue
         vid = venue_id(name)
-        venues[vid] = {
-            "venue_id": vid,
-            "phishnet_id": str(r.get("venueid") or r.get("id") or ""),
-            "name": name,
-            "city": r.get("city", "") or "",
-            "state": r.get("state", "") or "",
-            "country": r.get("country", "") or "",
-        }
+        venues[vid] = VenueRecord(
+            venue_id=vid,
+            phishnet_id=str(r.get("venueid") or r.get("id") or ""),
+            name=name,
+            city=r.get("city", "") or "",
+            state=r.get("state", "") or "",
+            country=r.get("country", "") or "",
+        )
     return venues
 
 
-def main(year: int | None) -> None:
-    """Pull setlists/songs/venues from Phish.net and persist to data/processed/."""
+def main(year: int | None = None) -> None:
+    """Pull setlists/songs/venues from Phish.net and persist to data/processed/.
+
+    Parameters
+    ----------
+    year
+        If provided, scrape only that year and merge into the existing
+        ``setlists.json``. If ``None`` (default), do a full pull from
+        ``FIRST_YEAR`` to the current year and overwrite ``setlists.json``.
+    """
     key = get_api_key()
     canonical = load_json(CANONICAL_NAMES_PATH) if CANONICAL_NAMES_PATH.exists() else {}
     DATA_DIR.mkdir(parents=True, exist_ok=True)
@@ -322,8 +340,13 @@ def main(year: int | None) -> None:
         print(f"wrote {len(venues)} venues")
 
 
-if __name__ == "__main__":
+def cli() -> None:
+    """Console-script entry point: parse args and call ``main``."""
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--year", type=int, default=None, help="Single year (else full pull)")
     args = parser.parse_args()
     main(args.year)
+
+
+if __name__ == "__main__":
+    cli()

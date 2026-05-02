@@ -4,14 +4,8 @@ Writes models/markov_order2.json. Same shape as state/features/transition_matrix
 but versioned in models/ as the inference artifact.
 """
 
-import sys
-from pathlib import Path
-
-if __package__ is None:
-    sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
-
-from scripts.build_features import build_transition_matrix
-from scripts.utils import MODELS_DIR, SETLISTS_PATH, load_json, save_json
+from phinish.build_features import build_transition_matrix
+from phinish.utils import MODELS_DIR, SETLISTS_PATH, load_json, save_json
 
 
 def main() -> None:

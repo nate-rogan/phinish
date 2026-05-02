@@ -6,13 +6,8 @@ Baselines:
 """
 
 import math
-import sys
-from pathlib import Path
 
-if __package__ is None:
-    sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
-
-from scripts.utils import (
+from phinish.utils import (
     FEATURES_DIR,
     MODELS_DIR,
     SongGap,

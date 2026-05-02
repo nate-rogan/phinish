@@ -7,14 +7,9 @@ Outputs to state/features/:
   venue_history.json
 """
 
-import sys
 from collections import Counter, defaultdict
-from pathlib import Path
 
-if __package__ is None:
-    sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
-
-from scripts.utils import (
+from phinish.utils import (
     FEATURES_DIR,
     SET_KEYS,
     SET_TO_INT,

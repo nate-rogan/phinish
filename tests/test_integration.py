@@ -2,8 +2,8 @@
 
 import json
 
-from scripts import build_features
-from scripts.train_xgboost import StreamingState
+from phinish import build_features
+from phinish.train_xgboost import StreamingState
 
 
 def test_data_to_features_pipeline(tmp_path, monkeypatch, tiny_shows, songs_catalog):

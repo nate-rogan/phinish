@@ -11,8 +11,8 @@ When editing this codebase, invoke these skills before writing code (they auto-t
 ## Project rules
 
 - **Run via pixi**: `pixi run -e dev pytest`, `pixi run -e dev ruff check .`. Never invoke a bare `python` or `pytest` — they pick up the wrong env.
-- **Pipeline scripts** in `scripts/` are invoked both via `python -m scripts.foo` (from `process_year.py`) and `python scripts/foo.py` (from CLI/docs). Keep the `if __package__ is None: sys.path.insert(...)` bootstrap.
-- **Shared helpers go in `scripts/utils.py`** — see `show_song_set`, `min_max_normalize`, `post_issue_comment`, `SET_KEYS`, `SET_TO_INT`, `SET_DISPLAY`. Don't re-implement these per module.
+- **Package layout**: `src/phinish/` is the importable package, installed editable via `[tool.pixi.pypi-dependencies]`. Modules import from each other as `from phinish.X import Y`; no `sys.path` bootstrapping. CLI surface is exposed through `[project.scripts]` (`phinish-predict`, `phinish-scrape`, `phinish-process-issue`, etc.). For modules with argparse (`scrape`, `predict`), the entry point is `cli()` which calls `main(...)`; for the rest the entry point is `main()` directly.
+- **Shared helpers go in `src/phinish/utils.py`** — see `show_song_set`, `min_max_normalize`, `post_issue_comment`, `SET_KEYS`, `SET_TO_INT`, `SET_DISPLAY`. Don't re-implement these per module.
 - **Verify before claiming done**: run `pixi run -e dev ruff check . && pixi run -e dev pytest` and confirm both pass.
 
 ## Docstring policy
@@ -63,5 +63,5 @@ NumPy convention rules (the ones ruff enforces):
 ## Testing
 
 - Hand-verified expected values for feature engineering live in `tests/conftest.py::tiny_shows`.
-- New helpers in `scripts/utils.py` should get a unit test before they get a second caller.
+- New helpers in `src/phinish/utils.py` should get a unit test before they get a second caller.
 - For the predict pipeline, prefer testing the public API (`predict()`, `format_comment()`) over internals.

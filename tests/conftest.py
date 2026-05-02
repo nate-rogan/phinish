@@ -3,7 +3,7 @@ from __future__ import annotations
 
 import pytest
 
-from scripts.utils import Show, SongCatalogEntry, SongEntry
+from phinish.utils import Show, SongCatalogEntry, SongEntry
 
 
 def _song(song: str, position: int) -> SongEntry:

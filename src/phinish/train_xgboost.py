@@ -11,20 +11,15 @@ Writes:
 
 import math
 import pickle
-import sys
 from collections import Counter, defaultdict, deque
 from dataclasses import dataclass, field
 from datetime import date
-from pathlib import Path
 
 import numpy as np
 from sklearn.linear_model import LogisticRegression
 from xgboost import XGBClassifier
 
-if __package__ is None:
-    sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
-
-from scripts.utils import (
+from phinish.utils import (
     MODELS_DIR,
     SET_KEYS,
     SET_TO_INT,
