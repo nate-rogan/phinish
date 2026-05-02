@@ -22,6 +22,26 @@ jobs:
       - uses: prefix-dev/setup-pixi@v0.8.1
         with:
           cache: true
+      - name: Restore data cache
+        # Raw setlist data is .gitignored per ToS; we cache it across runs to
+        # avoid re-scraping the full dataset on every prediction.
+        # Cache key rotates daily so data refreshes at least once per day.
+        uses: actions/cache@v4
+        with:
+          path: |
+            data/processed
+            state/features
+          key: phishnet-data-${{ format('{0:yyyy-MM-dd}', github.event.repository.updated_at) }}
+          restore-keys: |
+            phishnet-data-
+      - name: Scrape any missing data
+        # No-op if cache hit and current; otherwise fetches fresh.
+        # build_features regenerates features from setlists (cheap).
+        run: |
+          pixi run python scripts/scrape.py
+          pixi run python scripts/build_features.py
+        env:
+          PHISHNET_API_KEY: ${{ secrets.PHISHNET_API_KEY }}
       - name: Run prediction
         run: pixi run python -m scripts.process_issue
         env:
@@ -29,11 +49,12 @@ jobs:
           ISSUE_BODY: ${{ github.event.issue.body }}
           ISSUE_AUTHOR: ${{ github.event.issue.user.login }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - name: Commit state
+      - name: Commit prediction outputs
+        # Only the prediction artifacts (not raw setlist data) are committed.
         run: |
           git config user.name "phinish[bot]"
           git config user.email "bot@users.noreply.github.com"
-          git add state/ reasons.md
+          git add state/usage.json state/predictions_log.json state/latest_prediction.json reasons.md
           git diff --staged --quiet || git commit -m "prediction #${{ github.event.issue.number }}"
           git push
       - name: Update labels and close

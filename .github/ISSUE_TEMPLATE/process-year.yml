@@ -1,16 +1,24 @@
-name: 🔄 Process a Year
-description: Scrape a year's data from Phish.net and retrain all models
+name: 🔄 Retrain Models
+description: Re-scrape Phish.net and retrain all models. Idempotent — safe to repeat.
 labels: ["process"]
 body:
   - type: markdown
     attributes:
       value: |
-        This pulls a year of setlists, rebuilds all features, retrains every model, runs evaluation, and commits the artifacts. Takes ~2–3 minutes.
+        Pulls fresh data from Phish.net, rebuilds features, retrains every model,
+        runs evaluation, and commits the model artifacts. Takes ~3-5 minutes.
+
+        Safe to re-run anytime — picks up new shows and any late corrections to
+        old setlists. The bot's comment will tell you what changed since the
+        previous retrain.
   - type: input
     id: year
     attributes:
-      label: Year
-      description: "Year to scrape and process (1983–present)"
-      placeholder: "2025"
+      label: Year (optional)
+      description: |
+        Leave empty for a full scrape from 1983 to present (recommended).
+        Specify a single year (e.g. `2025`) for a quick incremental update —
+        useful when you just want to ingest a few new recent shows.
+      placeholder: "Leave empty for full scrape"
     validations:
-      required: true
+      required: false

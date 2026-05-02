@@ -1,9 +1,9 @@
 """Action entrypoint for the process workflow.
 
-Parses year from issue body, runs the full pipeline:
-  scrape -> build_features -> train_baseline -> train_markov ->
-  train_xgboost -> train_ensemble -> evaluate
-Then updates models/model_card.md and posts a summary comment.
+Runs the full pipeline (scrape → features → train → evaluate), writes
+models/manifest.json with dataset coverage + retrain history, and posts a
+summary comment. Idempotent — safe to re-run anytime to pick up new shows
+or late corrections.
 """
 from __future__ import annotations
 
@@ -12,7 +12,7 @@ import sys
 import traceback
 from collections.abc import Callable
 from dataclasses import dataclass
-from datetime import date
+from datetime import datetime
 from pathlib import Path
 from typing import NoReturn
 
@@ -29,6 +29,7 @@ from scripts import (
     train_xgboost,
 )
 from scripts.utils import (
+    MANIFEST_PATH,
     MODELS_DIR,
     SETLISTS_PATH,
     VALID_YEAR,
@@ -36,6 +37,7 @@ from scripts.utils import (
     parse_issue_form,
     post_issue_comment,
     sanitize,
+    save_json,
 )
 
 MODEL_CARD = MODELS_DIR / "model_card.md"
@@ -78,25 +80,20 @@ def _metric_rows(summary: dict) -> list[str]:
     return rows
 
 
-def _render_card(year: int, today: str, n_shows: int, rows: list[str]) -> str:
+def _render_card(today: str, n_shows: int, scrape_target: str, rows: list[str]) -> str:
     rows_block = "\n".join(rows)
     return f"""# Phinish Model Card
 
-**Status:** Trained — last retrained from year `{year}` on {today}.
+**Status:** Trained — last retrained on {today} ({scrape_target}).
 
-## Versions
+## Dataset
 
-| Component | Version | Updated |
-|---|---|---|
-| Dataset | `data/processed/setlists.json` | {today} |
-| Gap-weighted baseline | `models/baselines.json` | {today} |
-| XGBoost song selector | `models/xgboost_song_selector.pkl` | {today} |
-| Markov chain (order 2) | `models/markov_order2.json` | {today} |
-| Ensemble weights | `models/ensemble_weights.json` | {today} |
+{n_shows} shows scraped fresh per retrain. Raw setlist data is not committed
+to the repo (see `.gitignore`); only trained model artifacts are persisted.
 
 ## Metrics
 
-Evaluated on temporal holdout (test ≥ 2025), {n_shows} shows.
+Evaluated on temporal holdout (test ≥ 2025).
 
 | Model | Precision@25 | Recall | F1 | Opener Acc | Pair Match |
 |---|---|---|---|---|---|
@@ -109,23 +106,20 @@ Evaluated on temporal holdout (test ≥ 2025), {n_shows} shows.
 - **Calibration:** Platt scaling on validation set (2024)
 - **Ensemble:** grid search over `(w_xgb, w_markov, w_gap, w_venue)` optimizing Precision@25
 
-## Changelog
-
-- {today}: retrained from year `{year}`.
+See `models/manifest.json` for the full retrain history.
 """
 
 
-def update_model_card(year: int, summary: dict) -> None:
+def update_model_card(today: str, n_shows: int, scrape_target: str, summary: dict) -> None:
     """Render and persist models/model_card.md from the latest evaluation."""
-    today = date.today().isoformat()
-    n_shows = summary.get("ensemble", {}).get("n_shows", 0)
-    body = _render_card(year, today, n_shows, _metric_rows(summary))
+    body = _render_card(today, n_shows, scrape_target, _metric_rows(summary))
     MODEL_CARD.write_text(body, encoding="utf-8")
 
 
-def _pipeline_steps(year: int) -> list[tuple[str, Callable[[], None]]]:
+def _pipeline_steps(year: int | None) -> list[tuple[str, Callable[[], None]]]:
+    scrape_label = f"scrape year {year}" if year else "scrape (full pull)"
     return [
-        (f"scrape year {year}", lambda: scrape.main(year=year)),
+        (scrape_label, lambda: scrape.main(year=year)),
         ("build_features", build_features.main),
         ("train_baseline", train_baseline.main),
         ("train_markov", train_markov.main),
@@ -135,34 +129,85 @@ def _pipeline_steps(year: int) -> list[tuple[str, Callable[[], None]]]:
     ]
 
 
-def _run_pipeline(year: int) -> None:
+def _run_pipeline(year: int | None) -> None:
     for name, step in _pipeline_steps(year):
         print(f"=== {name} ===", flush=True)
         step()
 
 
-def _success_comment(year: int, n_shows: int, ensemble: dict) -> str:
-    return (
-        f"## ✅ Process Complete — year `{year}`\n\n"
-        f"- Dataset: **{n_shows}** shows\n"
-        f"- Test shows: **{ensemble.get('n_shows', 0)}** (since 2025)\n"
-        f"- Ensemble Precision@25: **{ensemble.get('precision_at_25', 0):.1%}**\n"
-        f"- Ensemble Opener Accuracy: **{ensemble.get('opener_accuracy', 0):.1%}**\n\n"
-        "See [`models/model_card.md`](../blob/main/models/model_card.md) for full metrics."
-    )
-
-
-def _read_year_from_env(gh: _GhContext) -> int:
+def _read_year_from_env(gh: _GhContext) -> int | None:
+    """Return the year specified in the issue, or None for a full scrape."""
     fields = parse_issue_form(os.environ.get("ISSUE_BODY", ""))
     year_str = sanitize(fields.get("year", ""), 8)
+    if not year_str:
+        return None
     if not VALID_YEAR.match(year_str):
-        _fail(gh, f"❌ Invalid year: `{year_str}`. Expected `YYYY`.")
+        _fail(gh, f"❌ Invalid year: `{year_str}`. Expected `YYYY` or empty for full scrape.")
     return int(year_str)
 
 
 def _fail(gh: _GhContext, msg: str) -> NoReturn:
     gh.post(msg)
     raise SystemExit(msg)
+
+
+def _read_previous() -> dict | None:
+    """Return the previous-run manifest entry, or None on first run."""
+    if not MANIFEST_PATH.exists():
+        return None
+    return load_json(MANIFEST_PATH).get("current")
+
+
+def _save_manifest(current: dict, previous: dict | None) -> None:
+    save_json(MANIFEST_PATH, {"current": current, "previous": previous})
+
+
+def _diff_line(current_n: int, previous: dict | None) -> str:
+    if previous is None:
+        return f"Initial training: **{current_n}** shows."
+    prev_n = previous.get("n_shows", 0)
+    prev_at = previous.get("trained_at", "previous run")
+    delta = current_n - prev_n
+    if delta == 0:
+        return (
+            f"Re-trained on the same dataset (**{current_n}** shows; previous run "
+            f"{prev_at}). Models refreshed; metrics may shift slightly from training "
+            "non-determinism."
+        )
+    sign = "+" if delta > 0 else ""
+    return (
+        f"Re-trained: **{current_n}** shows ({sign}{delta} since {prev_at}, "
+        f"which had {prev_n})."
+    )
+
+
+def _success_comment(current: dict, previous: dict | None, scrape_target: str) -> str:
+    diff = _diff_line(current["n_shows"], previous)
+    metrics = current.get("metrics", {})
+    return (
+        f"## ✅ Retrain Complete — {scrape_target}\n\n"
+        f"{diff}\n\n"
+        f"- Test shows: **{metrics.get('n_test_shows', 0)}** (since 2025)\n"
+        f"- Ensemble Precision@25: **{metrics.get('precision_at_25', 0):.1%}**\n"
+        f"- Ensemble Opener Accuracy: **{metrics.get('opener_accuracy', 0):.1%}**\n\n"
+        "See [`models/model_card.md`](../blob/main/models/model_card.md) for full "
+        "metrics, or [`models/manifest.json`](../blob/main/models/manifest.json) for "
+        "retrain history."
+    )
+
+
+def _build_current(today: str, n_shows: int, scrape_target: str, summary: dict) -> dict:
+    ensemble = summary.get("ensemble", {})
+    return {
+        "trained_at": today,
+        "n_shows": n_shows,
+        "scrape_target": scrape_target,
+        "metrics": {
+            "precision_at_25": ensemble.get("precision_at_25", 0.0),
+            "opener_accuracy": ensemble.get("opener_accuracy", 0.0),
+            "n_test_shows": ensemble.get("n_shows", 0),
+        },
+    }
 
 
 def main() -> None:
@@ -173,6 +218,8 @@ def main() -> None:
         repo=os.environ.get("GITHUB_REPOSITORY", ""),
     )
     year = _read_year_from_env(gh)
+    scrape_target = f"year {year}" if year else "full scrape"
+    previous = _read_previous()
 
     try:
         _run_pipeline(year)
@@ -183,10 +230,14 @@ def main() -> None:
 
     eval_path = MODELS_DIR / "evaluation.json"
     summary = load_json(eval_path).get("summary", {}) if eval_path.exists() else {}
-    update_model_card(year, summary)
-
     n_shows = len(load_json(SETLISTS_PATH)) if SETLISTS_PATH.exists() else 0
-    comment = _success_comment(year, n_shows, summary.get("ensemble", {}))
+    today = datetime.now().isoformat(timespec="seconds")
+
+    current = _build_current(today, n_shows, scrape_target, summary)
+    _save_manifest(current, previous)
+    update_model_card(today, n_shows, scrape_target, summary)
+
+    comment = _success_comment(current, previous, scrape_target)
     if gh.can_post:
         gh.post(comment)
     else:

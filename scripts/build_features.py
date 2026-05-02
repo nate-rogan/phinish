@@ -146,7 +146,36 @@ def _normalize(counts: Counter[str], vocab_size: int) -> dict[str, float]:
 
 
 def build_transition_matrix(shows: list[Show]) -> TransitionMatrix:
-    """Build order-1 and order-2 song-transition probabilities (Laplace smoothed)."""
+    """Build order-1 and order-2 song-transition probabilities, Laplace smoothed.
+
+    For every set in every show: counts each adjacent ``(a, b)`` pair as
+    a contribution to ``order_1[a]`` and each consecutive triple
+    ``(a, b, c)`` as a contribution to ``order_2["a|b"]``. Also tallies
+    set-opener and set-closer marginals separately per set key. All four
+    distributions are Laplace-smoothed with ``LAPLACE_K`` over the full
+    song vocabulary so unseen (song, next-song) pairs receive a small
+    non-zero probability mass.
+
+    Parameters
+    ----------
+    shows
+        Chronological list of shows. Order does not affect the output
+        (this is a marginal counting pass), but consistency with other
+        feature builders is convenient.
+
+    Returns
+    -------
+    TransitionMatrix
+        Dictionary with ``order_1`` / ``order_2`` / ``set_openers`` /
+        ``set_closers`` mappings, plus ``vocab_size`` and the smoothing
+        constant ``laplace_k`` for downstream auditing.
+
+    Notes
+    -----
+    Only emits probabilities for transitions that were actually observed —
+    the smoothing mass for unseen events is implicit, computed on demand
+    by the consumer using ``laplace_k`` and ``vocab_size``.
+    """
     order1: dict[str, Counter[str]] = defaultdict(Counter)
     order2: dict[str, Counter[str]] = defaultdict(Counter)
     set_openers: dict[str, Counter[str]] = {k: Counter() for k in SET_KEYS}
@@ -179,7 +208,28 @@ def build_transition_matrix(shows: list[Show]) -> TransitionMatrix:
 
 
 def build_venue_history(shows: list[Show]) -> dict[str, VenueHistory]:
-    """Aggregate per-venue song frequencies and common opener/closer picks."""
+    """Aggregate per-venue song frequencies and common opener / closer picks.
+
+    Walks every show and accumulates, per ``venue_id``: total show count,
+    cumulative song play counts, the song that opened set 1, and the song
+    that closed the show (last set with content, in priority order
+    ``encore -> 3 -> 2 -> 1``). On the second pass, normalizes the play
+    counts to per-show frequencies and keeps the top-10 most common
+    openers and closers per venue.
+
+    Parameters
+    ----------
+    shows
+        Chronological list of shows. Shows with an empty or missing
+        ``venue_id`` are skipped.
+
+    Returns
+    -------
+    dict[str, VenueHistory]
+        Mapping of canonical ``venue_id`` to a ``VenueHistory`` record
+        with ``total_shows``, ``song_freq`` (sorted descending by
+        frequency), and ``common_openers`` / ``common_closers`` lists.
+    """
     per_venue: dict[str, dict] = {}
     for show in shows:
         vid = show.get("venue_id", "")

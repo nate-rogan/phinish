@@ -20,6 +20,8 @@ SETLISTS_PATH = DATA_DIR / "setlists.json"
 SONGS_PATH = DATA_DIR / "songs.json"
 VENUES_PATH = DATA_DIR / "venues.json"
 CANONICAL_NAMES_PATH = ROOT / "data" / "canonical_names.json"
+MANIFEST_PATH = MODELS_DIR / "manifest.json"
+STATE_SNAPSHOT_PATH = MODELS_DIR / "state.pkl"
 
 VALID_DATE = re.compile(r"^\d{4}-\d{2}-\d{2}$")
 VALID_YEAR = re.compile(r"^\d{4}$")
@@ -235,7 +237,28 @@ def sanitize(raw: str, max_length: int = 500) -> str:
 
 
 def parse_issue_form(body: str) -> dict[str, str]:
-    """Parse GitHub Issue Form body into {label_lower: first_line_value}."""
+    """Parse a GitHub Issue Form body into a flat ``{label: value}`` mapping.
+
+    GitHub renders form submissions as a sequence of ``### Label`` blocks,
+    each followed by a blank line and the user's value (or the literal
+    ``_No response_`` for empty optional fields). This walks those blocks,
+    lowercases each label, and keeps only the first non-empty line of the
+    value — multi-line answers and unanswered fields are dropped.
+
+    Parameters
+    ----------
+    body
+        Raw markdown body of a labeled issue (typically from
+        ``github.event.issue.body``). Empty string is allowed.
+
+    Returns
+    -------
+    dict[str, str]
+        Mapping of lowercased label to the first line of its value. Skipped
+        labels (empty or ``_No response_``) are absent rather than mapped to
+        an empty string, so callers can use ``fields.get("year", "")`` with
+        a meaningful default.
+    """
     fields: dict[str, str] = {}
     sections = re.split(r"\n###\s+", "\n" + (body or ""))
     for section in sections[1:]:
@@ -264,7 +287,28 @@ def venue_id(name: str) -> str:
 
 
 def fuzzy_venue_match(target: str, venues: dict[str, VenueRecord]) -> str | None:
-    """Resolve `target` to a known venue id, falling back to fuzzy matching."""
+    """Resolve a venue name (possibly mistyped) to a known venue id.
+
+    Tries the alias-resolved canonical id first (``v_<slug>``); if absent,
+    falls back to a similarity scan of every venue name in ``venues`` using
+    ``difflib.SequenceMatcher`` and returns the best match above
+    ``FUZZY_VENUE_THRESHOLD``.
+
+    Parameters
+    ----------
+    target
+        Venue name as the user typed it. Empty input returns ``None``.
+    venues
+        Catalog from ``data/processed/venues.json``, keyed by canonical
+        venue id. Entries without a ``name`` are skipped.
+
+    Returns
+    -------
+    str or None
+        The matched canonical ``venue_id`` if either the direct lookup hits
+        or the best fuzzy match meets the similarity threshold; otherwise
+        ``None`` so the caller can decide how to handle the unknown venue.
+    """
     if not target:
         return None
     direct = venue_id(target)

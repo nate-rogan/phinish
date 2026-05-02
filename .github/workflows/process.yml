@@ -22,6 +22,19 @@ jobs:
       - uses: prefix-dev/setup-pixi@v0.8.1
         with:
           cache: true
+      - name: Restore data cache
+        # Raw data is .gitignored per ToS but cached across runs so an
+        # incremental retrain only re-fetches the requested year (the scrape
+        # script merges by show_id into the existing setlists.json).
+        # Cache key rotates daily — forces at least one full refresh per day.
+        uses: actions/cache@v4
+        with:
+          path: |
+            data/processed
+            state/features
+          key: phishnet-data-${{ format('{0:yyyy-MM-dd}', github.event.repository.updated_at) }}
+          restore-keys: |
+            phishnet-data-
       - name: Process year and retrain
         run: pixi run python -m scripts.process_year
         env:
@@ -29,12 +42,14 @@ jobs:
           ISSUE_BODY: ${{ github.event.issue.body }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           PHISHNET_API_KEY: ${{ secrets.PHISHNET_API_KEY }}
-      - name: Commit all artifacts
+      - name: Commit model artifacts
+        # Raw data and parsed features are .gitignored per Phish.net API ToS.
+        # Only trained models + manifest are committed.
         run: |
           git config user.name "phinish[bot]"
           git config user.email "bot@users.noreply.github.com"
-          git add data/ state/ models/
-          git diff --staged --quiet || git commit -m "process + retrain from issue #${{ github.event.issue.number }}"
+          git add models/
+          git diff --staged --quiet || git commit -m "retrain from issue #${{ github.event.issue.number }}"
           git push
       - name: Update labels and close
         if: success()

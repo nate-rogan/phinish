@@ -24,5 +24,8 @@ Thumbs.db
 # Logs
 *.log
 
-# Local raw API cache — committed processed data lives in data/processed/
+# Phish.net raw API data is not stored permanently in the repo (per API ToS).
+# Aggregate features (state/features/) are derivative stats and committed
+# alongside the models — same legal/ethical posture as the trained model files.
 data/raw/
+data/processed/

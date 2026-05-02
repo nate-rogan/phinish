@@ -93,7 +93,33 @@ def fetch(client: httpx.Client, path: str, key: str) -> list[dict]:
 
 
 def group_into_shows(rows: list[dict], canonical: dict[str, str]) -> list[Show]:
-    """Collapse Phish.net per-song rows into per-show records sorted by date."""
+    """Collapse Phish.net per-song rows into per-show records sorted by date.
+
+    The setlists endpoint returns one row per song per show. This groups
+    rows by ``showid``, builds a typed ``Show`` for each, places each song
+    into its set bucket, applies canonical name normalization, sorts
+    songs within each set by ``position``, and finally sorts shows by
+    date so the result reflects chronological order required by the
+    feature pipeline.
+
+    Parameters
+    ----------
+    rows
+        Raw rows as returned by ``GET /v5/setlists/showyear/<year>.json``.
+        Tolerates missing optional fields; a row with no ``showid`` is
+        skipped.
+    canonical
+        Map of raw song name (or lowercased name) to canonical name, used
+        to deduplicate spelling variants. Empty dict is allowed.
+
+    Returns
+    -------
+    list[Show]
+        One ``Show`` per unique ``showid``, with ``sets`` keyed by
+        ``"1"`` / ``"2"`` / ``"3"`` / ``"encore"`` (only non-empty sets are
+        present), ``total_songs`` populated, and special-show flags
+        (``is_nye``, ``is_halloween``, ``is_festival``) merged in.
+    """
     shows: dict[str, dict] = {}
     for row in rows:
         sid = str(row.get("showid", ""))

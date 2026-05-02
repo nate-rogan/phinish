@@ -30,6 +30,7 @@ from scripts.utils import (
     SET_DISPLAY,
     SETLISTS_PATH,
     SONGS_PATH,
+    STATE_SNAPSHOT_PATH,
     VALID_DATE,
     VENUES_PATH,
     EnsembleWeights,
@@ -72,7 +73,40 @@ class _Artifacts:
 
 
 def synthetic_show(date_str: str, venue_name: str, venues: dict[str, VenueRecord]) -> Show:
-    """Build a stand-in show dict matching the historical show schema for inference."""
+    """Build a stand-in ``Show`` for an upcoming (not-yet-played) show.
+
+    Inference reuses the same ``featurize()`` machinery as training,
+    which expects a ``Show``-shaped dict. This factory constructs that
+    shape for a hypothetical show: it resolves the venue (via
+    ``fuzzy_venue_match`` + alias table) so venue-history features can
+    fire, derives calendar fields from ``date_str``, and merges the
+    NYE / Halloween / festival flags. The ``sets`` field is empty (the
+    point is to predict it) and ``total_songs`` is omitted — both are
+    consistent with the ``Show`` TypedDict (``total_songs`` is
+    ``NotRequired``).
+
+    Parameters
+    ----------
+    date_str
+        Target show date as ``YYYY-MM-DD``. Parsed with
+        ``date.fromisoformat`` so invalid dates raise ``ValueError``
+        before any work is done downstream.
+    venue_name
+        Venue as the user typed it; resolved via fuzzy matching against
+        ``venues`` and falls back to the canonical alias slug.
+    venues
+        The catalog from ``data/processed/venues.json``, used both for
+        venue-id resolution and for prefilling ``city`` / ``state`` /
+        ``country`` when the venue is known.
+
+    Returns
+    -------
+    Show
+        A populated ``Show`` dict suitable for passing to
+        ``featurize(state, show, ...)``. ``tour`` and ``tour_id`` are
+        empty since upcoming-show tour metadata is not knowable from a
+        date + venue alone.
+    """
     vid = fuzzy_venue_match(venue_name, venues) or venue_id(venue_name)
     flags = special_show_flags(date_str)
     d = date.fromisoformat(date_str)
@@ -96,10 +130,27 @@ def synthetic_show(date_str: str, venue_name: str, venues: dict[str, VenueRecord
 
 
 def _build_state(shows: list[Show]) -> StreamingState:
+    """Return a StreamingState built by replaying ``shows`` in order."""
     state = StreamingState()
     for show in shows:
         state.update(show)
     return state
+
+
+def _load_or_replay_state(shows: list[Show]) -> StreamingState:
+    """Prefer the committed state snapshot; fall back to a full replay.
+
+    The snapshot at ``models/state.pkl`` is written by ``train_xgboost.main``
+    and lets prediction skip rebuilding StreamingState from raw setlists —
+    which matters because raw setlists are gitignored per the API ToS and
+    aren't present in a fresh checkout.
+    """
+    if STATE_SNAPSHOT_PATH.exists():
+        try:
+            return pickle.loads(STATE_SNAPSHOT_PATH.read_bytes())
+        except Exception as e:
+            print(f"warning: state snapshot unreadable ({e!r}); replaying", flush=True)
+    return _build_state(shows)
 
 
 def _split_by_typical_set(
@@ -159,7 +210,9 @@ def _sequence(
 
 
 def _load_artifacts() -> _Artifacts:
-    shows = load_json(SETLISTS_PATH)
+    # Raw setlists are only needed if the state snapshot is missing
+    # (e.g., a fresh checkout where data/processed/ hasn't been populated).
+    shows = load_json(SETLISTS_PATH) if SETLISTS_PATH.exists() else []
     songs_catalog = load_json(SONGS_PATH) if SONGS_PATH.exists() else []
     venues = load_json(VENUES_PATH) if VENUES_PATH.exists() else {}
     stats = load_json(FEATURES_DIR / "song_stats.json")
@@ -295,7 +348,7 @@ def predict(show_date: str, venue: str, city: str | None = None) -> Prediction:
         raise ValueError(f"Invalid date format: {show_date!r} (expected YYYY-MM-DD)")
 
     art = _load_artifacts()
-    state = _build_state(art.shows)
+    state = _load_or_replay_state(art.shows)
     show = synthetic_show(show_date, venue, art.venues)
     if city and not show["city"]:
         show["city"] = city

@@ -31,6 +31,7 @@ from scripts.utils import (
     SET_TO_INT,
     SETLISTS_PATH,
     SONGS_PATH,
+    STATE_SNAPSHOT_PATH,
     Show,
     SongCatalogEntry,
     day_of_week,
@@ -76,7 +77,38 @@ def feature_names() -> list[str]:
 
 @dataclass(slots=True)
 class StreamingState:
-    """Incremental statistics over shows seen so far."""
+    """Incremental statistics accumulated as shows are replayed in order.
+
+    Holds every signal ``featurize()`` needs to score a candidate song:
+    cumulative play counts, set-position averages, opener / closer rates,
+    sliding 50- and 20-show windows for recent-frequency features, the
+    last show's song set (for hard exclusion), and per-venue / per-tour
+    play counters. Designed to be ``update()``-d once per historical show
+    in chronological order, then read by ``featurize()`` *before* the
+    next ``update()`` — this ordering is what guarantees temporal
+    correctness during training and at inference.
+
+    Fields are intentionally exposed (no encapsulation) because
+    ``featurize()`` reads many of them and benefits from direct access.
+    Use ``slots=True`` to keep memory tight; a full backtest replays
+    ~2,100 shows.
+
+    Attributes
+    ----------
+    n : int
+        Number of shows already merged into the state.
+    plays : Counter[str]
+        Lifetime play count per song.
+    last_played_idx : dict[str, int]
+        Most recent show index (in replay order) at which each song was
+        played; used to compute gap.
+    last_show_set : set[str]
+        Songs played in the most recent show (``state.n - 1``); used for
+        hard exclusion at inference time.
+    last_3_shows : deque[set[str]]
+        Sliding window of the most recent three shows' song sets, used
+        for the soft "played recently" penalty.
+    """
 
     n: int = 0
     plays: Counter[str] = field(default_factory=Counter)
@@ -232,8 +264,43 @@ def featurize(state: StreamingState, show: Show, song: str, cover_set: set[str])
 
 def build_training_matrix(
     shows: list[Show], cover_set: set[str], min_year: int, max_year: int,
-) -> tuple[np.ndarray, np.ndarray, list[str]]:
-    """Replay shows; for each show in [min_year, max_year] emit one row per candidate."""
+) -> tuple[np.ndarray, np.ndarray, list[str], StreamingState]:
+    """Replay history and emit (X, y, dates) for shows in ``[min_year, max_year]``.
+
+    Walks every show in chronological order. When a show falls inside the
+    target year window, generates one training row per candidate song
+    (any song with at least ``MIN_PLAYS_FOR_CANDIDATE`` lifetime plays as
+    of the prior history) — feature vector via ``featurize()``, label of
+    1 if that song was actually played at the show. State is then
+    advanced to include the show, so the next iteration's features
+    reflect everything up to (but not including) that show.
+
+    Parameters
+    ----------
+    shows
+        Full chronological list of shows. The function reads every show
+        for state replay, but only emits training rows for shows in the
+        ``[min_year, max_year]`` window.
+    cover_set
+        Set of song names considered covers, passed through to
+        ``featurize()`` for the ``is_cover`` flag.
+    min_year, max_year
+        Inclusive year window for which training rows are generated.
+
+    Returns
+    -------
+    X : np.ndarray, shape (n_rows, n_features), dtype float32
+        Feature matrix aligned with ``feature_names()``.
+    y : np.ndarray, shape (n_rows,), dtype int8
+        Binary labels (1 if song was played at the show, else 0).
+    show_dates : list[str]
+        ISO date string per row, useful for diagnostic slicing /
+        per-show evaluation.
+    final_state : StreamingState
+        The streaming state after replaying all shows (including any past
+        ``max_year``). Used by inference to skip the full historical
+        replay — the snapshot is saved alongside the model.
+    """
     state = StreamingState()
     rows: list[list[float]] = []
     labels: list[int] = []
@@ -250,7 +317,7 @@ def build_training_matrix(
                 show_dates.append(show["date"])
         state.update(show)
 
-    return np.array(rows, dtype=np.float32), np.array(labels, dtype=np.int8), show_dates
+    return np.array(rows, dtype=np.float32), np.array(labels, dtype=np.int8), show_dates, state
 
 
 def main() -> None:
@@ -264,11 +331,11 @@ def main() -> None:
     cover_set = {s["name"] for s in songs_catalog if not s.get("is_original", True)}
 
     print("Building training matrix (train < 2024)...", flush=True)
-    X_train, y_train, _ = build_training_matrix(shows, cover_set, 1983, TRAIN_END_YEAR)
+    X_train, y_train, _, _ = build_training_matrix(shows, cover_set, 1983, TRAIN_END_YEAR)
     print(f"  train: {X_train.shape}, positives: {int(y_train.sum())}")
 
     print(f"Building validation matrix ({VAL_YEAR})...", flush=True)
-    X_val, y_val, _ = build_training_matrix(shows, cover_set, VAL_YEAR, VAL_YEAR)
+    X_val, y_val, _, final_state = build_training_matrix(shows, cover_set, VAL_YEAR, VAL_YEAR)
     print(f"  val: {X_val.shape}, positives: {int(y_val.sum())}")
 
     if X_train.size == 0:
@@ -290,6 +357,10 @@ def main() -> None:
     MODELS_DIR.mkdir(parents=True, exist_ok=True)
     (MODELS_DIR / "xgboost_song_selector.pkl").write_bytes(pickle.dumps(model))
     (MODELS_DIR / "calibrator.pkl").write_bytes(pickle.dumps(calibrator))
+    # Snapshot the streaming state so inference can skip the historical replay.
+    # The snapshot encodes aggregated stats + recent-window song bags; raw
+    # setlist data is not stored here (see .gitignore).
+    STATE_SNAPSHOT_PATH.write_bytes(pickle.dumps(final_state))
     save_json(MODELS_DIR / "xgboost_meta.json", {
         "feature_names": feature_names(),
         "n_train_rows": int(X_train.shape[0]),

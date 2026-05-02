@@ -39,7 +39,31 @@ MODEL_NAMES = ("frequency", "gap_weighted", "xgboost", "markov", "ensemble")
 
 
 def metrics(predicted: list[str], actual: set[str], k: int = TOP_K) -> dict[str, float]:
-    """Compute precision@k, recall, and F1 for one show's prediction."""
+    """Compute precision@k, recall, and F1 for one show's top-k prediction.
+
+    Treats setlist prediction as a multi-label retrieval task: the model
+    proposes a ranked top-k list of songs; the show actually contains a
+    set of songs. Precision is the fraction of the top-k that were
+    actually played; recall is the fraction of actually-played songs
+    that landed in the top-k. F1 is the harmonic mean.
+
+    Parameters
+    ----------
+    predicted
+        Songs ranked best-first; only the first ``k`` are scored.
+    actual
+        Set of songs actually played at the show.
+    k
+        Cutoff for precision@k (defaults to ``TOP_K``).
+
+    Returns
+    -------
+    dict[str, float]
+        ``{"precision_at_25", "recall", "f1"}``. Precision uses the
+        literal key ``precision_at_25`` regardless of ``k`` to keep the
+        downstream model card schema stable; the ``25`` here is the
+        product convention rather than a runtime constant.
+    """
     top = predicted[:k]
     if not top:
         return {"precision_at_25": 0.0, "recall": 0.0, "f1": 0.0}
