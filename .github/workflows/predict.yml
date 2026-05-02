@@ -26,7 +26,7 @@ jobs:
       # snapshot (models/state.pkl) + feature artifacts (state/features/),
       # which together hold everything featurize() needs without raw setlists.
       - name: Run prediction
-        run: pixi run python -m phinish.process_issue
+        run: pixi run process-issue
         env:
           ISSUE_NUMBER: ${{ github.event.issue.number }}
           ISSUE_BODY: ${{ github.event.issue.body }}

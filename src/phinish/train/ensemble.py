@@ -7,117 +7,40 @@ weights to maximize average Precision@25 on the validation shows.
 Writes models/ensemble_weights.json.
 """
 
-import math
-import pickle
 from itertools import product
 
 import numpy as np
+import structlog
 
-from phinish.train_xgboost import (
-    MIN_PLAYS_FOR_CANDIDATE,
-    StreamingState,
-    featurize,
+from phinish.artifacts import (
+    calibrated_predict_proba,
+    gap_score_per_song,
+    load_calibrator,
+    load_cover_set,
+    load_shows,
+    load_song_gaps,
+    load_song_stats,
+    load_transition_matrix,
+    load_venue_history,
+    load_xgb_model,
+    markov_score_per_song,
+    precision_at_k,
+    venue_freq_for_show,
 )
-from phinish.utils import (
-    FEATURES_DIR,
-    MODELS_DIR,
-    SETLISTS_PATH,
-    SONGS_PATH,
-    TOP_K,
-    Show,
-    SongGap,
-    SongStats,
-    TransitionMatrix,
-    VenueHistory,
-    load_json,
-    min_max_normalize,
-    save_json,
-    show_song_set,
-)
+from phinish.features.types import VenueHistory
+from phinish.scrape.types import Show
+from phinish.train.state import MIN_PLAYS_FOR_CANDIDATE, VAL_YEAR, StreamingState, featurize
+from phinish.utils import MODELS_DIR, min_max_normalize, save_json, show_song_set
 
-VAL_YEAR = 2024
-GRID = (0.0, 0.25, 0.5, 0.75, 1.0)
+log = structlog.get_logger()
+
+GRID = (0.0, 0.25, 0.5, 0.75, 1.0)  # coarse grid; finer adds 625->3125 combos for <0.01 gain
 SCORE_DIMS = ("xgb", "markov", "gap", "venue")
 DEFAULT_WEIGHTS = {"w_xgboost": 0.5, "w_markov": 0.1, "w_gap": 0.3, "w_venue": 0.1}
 
 
-def markov_score_per_song(matrix: TransitionMatrix) -> dict[str, float]:
-    """Compute a marginal "popularity as a set opener" score per song.
-
-    The Markov chain's primary use is sequencing (what comes after song
-    X), but the ensemble needs a per-song scalar to combine with
-    XGBoost / gap / venue scores. This collapses the chain to its
-    set-opener marginals: songs that frequently start any set get a
-    higher signal here.
-
-    Parameters
-    ----------
-    matrix
-        The trained transition matrix.
-
-    Returns
-    -------
-    dict[str, float]
-        Song -> mean opener probability across set keys. Songs that
-        have never opened any set are absent (treat as 0 downstream).
-    """
-    openers = matrix.get("set_openers", {})
-    if not openers:
-        return {}
-    scores: dict[str, float] = {}
-    for dist in openers.values():
-        for song, p in dist.items():
-            scores[song] = scores.get(song, 0.0) + p
-    return {song: s / len(openers) for song, s in scores.items()}
-
-
-def gap_score_per_song(
-    stats: dict[str, SongStats], gaps: dict[str, SongGap],
-) -> dict[str, float]:
-    """Compute the gap-weighted ensemble component per song.
-
-    Mirrors the formula in ``train_baseline.gap_weighted_score`` so the
-    ensemble's gap dimension matches the baseline reference scoring.
-
-    Parameters
-    ----------
-    stats
-        Per-song statistics from the feature store.
-    gaps
-        Per-song current-gap snapshot.
-
-    Returns
-    -------
-    dict[str, float]
-        Song -> ``recent_frequency_50 * log(gap + 2)``.
-    """
-    return {
-        song: s.get("recent_frequency_50", 0.0) * math.log(gaps.get(song, {}).get("gap", 1) + 2)
-        for song, s in stats.items()
-    }
-
-
-def precision_at_k(predicted: list[str], actual: set[str], k: int = TOP_K) -> float:
-    """Fraction of the top-k predicted songs that were actually played.
-
-    Parameters
-    ----------
-    predicted
-        Songs ranked best-first; only the first ``k`` are scored.
-    actual
-        Set of songs actually played at the show.
-    k
-        Cutoff (defaults to ``TOP_K``).
-
-    Returns
-    -------
-    float
-        Hits divided by ``k``. Returns 0.0 if ``predicted`` is empty.
-    """
-    return sum(1 for s in predicted[:k] if s in actual) / k if predicted else 0.0
-
-
 def _normalize_per_record(records: list[dict]) -> None:
+    """Min-max normalize each score dimension within every validation record."""
     for r in records:
         for dim in SCORE_DIMS:
             normed = min_max_normalize([s[dim] for s in r["scores"]])
@@ -134,21 +57,44 @@ def _build_val_records(
     markov: dict[str, float],
     gap_scores: dict[str, float],
 ) -> list[dict]:
+    """Replay history and collect candidate score vectors for validation shows.
+
+    Parameters
+    ----------
+    shows
+        Chronologically ordered show history used to build streaming state.
+    cover_set
+        Song names treated as covers during feature construction.
+    xgb
+        Trained XGBoost classifier used to produce per-song base probabilities.
+    calibrator
+        Optional probability calibrator fit on validation probabilities.
+    venue_history
+        Per-venue historical song frequencies keyed by venue ID.
+    markov
+        Global Markov transition prior score per song.
+    gap_scores
+        Global gap-based prior score per song.
+
+    Returns
+    -------
+    list[dict]
+        Validation records. Each record contains ``actual`` (songs played at the
+        show) and ``scores`` (per-candidate component model scores).
+    """
     state = StreamingState()
     val_records: list[dict] = []
     for show in shows:
         played = show_song_set(show)
-        if show.get("year", 0) == VAL_YEAR:
+        if show.year == VAL_YEAR:
             candidates = [s for s, c in state.plays.items() if c >= MIN_PLAYS_FOR_CANDIDATE]
             if candidates:
                 X = np.array(
                     [featurize(state, show, song, cover_set) for song in candidates],
                     dtype=np.float32,
                 )
-                raw = xgb.predict_proba(X)[:, 1]
-                if calibrator is not None:
-                    raw = calibrator.predict_proba(raw.reshape(-1, 1))[:, 1]
-                venue_freq = venue_history.get(show.get("venue_id", ""), {}).get("song_freq", {})
+                raw = calibrated_predict_proba(xgb, calibrator, X)
+                venue_freq = venue_freq_for_show(venue_history, show.venue_id)
                 scores = [
                     {
                         "song": song,
@@ -167,6 +113,20 @@ def _build_val_records(
 def _grid_search_weights(
     val_records: list[dict],
 ) -> tuple[tuple[float, float, float, float], float]:
+    """Search the weight grid for the best average Precision@25.
+
+    Parameters
+    ----------
+    val_records
+        Output from ``_build_val_records`` after normalization, with one score
+        vector per candidate song and one ``actual`` song set per show.
+
+    Returns
+    -------
+    tuple[tuple[float, float, float, float], float]
+        The best normalized ``(w_xgboost, w_markov, w_gap, w_venue)`` tuple and
+        its corresponding average Precision@25 over validation shows.
+    """
     best_score = -1.0
     best_weights = (1.0, 0.0, 0.0, 0.0)
     for w in product(GRID, repeat=4):
@@ -195,6 +155,18 @@ def _save_weights(
     score: float | None,
     n_records: int,
 ) -> None:
+    """Persist ensemble weights and validation metadata.
+
+    Parameters
+    ----------
+    weights
+        Normalized ``(w_xgboost, w_markov, w_gap, w_venue)`` ensemble weights.
+    score
+        Validation Precision@25 for ``weights``; ``None`` when defaults are
+        written because no validation records were available.
+    n_records
+        Number of validation shows used when computing ``score``.
+    """
     wx, wm, wg, wv = weights
     save_json(MODELS_DIR / "ensemble_weights.json", {
         "w_xgboost": wx,
@@ -208,19 +180,23 @@ def _save_weights(
 
 
 def main() -> None:
-    """Grid-search ensemble weights on validation set; persist best to models/."""
-    shows = load_json(SETLISTS_PATH)
-    songs_catalog = load_json(SONGS_PATH) if SONGS_PATH.exists() else []
-    cover_set = {s["name"] for s in songs_catalog if not s.get("is_original", True)}
+    """Fit and persist ensemble blending weights from validation shows.
 
-    xgb = pickle.loads((MODELS_DIR / "xgboost_song_selector.pkl").read_bytes())
-    calibrator_path = MODELS_DIR / "calibrator.pkl"
-    calibrator = pickle.loads(calibrator_path.read_bytes()) if calibrator_path.exists() else None
+    Loads trained artifacts, reconstructs per-show component scores for
+    ``VAL_YEAR``, grid-searches normalized blending weights, and writes the best
+    result to ``models/ensemble_weights.json``. Falls back to project defaults
+    when the validation split has no eligible shows.
+    """
+    shows = load_shows()
+    cover_set = load_cover_set()
 
-    transition = load_json(FEATURES_DIR / "transition_matrix.json")
-    venue_history = load_json(FEATURES_DIR / "venue_history.json")
-    stats = load_json(FEATURES_DIR / "song_stats.json")
-    gaps = load_json(FEATURES_DIR / "song_gaps.json")
+    xgb = load_xgb_model()
+    calibrator = load_calibrator()
+
+    transition = load_transition_matrix()
+    venue_history = load_venue_history()
+    stats = load_song_stats()
+    gaps = load_song_gaps()
     markov = markov_score_per_song(transition)
     gap_scores = gap_score_per_song(stats, gaps)
 
@@ -229,7 +205,7 @@ def main() -> None:
     )
 
     if not val_records:
-        print(f"No validation shows for year {VAL_YEAR}; using default weights.")
+        log.warning("no_val_shows", year=VAL_YEAR, action="using default weights")
         defaults = (DEFAULT_WEIGHTS["w_xgboost"], DEFAULT_WEIGHTS["w_markov"],
                     DEFAULT_WEIGHTS["w_gap"], DEFAULT_WEIGHTS["w_venue"])
         _save_weights(defaults, None, 0)
@@ -240,8 +216,8 @@ def main() -> None:
     _save_weights(best_weights, best_score, len(val_records))
 
     wx, wm, wg, wv = best_weights
-    print(f"best weights: xgb={wx:.2f} markov={wm:.2f} "
-          f"gap={wg:.2f} venue={wv:.2f} -> P@25={best_score:.3f}")
+    log.info("best_weights", xgb=f"{wx:.2f}", markov=f"{wm:.2f}",
+             gap=f"{wg:.2f}", venue=f"{wv:.2f}", precision_at_25=f"{best_score:.3f}")
 
 
 if __name__ == "__main__":

@@ -4,20 +4,24 @@ Writes models/markov_order2.json. Same shape as state/features/transition_matrix
 but versioned in models/ as the inference artifact.
 """
 
-from phinish.build_features import build_transition_matrix
-from phinish.utils import MODELS_DIR, SETLISTS_PATH, load_json, save_json
+import structlog
+
+from phinish.artifacts import load_shows
+from phinish.features.build import build_transition_matrix
+from phinish.utils import MODELS_DIR, SETLISTS_PATH, save_json
+
+log = structlog.get_logger()
 
 
 def main() -> None:
     """Train and persist the order-2 Markov transition matrix to models/."""
     if not SETLISTS_PATH.exists():
-        raise SystemExit(f"Missing {SETLISTS_PATH}; run scrape.py first.")
-    shows = load_json(SETLISTS_PATH)
+        raise SystemExit(f"Missing {SETLISTS_PATH}; run phinish-scrape first.")
+    shows = load_shows()
     matrix = build_transition_matrix(shows)
-    matrix["trained_on_shows"] = len(shows)
-    MODELS_DIR.mkdir(parents=True, exist_ok=True)
+    matrix.trained_on_shows = len(shows)
     save_json(MODELS_DIR / "markov_order2.json", matrix)
-    print(f"wrote markov ({len(shows)} shows) -> {MODELS_DIR / 'markov_order2.json'}")
+    log.info("wrote_markov", shows=len(shows), path=str(MODELS_DIR / "markov_order2.json"))
 
 
 if __name__ == "__main__":

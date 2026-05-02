@@ -36,7 +36,7 @@ jobs:
           restore-keys: |
             phishnet-data-
       - name: Process year and retrain
-        run: pixi run python -m phinish.process_year
+        run: pixi run process-year
         env:
           ISSUE_NUMBER: ${{ github.event.issue.number }}
           ISSUE_BODY: ${{ github.event.issue.body }}

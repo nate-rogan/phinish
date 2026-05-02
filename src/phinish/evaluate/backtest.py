@@ -3,61 +3,39 @@
 Writes models/evaluation.json and prints a comparison table.
 """
 
-import pickle
-
 import numpy as np
 
-from phinish.train_ensemble import gap_score_per_song, markov_score_per_song
-from phinish.train_xgboost import (
-    MIN_PLAYS_FOR_CANDIDATE,
-    StreamingState,
-    featurize,
+from phinish.artifacts import (
+    calibrated_predict_proba,
+    gap_score_per_song,
+    load_calibrator,
+    load_cover_set,
+    load_ensemble_weights,
+    load_shows,
+    load_song_gaps,
+    load_song_stats,
+    load_transition_matrix,
+    load_venue_history,
+    load_xgb_model,
+    markov_score_per_song,
+    venue_freq_for_show,
 )
+from phinish.features.types import SongStats, VenueHistory
+from phinish.scrape.types import Show
+from phinish.train import MIN_PLAYS_FOR_CANDIDATE, TEST_START_YEAR, StreamingState, featurize
 from phinish.utils import (
-    FEATURES_DIR,
     MODELS_DIR,
-    SETLISTS_PATH,
-    SONGS_PATH,
     TOP_K,
-    Show,
-    SongStats,
-    VenueHistory,
-    load_json,
     min_max_normalize,
     save_json,
     show_song_set,
 )
 
-TEST_START_YEAR = 2025
 MODEL_NAMES = ("frequency", "gap_weighted", "xgboost", "markov", "ensemble")
 
 
 def metrics(predicted: list[str], actual: set[str], k: int = TOP_K) -> dict[str, float]:
-    """Compute precision@k, recall, and F1 for one show's top-k prediction.
-
-    Treats setlist prediction as a multi-label retrieval task: the model
-    proposes a ranked top-k list of songs; the show actually contains a
-    set of songs. Precision is the fraction of the top-k that were
-    actually played; recall is the fraction of actually-played songs
-    that landed in the top-k. F1 is the harmonic mean.
-
-    Parameters
-    ----------
-    predicted
-        Songs ranked best-first; only the first ``k`` are scored.
-    actual
-        Set of songs actually played at the show.
-    k
-        Cutoff for precision@k (defaults to ``TOP_K``).
-
-    Returns
-    -------
-    dict[str, float]
-        ``{"precision_at_25", "recall", "f1"}``. Precision uses the
-        literal key ``precision_at_25`` regardless of ``k`` to keep the
-        downstream model card schema stable; the ``25`` here is the
-        product convention rather than a runtime constant.
-    """
+    """Compute precision@k, recall, and F1 for one show's top-k prediction."""
     top = predicted[:k]
     if not top:
         return {"precision_at_25": 0.0, "recall": 0.0, "f1": 0.0}
@@ -81,15 +59,13 @@ def _rank_all_models(
     venue_history: dict[str, VenueHistory],
     weights: tuple[float, float, float, float],
 ) -> dict[str, list[str]]:
+    """Rank candidates by each model and return ``{model_name: ranked_songs}``."""
     X = np.array(
         [featurize(state, show, s, cover_set) for s in candidates],
         dtype=np.float32,
     )
-    xgb_probs = xgb.predict_proba(X)[:, 1]
-    if calibrator is not None:
-        xgb_probs = calibrator.predict_proba(xgb_probs.reshape(-1, 1))[:, 1]
-
-    venue_freq = venue_history.get(show.get("venue_id", ""), {}).get("song_freq", {})
+    xgb_probs = calibrated_predict_proba(xgb, calibrator, X)
+    venue_freq = venue_freq_for_show(venue_history, show.venue_id)
     xgb_pairs = sorted(
         zip(xgb_probs, candidates, strict=True),
         reverse=True, key=lambda t: t[0],
@@ -111,7 +87,7 @@ def _rank_all_models(
     return {
         "frequency": sorted(
             candidates,
-            key=lambda s: stats.get(s, {}).get("lifetime_frequency", 0.0),
+            key=lambda s: stats[s].lifetime_frequency if s in stats else 0.0,
             reverse=True,
         ),
         "gap_weighted": sorted(
@@ -128,6 +104,7 @@ def _summarize(
     opener_correct: dict[str, int],
     opener_total: int,
 ) -> dict[str, dict]:
+    """Average per-show metrics into a summary dict keyed by model name."""
     summary: dict[str, dict] = {}
     for name in MODEL_NAMES:
         rs = results[name]
@@ -142,6 +119,7 @@ def _summarize(
 
 
 def _print_summary(summary: dict[str, dict]) -> None:
+    """Print a compact comparison table of all model metrics to stdout."""
     n = summary.get("ensemble", {}).get("n_shows", 0)
     print(f"\nEvaluation on {n} shows since {TEST_START_YEAR}:\n")
     for name in MODEL_NAMES:
@@ -153,24 +131,19 @@ def _print_summary(summary: dict[str, dict]) -> None:
 
 def main() -> None:
     """Backtest each model on the test holdout and write models/evaluation.json."""
-    shows = load_json(SETLISTS_PATH)
-    songs_catalog = load_json(SONGS_PATH) if SONGS_PATH.exists() else []
-    cover_set = {s["name"] for s in songs_catalog if not s.get("is_original", True)}
-
-    xgb = pickle.loads((MODELS_DIR / "xgboost_song_selector.pkl").read_bytes())
-    calibrator_path = MODELS_DIR / "calibrator.pkl"
-    calibrator = pickle.loads(calibrator_path.read_bytes()) if calibrator_path.exists() else None
-
-    transition = load_json(FEATURES_DIR / "transition_matrix.json")
-    venue_history = load_json(FEATURES_DIR / "venue_history.json")
-    stats = load_json(FEATURES_DIR / "song_stats.json")
-    gaps = load_json(FEATURES_DIR / "song_gaps.json")
+    shows = load_shows()
+    cover_set = load_cover_set()
+    xgb = load_xgb_model()
+    calibrator = load_calibrator()
+    transition = load_transition_matrix()
+    venue_history = load_venue_history()
+    stats = load_song_stats()
+    gaps = load_song_gaps()
     markov = markov_score_per_song(transition)
     gap_scores = gap_score_per_song(stats, gaps)
-    set_openers_1 = transition.get("set_openers", {}).get("1", {})
-
-    weights = load_json(MODELS_DIR / "ensemble_weights.json")
-    w = (weights["w_xgboost"], weights["w_markov"], weights["w_gap"], weights["w_venue"])
+    set_openers_1 = transition.set_openers.get("1", {})
+    weights = load_ensemble_weights()
+    w = (weights.w_xgboost, weights.w_markov, weights.w_gap, weights.w_venue)
 
     state = StreamingState()
     results: dict[str, list[dict]] = {m: [] for m in MODEL_NAMES}
@@ -179,10 +152,10 @@ def main() -> None:
 
     for show in shows:
         played = show_song_set(show)
-        set1 = show.get("sets", {}).get("1", [])
-        actual_opener = set1[0]["song"] if set1 else None
+        set1 = show.sets.get("1", [])
+        actual_opener = set1[0].song if set1 else None
 
-        if show.get("year", 0) >= TEST_START_YEAR:
+        if show.year >= TEST_START_YEAR:
             candidates = [s for s, c in state.plays.items() if c >= MIN_PLAYS_FOR_CANDIDATE]
             if candidates:
                 rankings = _rank_all_models(

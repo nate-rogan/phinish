@@ -7,22 +7,18 @@ or late corrections.
 """
 
 import os
-import sys
-import traceback
 from collections.abc import Callable
 from dataclasses import dataclass
 from datetime import datetime
 from typing import NoReturn
 
-from phinish import (
-    build_features,
-    evaluate,
-    scrape,
-    train_baseline,
-    train_ensemble,
-    train_markov,
-    train_xgboost,
-)
+import structlog
+
+from phinish import evaluate, features, scrape
+from phinish.train import baseline as train_baseline
+from phinish.train import ensemble as train_ensemble
+from phinish.train import markov as train_markov
+from phinish.train import xgboost as train_xgboost
 from phinish.utils import (
     MANIFEST_PATH,
     MODELS_DIR,
@@ -34,6 +30,8 @@ from phinish.utils import (
     sanitize,
     save_json,
 )
+
+log = structlog.get_logger()
 
 MODEL_CARD = MODELS_DIR / "model_card.md"
 
@@ -48,6 +46,8 @@ METRIC_LABELS: tuple[tuple[str, str], ...] = (
 
 @dataclass(slots=True)
 class _GhContext:
+    """GitHub Actions context for posting comments back to an issue."""
+
     issue_number: int
     token: str
     repo: str
@@ -62,6 +62,7 @@ class _GhContext:
 
 
 def _metric_rows(summary: dict) -> list[str]:
+    """Format the evaluation summary into markdown table rows for the model card."""
     rows = []
     for label, key in METRIC_LABELS:
         m = summary.get(key, {})
@@ -76,6 +77,7 @@ def _metric_rows(summary: dict) -> list[str]:
 
 
 def _render_card(today: str, n_shows: int, scrape_target: str, rows: list[str]) -> str:
+    """Return the full markdown body for ``models/model_card.md``."""
     rows_block = "\n".join(rows)
     return f"""# Phinish Model Card
 
@@ -128,10 +130,11 @@ def update_model_card(today: str, n_shows: int, scrape_target: str, summary: dic
 
 
 def _pipeline_steps(year: int | None) -> list[tuple[str, Callable[[], None]]]:
+    """Return the ordered ``(label, callable)`` pairs for the full retrain pipeline."""
     scrape_label = f"scrape year {year}" if year else "scrape (full pull)"
     return [
         (scrape_label, lambda: scrape.main(year=year)),
-        ("build_features", build_features.main),
+        ("build_features", features.main),
         ("train_baseline", train_baseline.main),
         ("train_markov", train_markov.main),
         ("train_xgboost", train_xgboost.main),
@@ -141,8 +144,9 @@ def _pipeline_steps(year: int | None) -> list[tuple[str, Callable[[], None]]]:
 
 
 def _run_pipeline(year: int | None) -> None:
+    """Execute each pipeline step in order, logging progress."""
     for name, step in _pipeline_steps(year):
-        print(f"=== {name} ===", flush=True)
+        log.info("pipeline_step", step=name)
         step()
 
 
@@ -158,6 +162,7 @@ def _read_year_from_env(gh: _GhContext) -> int | None:
 
 
 def _fail(gh: _GhContext, msg: str) -> NoReturn:
+    """Post an error comment and exit with a non-zero status."""
     gh.post(msg)
     raise SystemExit(msg)
 
@@ -170,10 +175,12 @@ def _read_previous() -> dict | None:
 
 
 def _save_manifest(current: dict, previous: dict | None) -> None:
+    """Write the current and previous run snapshots to ``models/manifest.json``."""
     save_json(MANIFEST_PATH, {"current": current, "previous": previous})
 
 
 def _diff_line(current_n: int, previous: dict | None) -> str:
+    """Generate a human-readable delta sentence comparing current vs. previous run."""
     if previous is None:
         return f"Initial training: **{current_n}** shows."
     prev_n = previous.get("n_shows", 0)
@@ -193,6 +200,7 @@ def _diff_line(current_n: int, previous: dict | None) -> str:
 
 
 def _success_comment(current: dict, previous: dict | None, scrape_target: str) -> str:
+    """Build the markdown body for the success comment posted to the issue."""
     diff = _diff_line(current["n_shows"], previous)
     metrics = current.get("metrics", {})
     return (
@@ -208,6 +216,7 @@ def _success_comment(current: dict, previous: dict | None, scrape_target: str) -
 
 
 def _build_current(today: str, n_shows: int, scrape_target: str, summary: dict) -> dict:
+    """Assemble the ``current`` manifest entry from this run's results."""
     ensemble = summary.get("ensemble", {})
     return {
         "trained_at": today,
@@ -234,9 +243,9 @@ def main() -> None:
 
     try:
         _run_pipeline(year)
-    except Exception as e:
-        print(traceback.format_exc(), file=sys.stderr)
-        gh.post(f"❌ Pipeline failed at step: `{type(e).__name__}: {e}`")
+    except Exception:
+        log.exception("pipeline_failed")
+        gh.post("❌ Pipeline failed — see Actions log for details.")
         raise
 
     eval_path = MODELS_DIR / "evaluation.json"
@@ -253,7 +262,7 @@ def main() -> None:
         gh.post(comment)
     else:
         print(comment)
-    print(f"process complete for issue #{gh.issue_number}")
+    log.info("process_complete", issue=gh.issue_number)
 
 
 if __name__ == "__main__":
