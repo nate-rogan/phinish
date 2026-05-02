@@ -1,5 +1,4 @@
 """Integration tests: data → features pipeline and last-show exclusion."""
-from __future__ import annotations
 
 import json
 

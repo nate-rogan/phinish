@@ -5,7 +5,6 @@ models/manifest.json with dataset coverage + retrain history, and posts a
 summary comment. Idempotent — safe to re-run anytime to pick up new shows
 or late corrections.
 """
-from __future__ import annotations
 
 import os
 import sys
@@ -111,7 +110,23 @@ See `models/manifest.json` for the full retrain history.
 
 
 def update_model_card(today: str, n_shows: int, scrape_target: str, summary: dict) -> None:
-    """Render and persist models/model_card.md from the latest evaluation."""
+    """Render and persist ``models/model_card.md`` from the latest evaluation.
+
+    Parameters
+    ----------
+    today
+        ISO timestamp string (date or datetime) for the "last retrained
+        on" header — typically ``datetime.now().isoformat(timespec="seconds")``.
+    n_shows
+        Total number of shows in the dataset that produced these models.
+    scrape_target
+        Human-readable description of what was scraped this run, e.g.
+        ``"full scrape"`` or ``"year 2025"``.
+    summary
+        Per-model evaluation summary from ``models/evaluation.json``;
+        each entry has ``precision_at_25`` / ``recall`` / ``f1`` /
+        ``opener_accuracy`` / ``n_shows``.
+    """
     body = _render_card(today, n_shows, scrape_target, _metric_rows(summary))
     MODEL_CARD.write_text(body, encoding="utf-8")
 

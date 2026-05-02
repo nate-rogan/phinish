@@ -4,7 +4,6 @@ Baselines:
 - frequency: lifetime_frequency (top songs by lifetime play rate)
 - gap_weighted: recent_frequency_50 * log(gap + 2)
 """
-from __future__ import annotations
 
 import math
 import sys
@@ -26,7 +25,26 @@ from scripts.utils import (
 def gap_weighted_score(
     stats: dict[str, SongStats], gaps: dict[str, SongGap],
 ) -> dict[str, float]:
-    """Score = recent play frequency boosted by log(gap), reflecting overdue songs."""
+    """Compute the gap-weighted baseline score for each song.
+
+    Score is recent play frequency (50-show window) boosted by the log
+    of current gap, so songs that are *both* common in recent rotation
+    *and* overdue rank highest. Adding 2 inside the log keeps the
+    boost finite at gap 0 and monotone increasing.
+
+    Parameters
+    ----------
+    stats
+        Per-song statistics from the feature store.
+    gaps
+        Per-song current-gap snapshot from the feature store. Songs
+        missing from ``gaps`` get a default gap of 1.
+
+    Returns
+    -------
+    dict[str, float]
+        Mapping of song -> score; higher means more likely to appear.
+    """
     out: dict[str, float] = {}
     for song, s in stats.items():
         gap = gaps.get(song, {}).get("gap", 1)
@@ -35,7 +53,19 @@ def gap_weighted_score(
 
 
 def frequency_score(stats: dict[str, SongStats]) -> dict[str, float]:
-    """Baseline score: lifetime play frequency per song."""
+    """Compute the lifetime-frequency baseline score for each song.
+
+    Parameters
+    ----------
+    stats
+        Per-song statistics from the feature store.
+
+    Returns
+    -------
+    dict[str, float]
+        Mapping of song -> ``lifetime_frequency``; higher means the
+        song is played in a larger fraction of all shows historically.
+    """
     return {song: s.get("lifetime_frequency", 0.0) for song, s in stats.items()}
 
 

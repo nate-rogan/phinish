@@ -11,16 +11,15 @@ Usage:
 
 Requires PHISHNET_API_KEY environment variable.
 """
-from __future__ import annotations
 
 import argparse
 import os
 import sys
-import time
 from datetime import date
 from pathlib import Path
 
 import httpx
+import stamina
 
 if __package__ is None:
     sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
@@ -45,51 +44,78 @@ from scripts.utils import (
 API_BASE = "https://api.phish.net/v5"
 FIRST_YEAR = 1983
 TIMEOUT = 30.0
-RETRIES = 3
-RETRY_BACKOFF_BASE = 2.0
+
+
+def _is_retryable(exc: BaseException) -> bool:
+    """Retry on network errors, 5xx, and 429 — not on other 4xx (e.g. bad key)."""
+    if isinstance(exc, httpx.HTTPStatusError):
+        status = exc.response.status_code
+        return status == 429 or status >= 500
+    return isinstance(exc, (httpx.RequestError, RuntimeError))
 
 
 def get_api_key() -> str:
-    """Read PHISHNET_API_KEY from the environment or exit with a clear message."""
+    """Read ``PHISHNET_API_KEY`` from the environment or exit with a clear message.
+
+    Returns
+    -------
+    str
+        The API key value, never empty.
+
+    Raises
+    ------
+    SystemExit
+        If ``PHISHNET_API_KEY`` is unset or empty. Caller should let
+        this propagate so the CLI exits with a clean error.
+    """
     key = os.environ.get("PHISHNET_API_KEY")
     if not key:
         raise SystemExit("PHISHNET_API_KEY environment variable is required.")
     return key
 
 
+@stamina.retry(on=_is_retryable, attempts=3)
 def fetch(client: httpx.Client, path: str, key: str) -> list[dict]:
-    """GET an API path and return its `data` payload, retrying transient errors.
+    """GET an API path and return its ``data`` payload.
 
-    Retries network errors and 5xx/429 responses with exponential backoff,
-    honoring `Retry-After` on 429. 4xx responses (other than 429) are fatal
-    and raised immediately — retrying a bad API key wastes the rate budget
-    Phish.net warns about in their terms.
+    Wrapped with ``@stamina.retry`` for transient errors: network
+    failures, 5xx responses, and 429 rate-limits get exponential backoff
+    + jitter (and structured retry telemetry). Other 4xx responses
+    (e.g. 401 from a bad API key) raise immediately so we don't burn
+    the rate budget Phish.net warns about in their terms.
+
+    Parameters
+    ----------
+    client
+        Reusable ``httpx.Client``; the caller owns its lifetime so
+        connection pooling spans many calls.
+    path
+        Path component beneath ``/v5/`` — for example
+        ``setlists/showyear/2025.json``.
+    key
+        Phish.net API key; sent as the ``apikey`` query parameter.
+
+    Returns
+    -------
+    list[dict]
+        Raw rows from the API's ``data`` field, or an empty list when
+        the endpoint returns no rows.
+
+    Raises
+    ------
+    RuntimeError
+        On an API-level ``error`` flag in the JSON body, or after
+        stamina exhausts retries on transient errors.
+    httpx.HTTPStatusError
+        On a 4xx response other than 429 (no retry, fail fast).
     """
     url = f"{API_BASE}/{path.lstrip('/')}"
-    last_err: Exception | None = None
-    for attempt in range(RETRIES):
-        try:
-            r = client.get(url, params={"apikey": key}, timeout=TIMEOUT)
-            r.raise_for_status()
-            payload = r.json()
-            if payload.get("error"):
-                raise RuntimeError(f"{path}: {payload.get('error_message')}")
-            return payload.get("data", []) or []
-        except httpx.HTTPStatusError as e:
-            status = e.response.status_code
-            if 400 <= status < 500 and status != 429:
-                raise RuntimeError(f"{path}: {status} {e.response.text[:200]}") from e
-            last_err = e
-            if attempt < RETRIES - 1:
-                wait = float(
-                    e.response.headers.get("Retry-After", RETRY_BACKOFF_BASE ** attempt)
-                )
-                time.sleep(wait)
-        except (httpx.RequestError, RuntimeError) as e:
-            last_err = e
-            if attempt < RETRIES - 1:
-                time.sleep(RETRY_BACKOFF_BASE ** attempt)
-    raise RuntimeError(f"Failed after {RETRIES} attempts: {path}: {last_err}")
+    r = client.get(url, params={"apikey": key}, timeout=TIMEOUT)
+    r.raise_for_status()
+    payload = r.json()
+    if payload.get("error"):
+        raise RuntimeError(f"{path}: {payload.get('error_message')}")
+    return payload.get("data", []) or []
 
 
 def group_into_shows(rows: list[dict], canonical: dict[str, str]) -> list[Show]:
@@ -167,7 +193,27 @@ def group_into_shows(rows: list[dict], canonical: dict[str, str]) -> list[Show]:
 
 
 def merge_setlists(existing: list[Show], new: list[Show]) -> list[Show]:
-    """Merge new shows into existing, replacing duplicates by show_id."""
+    """Merge new shows into existing, replacing duplicates by ``show_id``.
+
+    Used by the year-incremental scrape path: shows already present are
+    overwritten by the freshly-scraped version (so late corrections to
+    a setlist propagate), and shows present only in ``existing`` are
+    preserved.
+
+    Parameters
+    ----------
+    existing
+        Previously persisted shows (full history).
+    new
+        Newly scraped shows for one year, possibly overlapping
+        ``existing``.
+
+    Returns
+    -------
+    list[Show]
+        Combined shows, deduplicated by ``show_id``, sorted ascending
+        by ``date``.
+    """
     by_id = {s["show_id"]: s for s in existing}
     for s in new:
         by_id[s["show_id"]] = s
@@ -175,7 +221,23 @@ def merge_setlists(existing: list[Show], new: list[Show]) -> list[Show]:
 
 
 def normalize_songs(rows: list[dict]) -> list[SongCatalogEntry]:
-    """Reshape Phish.net song catalog rows into the project's schema."""
+    """Reshape Phish.net song catalog rows into the project's schema.
+
+    Tolerates the field-name variation that Phish.net's v5 endpoints
+    have shipped at different times (``songid`` vs ``id``, ``song`` vs
+    ``name``, ``artist`` vs ``artist_name``).
+
+    Parameters
+    ----------
+    rows
+        Raw rows from ``GET /v5/songs.json``.
+
+    Returns
+    -------
+    list[SongCatalogEntry]
+        One typed entry per song. ``is_original`` is derived from the
+        artist field — covers (artist != Phish) get ``False``.
+    """
     out = []
     for r in rows:
         artist = (r.get("artist") or r.get("artist_name") or "").strip()
@@ -193,7 +255,20 @@ def normalize_songs(rows: list[dict]) -> list[SongCatalogEntry]:
 
 
 def normalize_venues(rows: list[dict]) -> dict[str, VenueRecord]:
-    """Reshape Phish.net venue rows into the project's `{venue_id: ...}` schema."""
+    """Reshape Phish.net venue rows into the project's ``{venue_id: ...}`` schema.
+
+    Parameters
+    ----------
+    rows
+        Raw rows from ``GET /v5/venues.json``.
+
+    Returns
+    -------
+    dict[str, VenueRecord]
+        Mapping of canonical ``venue_id`` to a typed ``VenueRecord``.
+        Rows without a usable name are skipped (the API occasionally
+        ships placeholder rows).
+    """
     venues: dict[str, dict] = {}
     for r in rows:
         name = r.get("venuename") or r.get("name") or ""

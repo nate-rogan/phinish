@@ -2,7 +2,6 @@
 
 Reads issue env vars, runs predict(), posts a markdown comment, updates state.
 """
-from __future__ import annotations
 
 import os
 import sys
@@ -115,7 +114,23 @@ def format_comment(prediction: Prediction) -> str:
 
 
 def append_reasons(prediction: Prediction, issue_number: int, author: str) -> None:
-    """Append a one-paragraph audit entry for this prediction to reasons.md."""
+    """Append a one-paragraph audit entry for this prediction to reasons.md.
+
+    The audit log is committed alongside state outputs so the prediction
+    history is browsable directly in git without needing a database.
+    Each entry surfaces top picks per set so a reader can spot patterns
+    over time without opening the full prediction JSON.
+
+    Parameters
+    ----------
+    prediction
+        The prediction payload returned by ``scripts.predict.predict``.
+    issue_number
+        GitHub issue id this prediction was generated for; used as the
+        anchor in the audit log header.
+    author
+        GitHub login of the issue author, attributed in the log entry.
+    """
     REASONS_PATH.parent.mkdir(parents=True, exist_ok=True)
     today = date.today().isoformat()
     venue = prediction.get("venue", "")

@@ -6,7 +6,6 @@ weights to maximize average Precision@25 on the validation shows.
 
 Writes models/ensemble_weights.json.
 """
-from __future__ import annotations
 
 import math
 import pickle
@@ -48,7 +47,25 @@ DEFAULT_WEIGHTS = {"w_xgboost": 0.5, "w_markov": 0.1, "w_gap": 0.3, "w_venue": 0
 
 
 def markov_score_per_song(matrix: TransitionMatrix) -> dict[str, float]:
-    """Marginal song score = mean opener probability across set keys."""
+    """Compute a marginal "popularity as a set opener" score per song.
+
+    The Markov chain's primary use is sequencing (what comes after song
+    X), but the ensemble needs a per-song scalar to combine with
+    XGBoost / gap / venue scores. This collapses the chain to its
+    set-opener marginals: songs that frequently start any set get a
+    higher signal here.
+
+    Parameters
+    ----------
+    matrix
+        The trained transition matrix.
+
+    Returns
+    -------
+    dict[str, float]
+        Song -> mean opener probability across set keys. Songs that
+        have never opened any set are absent (treat as 0 downstream).
+    """
     openers = matrix.get("set_openers", {})
     if not openers:
         return {}
@@ -62,7 +79,23 @@ def markov_score_per_song(matrix: TransitionMatrix) -> dict[str, float]:
 def gap_score_per_song(
     stats: dict[str, SongStats], gaps: dict[str, SongGap],
 ) -> dict[str, float]:
-    """Per-song score = recent frequency * log(current gap)."""
+    """Compute the gap-weighted ensemble component per song.
+
+    Mirrors the formula in ``train_baseline.gap_weighted_score`` so the
+    ensemble's gap dimension matches the baseline reference scoring.
+
+    Parameters
+    ----------
+    stats
+        Per-song statistics from the feature store.
+    gaps
+        Per-song current-gap snapshot.
+
+    Returns
+    -------
+    dict[str, float]
+        Song -> ``recent_frequency_50 * log(gap + 2)``.
+    """
     return {
         song: s.get("recent_frequency_50", 0.0) * math.log(gaps.get(song, {}).get("gap", 1) + 2)
         for song, s in stats.items()
@@ -70,7 +103,22 @@ def gap_score_per_song(
 
 
 def precision_at_k(predicted: list[str], actual: set[str], k: int = TOP_K) -> float:
-    """Fraction of the top-k predicted songs that were actually played."""
+    """Fraction of the top-k predicted songs that were actually played.
+
+    Parameters
+    ----------
+    predicted
+        Songs ranked best-first; only the first ``k`` are scored.
+    actual
+        Set of songs actually played at the show.
+    k
+        Cutoff (defaults to ``TOP_K``).
+
+    Returns
+    -------
+    float
+        Hits divided by ``k``. Returns 0.0 if ``predicted`` is empty.
+    """
     return sum(1 for s in predicted[:k] if s in actual) / k if predicted else 0.0
 
 

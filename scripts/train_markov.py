@@ -3,7 +3,6 @@
 Writes models/markov_order2.json. Same shape as state/features/transition_matrix.json
 but versioned in models/ as the inference artifact.
 """
-from __future__ import annotations
 
 import sys
 from pathlib import Path

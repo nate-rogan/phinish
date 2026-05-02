@@ -1,5 +1,4 @@
 """Unit tests for predict.py helpers and output structure."""
-from __future__ import annotations
 
 import pytest
 

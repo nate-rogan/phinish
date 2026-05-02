@@ -22,26 +22,9 @@ jobs:
       - uses: prefix-dev/setup-pixi@v0.8.1
         with:
           cache: true
-      - name: Restore data cache
-        # Raw setlist data is .gitignored per ToS; we cache it across runs to
-        # avoid re-scraping the full dataset on every prediction.
-        # Cache key rotates daily so data refreshes at least once per day.
-        uses: actions/cache@v4
-        with:
-          path: |
-            data/processed
-            state/features
-          key: phishnet-data-${{ format('{0:yyyy-MM-dd}', github.event.repository.updated_at) }}
-          restore-keys: |
-            phishnet-data-
-      - name: Scrape any missing data
-        # No-op if cache hit and current; otherwise fetches fresh.
-        # build_features regenerates features from setlists (cheap).
-        run: |
-          pixi run python scripts/scrape.py
-          pixi run python scripts/build_features.py
-        env:
-          PHISHNET_API_KEY: ${{ secrets.PHISHNET_API_KEY }}
+      # No data scraping needed: predictions load the committed state
+      # snapshot (models/state.pkl) + feature artifacts (state/features/),
+      # which together hold everything featurize() needs without raw setlists.
       - name: Run prediction
         run: pixi run python -m scripts.process_issue
         env:

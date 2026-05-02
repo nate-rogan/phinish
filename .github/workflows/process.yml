@@ -42,13 +42,14 @@ jobs:
           ISSUE_BODY: ${{ github.event.issue.body }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           PHISHNET_API_KEY: ${{ secrets.PHISHNET_API_KEY }}
-      - name: Commit model artifacts
-        # Raw data and parsed features are .gitignored per Phish.net API ToS.
-        # Only trained models + manifest are committed.
+      - name: Commit model + feature artifacts
+        # Raw setlists (data/processed/) are .gitignored per Phish.net API ToS.
+        # Aggregate features and the trained model state snapshot are committed —
+        # those are derivative aggregates, same posture as the model files.
         run: |
           git config user.name "phinish[bot]"
           git config user.email "bot@users.noreply.github.com"
-          git add models/
+          git add models/ state/features/
           git diff --staged --quiet || git commit -m "retrain from issue #${{ github.event.issue.number }}"
           git push
       - name: Update labels and close

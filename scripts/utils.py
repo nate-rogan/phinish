@@ -1,5 +1,4 @@
 """Shared helpers: paths, JSON I/O, sanitization, venue matching, rate limiting."""
-from __future__ import annotations
 
 import json
 import re
@@ -216,12 +215,44 @@ class Usage(TypedDict, total=False):
 
 
 def load_json(path: Path | str) -> Any:
-    """Read and parse a JSON file as UTF-8."""
+    """Read and parse a JSON file as UTF-8.
+
+    Parameters
+    ----------
+    path
+        Filesystem path to a UTF-8 encoded JSON file.
+
+    Returns
+    -------
+    Any
+        The decoded JSON value — typically ``dict`` or ``list``,
+        depending on the file's top-level shape.
+
+    Raises
+    ------
+    FileNotFoundError
+        If ``path`` does not exist.
+    json.JSONDecodeError
+        If the file is not valid JSON.
+    """
     return json.loads(Path(path).read_text(encoding="utf-8"))
 
 
 def save_json(path: Path | str, data: Any, indent: int = 2, sort_keys: bool = False) -> None:
-    """Write `data` as JSON to `path`, creating parent directories as needed."""
+    """Write ``data`` as JSON to ``path``, creating parent directories as needed.
+
+    Parameters
+    ----------
+    path
+        Destination filesystem path.
+    data
+        Any JSON-serializable value (dict, list, str, int, float, bool, None).
+    indent
+        Number of spaces per indentation level (default 2 for diff-friendly output).
+    sort_keys
+        If True, sort dict keys alphabetically — useful for stable diffs on
+        inputs whose insertion order is not meaningful.
+    """
     p = Path(path)
     p.parent.mkdir(parents=True, exist_ok=True)
     p.write_text(
@@ -231,7 +262,24 @@ def save_json(path: Path | str, data: Any, indent: int = 2, sort_keys: bool = Fa
 
 
 def sanitize(raw: str, max_length: int = 500) -> str:
-    """Trim, length-cap, and strip shell-metachars from untrusted user input."""
+    r"""Trim, length-cap, and strip shell-metachars from untrusted user input.
+
+    Defense-in-depth for input that may eventually flow into a shell or
+    template; not a substitute for proper parameterization at the boundary.
+    Strips ``; & | \` $ ( ) { }`` and caps overall length.
+
+    Parameters
+    ----------
+    raw
+        Raw user-supplied string (issue body field, env var, etc.).
+    max_length
+        Maximum length to keep before stripping metacharacters.
+
+    Returns
+    -------
+    str
+        The cleaned string, safe to embed in markdown / log lines.
+    """
     cleaned = raw.strip()[:max_length]
     return re.sub(r"[;&|`$(){}]", "", cleaned)
 
@@ -271,7 +319,22 @@ def parse_issue_form(body: str) -> dict[str, str]:
 
 
 def normalize_venue_name(name: str) -> str:
-    """Lowercase, snake-case, and resolve common aliases (MSG, SPAC, etc)."""
+    """Lowercase, snake-case, and resolve common aliases (MSG, SPAC, ...).
+
+    Squashes any non-alphanumeric run to a single underscore, strips
+    leading/trailing underscores, and applies an alias table so common
+    full names collapse to their conventional short form.
+
+    Parameters
+    ----------
+    name
+        Raw venue name as it appears in API data or user input.
+
+    Returns
+    -------
+    str
+        Normalized slug — the body of a canonical ``venue_id``.
+    """
     s = re.sub(r"[^a-z0-9]+", "_", (name or "").lower()).strip("_")
     aliases = {
         "madison_square_garden": "msg",
@@ -282,7 +345,19 @@ def normalize_venue_name(name: str) -> str:
 
 
 def venue_id(name: str) -> str:
-    """Return the canonical `v_<slug>` venue identifier for a venue name."""
+    """Return the canonical ``v_<slug>`` venue identifier for a venue name.
+
+    Parameters
+    ----------
+    name
+        Raw venue name.
+
+    Returns
+    -------
+    str
+        The ``v_``-prefixed canonical identifier; consumers key venue
+        catalogs and venue-history records by this string.
+    """
     return "v_" + normalize_venue_name(name)
 
 
@@ -329,7 +404,29 @@ def fuzzy_venue_match(target: str, venues: dict[str, VenueRecord]) -> str | None
 def check_rate_limit(
     usage: Usage, user: str, max_per_day: int = 20, max_per_user: int = 3
 ) -> tuple[bool, str | None]:
-    """Return (ok, reason) for a prediction request given the day's usage."""
+    """Return ``(ok, reason)`` for a prediction request given the day's usage.
+
+    Date-bounded throttle to keep the public API from being abused. A new
+    UTC day resets all counters automatically; same-day requests are
+    checked against both the global daily cap and a per-user cap.
+
+    Parameters
+    ----------
+    usage
+        The persisted ``Usage`` counter, possibly empty / from a prior day.
+    user
+        GitHub login of the requesting user.
+    max_per_day
+        Maximum predictions allowed per UTC day across all users.
+    max_per_user
+        Maximum predictions allowed per UTC day for a single user.
+
+    Returns
+    -------
+    tuple[bool, str or None]
+        ``(True, None)`` if the request is allowed; ``(False, reason)``
+        with a human-readable explanation if blocked.
+    """
     today = date.today().isoformat()
     if usage.get("date") != today:
         return True, None
@@ -341,7 +438,25 @@ def check_rate_limit(
 
 
 def update_usage(usage: Usage, user: str) -> Usage:
-    """Increment today's prediction counters, resetting on a date rollover."""
+    """Increment today's prediction counters, resetting on a date rollover.
+
+    Mutates and returns a fresh ``Usage`` dict each call so the caller
+    can persist the result without coupling to in-place mutation.
+
+    Parameters
+    ----------
+    usage
+        Existing usage counter, possibly from a prior day.
+    user
+        GitHub login of the user whose request just succeeded.
+
+    Returns
+    -------
+    Usage
+        The updated counter, with ``total`` and ``by_user[user]``
+        incremented; reset to a fresh shape if the persisted ``date``
+        is stale.
+    """
     today = date.today().isoformat()
     if usage.get("date") != today:
         usage = {"date": today, "total": 0, "by_user": {}}
@@ -351,7 +466,19 @@ def update_usage(usage: Usage, user: str) -> Usage:
 
 
 def day_of_week(date_str: str) -> str:
-    """Return the lowercase day name ('monday', ...) for an ISO date string."""
+    """Return the lowercase day name (``'monday'``, ...) for an ISO date.
+
+    Parameters
+    ----------
+    date_str
+        ISO date as ``YYYY-MM-DD``.
+
+    Returns
+    -------
+    str
+        Lowercase English weekday name. Used as a categorical feature
+        so consumers can one-hot encode without further parsing.
+    """
     return date.fromisoformat(date_str).strftime("%A").lower()
 
 
@@ -359,7 +486,26 @@ FESTIVAL_KEYWORDS = ("festival", "it ", "magnaball", "curveball", "dick's")
 
 
 def special_show_flags(date_str: str, tour_name: str = "") -> dict[str, bool]:
-    """Flag NYE, Halloween, and festival shows by date and tour name."""
+    """Flag NYE, Halloween, and festival shows by date and tour name.
+
+    These three categories have setlist distributions distinct from
+    regular shows — NYE traditionally features long jams + a midnight
+    cover, Halloween features a "musical costume" full-album cover,
+    festivals feature longer sets and rarities.
+
+    Parameters
+    ----------
+    date_str
+        ISO date as ``YYYY-MM-DD``.
+    tour_name
+        Tour / festival name from the show metadata; ``''`` if unknown.
+
+    Returns
+    -------
+    dict[str, bool]
+        ``{"is_nye", "is_halloween", "is_festival"}`` ready to be
+        merged into a ``Show`` dict.
+    """
     _, m, d = date_str.split("-")
     tour_lower = (tour_name or "").lower()
     return {
@@ -370,7 +516,29 @@ def special_show_flags(date_str: str, tour_name: str = "") -> dict[str, bool]:
 
 
 def canonicalize_song(name: str, canonical_map: dict[str, str] | None = None) -> str:
-    """Resolve a raw song name to its canonical form via the alias map."""
+    """Resolve a raw song name to its canonical form via the alias map.
+
+    Phish.net lists song titles inconsistently (case, punctuation,
+    abbreviation: ``YEM`` vs ``You Enjoy Myself``); this collapses all
+    known variants to one canonical name so downstream stats aggregate
+    correctly.
+
+    Parameters
+    ----------
+    name
+        Raw song name from a setlist row.
+    canonical_map
+        Optional ``{variant -> canonical}`` mapping (``data/canonical_names.json``).
+        Lookups are case-insensitive: an exact match is tried first, then
+        a lowercased match. ``None`` is treated the same as an empty map.
+
+    Returns
+    -------
+    str
+        Canonical name if a mapping exists, otherwise the trimmed input.
+        Empty input returns ``''`` rather than ``None`` so consumers
+        don't need to guard against missing values.
+    """
     if not name:
         return ""
     raw = name.strip()
@@ -382,12 +550,42 @@ def canonicalize_song(name: str, canonical_map: dict[str, str] | None = None) ->
 
 
 def show_song_set(show: Show) -> set[str]:
-    """Return the unique set of songs played across all sets of one show."""
+    """Return the unique set of songs played across all sets of one show.
+
+    Parameters
+    ----------
+    show
+        A ``Show`` dict with one or more sets.
+
+    Returns
+    -------
+    set[str]
+        Distinct song names; useful for membership tests like "was X
+        played at this show" without caring about set placement or
+        repetition.
+    """
     return {s["song"] for songs in show.get("sets", {}).values() for s in songs}
 
 
 def min_max_normalize(values: list[float]) -> list[float]:
-    """Rescale values to [0, 1]; constant or empty input maps to all zeros."""
+    """Rescale values to ``[0, 1]``; constant or empty input maps to zeros.
+
+    Used to put ensemble component scores on a comparable scale before
+    weighted combination. Constant input collapses to all zeros (rather
+    than blowing up on a zero range), and empty input round-trips
+    unchanged.
+
+    Parameters
+    ----------
+    values
+        Numeric values to rescale.
+
+    Returns
+    -------
+    list[float]
+        Same length as input, each value rescaled to ``[0, 1]``. The
+        minimum maps to ``0.0`` and the maximum to ``1.0``.
+    """
     if not values:
         return values
     lo, hi = min(values), max(values)
@@ -396,7 +594,27 @@ def min_max_normalize(values: list[float]) -> list[float]:
 
 
 def post_issue_comment(repo: str, issue_number: int, body: str, token: str) -> None:
-    """Post a markdown comment to a GitHub issue via the REST API."""
+    """Post a markdown comment to a GitHub issue via the REST API.
+
+    Parameters
+    ----------
+    repo
+        ``owner/repo`` slug — typically from ``$GITHUB_REPOSITORY``.
+    issue_number
+        Numeric issue id to comment on.
+    body
+        Markdown body of the comment.
+    token
+        GitHub token with ``issues: write`` scope on ``repo``. In
+        Actions this comes from ``${{ secrets.GITHUB_TOKEN }}``.
+
+    Raises
+    ------
+    httpx.HTTPStatusError
+        If the API rejects the request (auth failure, missing issue,
+        rate limit). The caller should surface the original token
+        failure rather than retrying blindly.
+    """
     r = httpx.post(
         f"https://api.github.com/repos/{repo}/issues/{issue_number}/comments",
         headers={

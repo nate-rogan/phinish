@@ -3,7 +3,6 @@
 CLI:
   pixi run python scripts/predict.py --date 2026-12-31 --venue "MSG"
 """
-from __future__ import annotations
 
 import argparse
 import pickle

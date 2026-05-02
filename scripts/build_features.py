@@ -6,7 +6,6 @@ Outputs to state/features/:
   transition_matrix.json
   venue_history.json
 """
-from __future__ import annotations
 
 import sys
 from collections import Counter, defaultdict
@@ -37,7 +36,26 @@ RECENT_WINDOWS = (50, 20)
 
 
 def build_song_gaps(shows: list[Show]) -> dict[str, SongGap]:
-    """Compute current rotation gap (shows since last play) for each song."""
+    """Compute current rotation gap (shows since last play) for each song.
+
+    Walks shows in order and records the most recent index at which
+    each song appears. The gap is the number of shows between that
+    last appearance and the most recent show in the dataset — a
+    "gap" of 0 means the song was played at the most recent show.
+
+    Parameters
+    ----------
+    shows
+        Chronological list of shows. Order matters: the last show in
+        the list is treated as "now" for gap purposes.
+
+    Returns
+    -------
+    dict[str, SongGap]
+        ``{song -> {gap, last_played}}``. Songs that never appear in
+        ``shows`` are omitted entirely (callers can default to a large
+        sentinel gap for those).
+    """
     last_played: dict[str, str] = {}
     last_shown_idx: dict[str, int] = {}
     for idx, show in enumerate(shows):

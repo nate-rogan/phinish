@@ -2,7 +2,6 @@
 
 Writes models/evaluation.json and prints a comparison table.
 """
-from __future__ import annotations
 
 import pickle
 import sys

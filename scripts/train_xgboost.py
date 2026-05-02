@@ -8,7 +8,6 @@ Writes:
   models/calibrator.pkl
   models/xgboost_meta.json
 """
-from __future__ import annotations
 
 import math
 import pickle
@@ -61,7 +60,19 @@ XGB_PARAMS = dict(
 
 
 def feature_names() -> list[str]:
-    """Return the ordered list of feature names produced by `featurize()`."""
+    """Return the ordered list of feature names produced by ``featurize()``.
+
+    Kept in lockstep with ``featurize()`` so the model card and debug
+    tooling can map a feature index back to a meaningful name.
+    Day-of-week is one-hot expanded as ``dow_<day>`` over all seven
+    weekdays.
+
+    Returns
+    -------
+    list[str]
+        Ordered feature names; positional alignment with rows produced
+        by ``featurize()``.
+    """
     base = [
         "gap", "log_gap", "is_bustout", "lifetime_freq",
         "recent_freq_50", "recent_freq_20",
@@ -170,7 +181,20 @@ class StreamingState:
 
 
 def days_between(d1: str, d2: str) -> int:
-    """Absolute day count between two ISO dates; 0 if either is empty."""
+    """Absolute day count between two ISO dates; 0 if either is empty.
+
+    Parameters
+    ----------
+    d1, d2
+        ISO date strings (``YYYY-MM-DD``). Either may be empty, which
+        triggers the zero fallback (used for the very first show in
+        the dataset, where ``state.last_show_date`` is still empty).
+
+    Returns
+    -------
+    int
+        Absolute day difference. Order of arguments doesn't matter.
+    """
     if not d1 or not d2:
         return 0
     return abs((date.fromisoformat(d2) - date.fromisoformat(d1)).days)

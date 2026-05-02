@@ -1,5 +1,4 @@
 """Unit tests for build_features."""
-from __future__ import annotations
 
 from scripts.build_features import (
     build_song_gaps,
