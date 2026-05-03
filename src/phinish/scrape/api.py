@@ -49,7 +49,7 @@ log = structlog.get_logger()
 
 API_BASE = "https://api.phish.net/v5"
 FIRST_YEAR = 1983
-TIMEOUT = 30.0
+TIMEOUT = 120.0
 
 
 def _is_retryable(exc: BaseException) -> bool:
@@ -79,7 +79,7 @@ def get_api_key() -> str:
     return key
 
 
-@stamina.retry(on=_is_retryable, attempts=3)
+@stamina.retry(on=_is_retryable, attempts=5)
 def fetch(client: httpx.Client, path: str, key: str) -> list[dict]:
     """GET an API path and return its ``data`` payload.
 
@@ -125,11 +125,15 @@ def group_into_shows(rows: list[dict], canonical: dict[str, str]) -> list[Show]:
     show_meta: dict[str, ApiSetlistRow] = {}
     sets_acc: dict[str, dict[str, list[SongEntry]]] = defaultdict(lambda: defaultdict(list))
     for raw in rows:
-        row = msgspec.convert(raw, ApiSetlistRow, strict=False)
-        if not row.showid:
+        # Phish.net API returns some fields as int inconsistently; stringify everything
+        # except position (genuinely numeric) so msgspec can parse cleanly.
+        normalized = {k: (v if k == "position" else str(v)) for k, v in raw.items()}
+        row = msgspec.convert(normalized, ApiSetlistRow, strict=False)
+        sid = row.showid
+        if not sid:
             continue
-        if row.showid not in show_meta:
-            show_meta[row.showid] = row
+        if sid not in show_meta:
+            show_meta[sid] = row
         entry = SongEntry(
             song=canonicalize_song(row.song, canonical),
             song_id=row.songid,
@@ -138,7 +142,7 @@ def group_into_shows(rows: list[dict], canonical: dict[str, str]) -> list[Show]:
             is_jam=row.is_jam,
             is_reprise=row.is_reprise,
         )
-        sets_acc[row.showid][row.set_key].append(entry)
+        sets_acc[sid][row.set_key].append(entry)
 
     # Second pass: build immutable Show structs
     out: list[Show] = []
@@ -209,7 +213,8 @@ def normalize_songs(rows: list[dict]) -> list[SongCatalogEntry]:
     """
     out: list[SongCatalogEntry] = []
     for raw in rows:
-        row = msgspec.convert(raw, ApiSongRow, strict=False)
+        normalized = {k: (v if k == "times_played" else str(v)) for k, v in raw.items()}
+        row = msgspec.convert(normalized, ApiSongRow, strict=False)
         artist = row.resolved_artist
         out.append(SongCatalogEntry(
             song_id=row.resolved_id,
@@ -239,7 +244,8 @@ def normalize_venues(rows: list[dict]) -> dict[str, VenueRecord]:
     """
     venues: dict[str, VenueRecord] = {}
     for raw in rows:
-        row = msgspec.convert(raw, ApiVenueRow, strict=False)
+        normalized = {k: str(v) for k, v in raw.items()}
+        row = msgspec.convert(normalized, ApiVenueRow, strict=False)
         name = row.resolved_name
         if not name:
             continue
@@ -289,15 +295,33 @@ def main(year: int | None = None) -> None:
             save_json(SETLISTS_PATH, merged)
             log.info("merged_setlists", year=year, new=len(new_shows), total=len(merged))
 
-        log.info("fetching_songs_catalog")
-        songs = normalize_songs(fetch(client, "songs.json", key))
-        save_json(SONGS_PATH, songs)
-        log.info("wrote_songs", count=len(songs))
+        # Catalog endpoints are large and slow; skip on incremental runs
+        # when the files already exist.
+        if year is None or not SONGS_PATH.exists():
+            try:
+                log.info("fetching_songs_catalog")
+                songs = normalize_songs(fetch(client, "songs.json", key))
+                save_json(SONGS_PATH, songs)
+                log.info("wrote_songs", count=len(songs))
+            except Exception as exc:
+                log.warning("songs_catalog_failed", error=str(exc))
+                if not SONGS_PATH.exists():
+                    save_json(SONGS_PATH, [])
+        else:
+            log.info("skipping_songs_catalog", reason="file exists on incremental run")
 
-        log.info("fetching_venues")
-        venues = normalize_venues(fetch(client, "venues.json", key))
-        save_json(VENUES_PATH, venues)
-        log.info("wrote_venues", count=len(venues))
+        if year is None or not VENUES_PATH.exists():
+            try:
+                log.info("fetching_venues")
+                venues = normalize_venues(fetch(client, "venues.json", key))
+                save_json(VENUES_PATH, venues)
+                log.info("wrote_venues", count=len(venues))
+            except Exception as exc:
+                log.warning("venues_fetch_failed", error=str(exc))
+                if not VENUES_PATH.exists():
+                    save_json(VENUES_PATH, {})
+        else:
+            log.info("skipping_venues", reason="file exists on incremental run")
 
 
 def cli() -> None:
