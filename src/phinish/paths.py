@@ -3,10 +3,10 @@
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
-DATA_DIR = ROOT / "data" / "processed"
-FEATURES_DIR = ROOT / "state" / "features"
-MODELS_DIR = ROOT / "models"
-STATE_DIR = ROOT / "state"
+DATA_DIR = ROOT / "data" / "source"
+FEATURES_DIR = ROOT / "data" / "state" / "features"
+MODELS_DIR = ROOT / "data" / "models"
+STATE_DIR = ROOT / "data" / "state"
 
 SETLISTS_PATH = DATA_DIR / "setlists.json"
 SONGS_PATH = DATA_DIR / "songs.json"

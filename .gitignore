@@ -27,8 +27,10 @@ Thumbs.db
 # Logs
 *.log
 
-# Phish.net raw API data is not stored permanently in the repo (per API ToS).
-# Aggregate features (state/features/) are derivative stats and committed
-# alongside the models — same legal/ethical posture as the trained model files.
-data/raw/
-data/processed/
+# All generated data lives under data/ — only canonical_names.json is committed.
+data/source/
+data/state/
+data/models/
+!data/state/features/.gitkeep
+!data/models/.gitkeep
+!data/models/model_card.md

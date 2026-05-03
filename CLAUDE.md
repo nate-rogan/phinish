@@ -54,7 +54,7 @@ src/phinish/
 **Conventions**:
 - Types live in their owning subpackage's `types.py`. Cross-stage code imports from `phinish.<stage>.types`, never from `phinish.utils`.
 - `__init__.py` re-exports only the subpackage's *public* surface: types + the entry-point function (`cli` or `main`). Internal helpers stay reachable only via `phinish.<stage>.<module>`.
-- `paths.py` owns all filesystem constants (`ROOT`, `DATA_DIR`, `MODELS_DIR`, …). Import paths from `phinish.paths` (or via the `phinish.utils` re-export).
+- `paths.py` owns all filesystem constants (`ROOT`, `DATA_DIR`, `MODELS_DIR`, …). Import paths from `phinish.paths` (or via the `phinish.utils` re-export). All generated data lives under `data/`: `data/source/` (API data, gitignored), `data/state/` (features), `data/models/` (trained artifacts). Only `data/canonical_names.json` is committed.
 - `artifacts.py` centralizes repeated `load_json` + `msgspec.convert` patterns and cross-cutting scoring helpers (`markov_score_per_song`, `gap_score_per_song`, `calibrated_predict_proba`).
 - `utils/` has three sub-modules: `constants.py` (pure data), `io.py` (disk/network I/O), `helpers.py` (pure transforms). The `__init__.py` re-exports everything, so `from phinish.utils import X` works.
 - `train/state.py` exists because both `train` and `predict` need `StreamingState`/`featurize`. When two stages share a non-type primitive, give it its own module rather than picking one stage to "own" it.
