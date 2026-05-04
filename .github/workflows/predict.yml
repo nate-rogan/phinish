@@ -14,7 +14,7 @@ concurrency:
 jobs:
   predict:
     runs-on: ubuntu-latest
-    if: github.event.label.name == 'predict'
+    if: github.event.label.name == 'wf:predict'
     steps:
       - uses: actions/checkout@v4
         with:
@@ -33,24 +33,23 @@ jobs:
           ISSUE_AUTHOR: ${{ github.event.issue.user.login }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Commit prediction outputs
-        # Only the prediction artifacts (not raw setlist data) are committed.
         run: |
           git config user.name "phinish[bot]"
           git config user.email "bot@users.noreply.github.com"
-          git add state/usage.json state/predictions_log.json state/latest_prediction.json reasons.md
+          git add data/state/ reasons.md
           git diff --staged --quiet || git commit -m "prediction #${{ github.event.issue.number }}"
           git push
       - name: Update labels and close
         if: success()
         run: |
-          gh issue edit ${{ github.event.issue.number }} --remove-label "predict" --add-label "predicted"
+          gh issue edit ${{ github.event.issue.number }} --remove-label "wf:predict" --add-label "wf:done"
           gh issue close ${{ github.event.issue.number }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Mark failure
         if: failure()
         run: |
-          gh issue edit ${{ github.event.issue.number }} --remove-label "predict" --add-label "failed"
+          gh issue edit ${{ github.event.issue.number }} --remove-label "wf:predict" --add-label "wf:failed"
           gh issue close ${{ github.event.issue.number }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
