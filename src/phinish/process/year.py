@@ -153,7 +153,7 @@ def _run_pipeline(year: int | None) -> None:
 def _read_year_from_env(gh: _GhContext) -> int | None:
     """Return the year specified in the issue, or None for a full scrape."""
     fields = parse_issue_form(os.environ.get("ISSUE_BODY", ""))
-    year_str = sanitize(fields.get("year", ""), 8)
+    year_str = sanitize(fields.get("year (optional)", fields.get("year", "")), 8)
     if not year_str:
         return None
     if not VALID_YEAR.match(year_str):
