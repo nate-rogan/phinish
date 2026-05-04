@@ -22,28 +22,28 @@ src/phinish/
 │   ├── io.py             # load_json, save_json, post_issue_comment
 │   └── helpers.py        # sanitize, venue matching, dates, show utils, rate limiting
 ├── scrape/               # Phish.net API ingestion
-│   ├── __init__.py       # re-exports cli + types
-│   ├── api.py            # fetch / group_into_shows / normalize_*
+│   ├── __init__.py       # re-exports scrape, cli, types
+│   ├── api.py            # scrape() + fetch / group_into_shows / normalize_*
 │   └── types.py          # Show, SongEntry, SongCatalogEntry, VenueRecord
 ├── features/             # raw setlists → aggregate stats
-│   ├── __init__.py       # re-exports main + types
-│   ├── build.py          # build_song_gaps / _stats / _transition_matrix / _venue_history
+│   ├── __init__.py       # re-exports build_features, main, types
+│   ├── build.py          # build_features() + build_song_gaps / _stats / _transition_matrix / _venue_history
 │   └── types.py          # SongStats, SongGap, VenueHistory, TransitionMatrix, TransitionDist
 ├── train/                # ML model fitting
 │   ├── __init__.py       # re-exports state primitives + types
 │   ├── state.py          # StreamingState, featurize, MIN_PLAYS_FOR_CANDIDATE
-│   ├── baseline.py
-│   ├── markov.py
-│   ├── xgboost.py
-│   ├── ensemble.py
+│   ├── baseline.py       # train_baseline() + main()
+│   ├── markov.py         # train_markov() + main()
+│   ├── xgboost.py        # train_xgboost() + main()
+│   ├── ensemble.py       # train_ensemble() + main()
 │   └── types.py          # EnsembleWeights
 ├── predict/              # inference
 │   ├── __init__.py       # re-exports cli + types
 │   ├── pipeline.py       # predict() + helpers
 │   └── types.py          # Prediction, PredictionItem, PredictionWeights
 ├── evaluate/             # backtesting
-│   ├── __init__.py
-│   └── backtest.py
+│   ├── __init__.py       # re-exports evaluate, main
+│   └── backtest.py       # evaluate() + main()
 └── process/              # GitHub Actions entry points
     ├── __init__.py
     ├── issue.py          # process_issue (predict-on-issue)
@@ -53,7 +53,7 @@ src/phinish/
 
 **Conventions**:
 - Types live in their owning subpackage's `types.py`. Cross-stage code imports from `phinish.<stage>.types`, never from `phinish.utils`.
-- `__init__.py` re-exports only the subpackage's *public* surface: types + the entry-point function (`cli` or `main`). Internal helpers stay reachable only via `phinish.<stage>.<module>`.
+- `__init__.py` re-exports only the subpackage's *public* surface: types + lightweight functions. Heavy entry points (those that import `artifacts` or cross-stage modules) stay in their own modules to avoid circular imports and are referenced directly in `pyproject.toml` entry points.
 - `paths.py` owns all filesystem constants (`ROOT`, `DATA_DIR`, `MODELS_DIR`, …). Import paths from `phinish.paths` (or via the `phinish.utils` re-export). All generated data lives under `data/`: `data/source/` (API data, gitignored), `data/state/` (features), `data/models/` (trained artifacts). Only `data/canonical_names.json` is committed.
 - `artifacts.py` centralizes repeated `load_json` + `msgspec.convert` patterns and cross-cutting scoring helpers (`markov_score_per_song`, `gap_score_per_song`, `calibrated_predict_proba`).
 - `utils/` has three sub-modules: `constants.py` (pure data), `io.py` (disk/network I/O), `helpers.py` (pure transforms). The `__init__.py` re-exports everything, so `from phinish.utils import X` works.
@@ -63,7 +63,7 @@ src/phinish/
 
 - **Run via pixi**: `pixi run -e dev pytest`, `pixi run -e dev ruff check .`. Never invoke a bare `python` or `pytest` — they pick up the wrong env.
 - **Editable install** via `[tool.pixi.pypi-dependencies] phinish = { path = ".", editable = true }`. Imports use `from phinish.X import Y`; no `sys.path` bootstrapping.
-- **CLI surface** is exposed via `[project.scripts]` (`phinish-predict`, `phinish-scrape`, `phinish-process-issue`, etc.). For modules with argparse, the entry point is `cli()`; for the rest the entry point is `main()`.
+- **CLI surface** is exposed via `[project.scripts]` (`phinish-predict`, `phinish-scrape`, `phinish-process-issue`, etc.). Each pipeline module has a library function (typed in → typed out, no I/O) and a thin `main()` wrapper that handles load/save. Modules with argparse (`scrape/api.py`, `predict/pipeline.py`) use `cli()` instead. Process entry points use descriptive names (`process_issue`, `process_year`) since they are inherently I/O-bound.
 - **Build backend**: hatchling, configured to package `src/phinish`.
 - **Verify before claiming done**: `pixi run -e dev ruff check . && pixi run -e dev pytest` must both pass.
 
