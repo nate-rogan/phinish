@@ -1,0 +1,122 @@
+{
+  "date": "2026-05-05",
+  "venue": "Boston Garden",
+  "venue_id": "v_boston_garden",
+  "city": "Boston, MD",
+  "setlist": {
+    "1": [
+      {
+        "song": "Maze",
+        "confidence": 0.016478453859838146,
+        "gap": 25
+      },
+      {
+        "song": "My Sweet One",
+        "confidence": 0.05888293402220365,
+        "gap": 103
+      },
+      {
+        "song": "Run Like an Antelope",
+        "confidence": 0.014615838952567033,
+        "gap": 3
+      },
+      {
+        "song": "Golgi Apparatus",
+        "confidence": 0.009739121815449241,
+        "gap": 21
+      },
+      {
+        "song": "Rift",
+        "confidence": 0.024447682602090064,
+        "gap": 3
+      },
+      {
+        "song": "The Old Home Place",
+        "confidence": 0.01816252882921756,
+        "gap": 27
+      },
+      {
+        "song": "Runaway Jim",
+        "confidence": 0.013818813600913324,
+        "gap": 27
+      },
+      {
+        "song": "Peaches en Regalia",
+        "confidence": 0.01731017835283988,
+        "gap": 25
+      },
+      {
+        "song": "Funky Bitch",
+        "confidence": 0.012873339691639236,
+        "gap": 22
+      },
+      {
+        "song": "The Squirming Coil",
+        "confidence": 0.011322139616421768,
+        "gap": 25
+      }
+    ],
+    "2": [
+      {
+        "song": "Simple",
+        "confidence": 0.029236001221627266,
+        "gap": 3
+      },
+      {
+        "song": "Slave to the Traffic Light",
+        "confidence": 0.021668378003274612,
+        "gap": 3
+      },
+      {
+        "song": "Silent in the Morning",
+        "confidence": 0.00616297369407999,
+        "gap": 44
+      },
+      {
+        "song": "Yerushalayim Shel Zahav",
+        "confidence": 0.0043812686899081426,
+        "gap": 336
+      },
+      {
+        "song": "Weekapaug Groove",
+        "confidence": 0.019372075394747845,
+        "gap": 2
+      },
+      {
+        "song": "Oblivion",
+        "confidence": 0.08163831115380134,
+        "gap": 3
+      },
+      {
+        "song": "Ghost",
+        "confidence": 0.2158205328515293,
+        "gap": 1
+      },
+      {
+        "song": "Mike's Song",
+        "confidence": 0.04789786444324852,
+        "gap": 2
+      }
+    ],
+    "encore": [
+      {
+        "song": "Amazing Grace",
+        "confidence": 0.0040205848928282625,
+        "gap": 1017
+      },
+      {
+        "song": "Simeon",
+        "confidence": 0.030486422006912706,
+        "gap": 6
+      }
+    ]
+  },
+  "avg_confidence": 0.032916772184756894,
+  "model_version": 2024,
+  "weights": {
+    "xgboost": 0.5,
+    "markov": 0.0,
+    "gap": 0.0,
+    "venue": 0.5
+  }
+}
