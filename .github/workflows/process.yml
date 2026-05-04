@@ -28,7 +28,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: data/source
-          key: phishnet-source-${{ format('{0:yyyy-MM-dd}', github.event.repository.updated_at) }}
+          key: phishnet-source-${{ github.run_id }}
           restore-keys: |
             phishnet-source-
       - name: Process year and retrain
