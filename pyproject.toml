@@ -12,10 +12,10 @@ phinish-train-baseline = "phinish.train.baseline:main"
 phinish-train-markov = "phinish.train.markov:main"
 phinish-train-xgboost = "phinish.train.xgboost:main"
 phinish-train-ensemble = "phinish.train.ensemble:main"
-phinish-evaluate = "phinish.evaluate:main"
+phinish-evaluate = "phinish.evaluate.backtest:main"
 phinish-predict = "phinish.predict:cli"
-phinish-process-issue = "phinish.process.issue:main"
-phinish-process-year = "phinish.process.year:main"
+phinish-process-issue = "phinish.process.issue:process_issue"
+phinish-process-year = "phinish.process.year:process_year"
 
 [build-system]
 requires = ["hatchling"]

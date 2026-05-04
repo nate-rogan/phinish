@@ -1486,7 +1486,7 @@ packages:
 - pypi: ./
   name: phinish
   version: 0.1.0
-  sha256: 3350578dd246650005229a8c86fdf04f7b740661a09da309c5e7d26d36f9609d
+  sha256: ba897022c7b93fdfd11e32e6484c5d5685ec739f6f1d476d7f94bccdd0fe4daa
   requires_python: '>=3.12'
 - conda: https://conda.anaconda.org/conda-forge/noarch/pluggy-1.6.0-pyhf9edf01_1.conda
   sha256: e14aafa63efa0528ca99ba568eaf506eb55a0371d12e6250aaaa61718d2eb62e
