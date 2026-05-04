@@ -11,7 +11,7 @@ from phinish.train.state import (
 )
 from phinish.train.types import EnsembleWeights
 
-__all__ = [
+__all__ = (
     "MIN_PLAYS_FOR_CANDIDATE",
     "TEST_START_YEAR",
     "TRAIN_END_YEAR",
@@ -20,4 +20,4 @@ __all__ = [
     "StreamingState",
     "feature_names",
     "featurize",
-]
+)

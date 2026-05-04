@@ -1,5 +1,5 @@
 """Evaluate stage: backtest each model on the test holdout."""
 
-from phinish.evaluate.backtest import main
+from phinish.evaluate.backtest import evaluate, main
 
-__all__ = ["main"]
+__all__ = ("evaluate", "main")

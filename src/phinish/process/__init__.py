@@ -2,4 +2,4 @@
 
 from phinish.process.types import Usage
 
-__all__ = ["Usage"]
+__all__ = ("Usage",)

@@ -44,7 +44,7 @@ from phinish.utils.helpers import (
 )
 from phinish.utils.io import load_json, post_issue_comment, save_json
 
-__all__ = [
+__all__ = (
     # paths
     "CANONICAL_NAMES_PATH",
     "DATA_DIR",
@@ -83,4 +83,4 @@ __all__ = [
     "special_show_flags",
     "update_usage",
     "venue_id",
-]
+)
