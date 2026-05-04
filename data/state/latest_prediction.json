@@ -1,117 +1,117 @@
 {
-  "date": "1999-02-02",
-  "venue": "Miami",
-  "venue_id": "v_miami",
-  "city": "",
+  "date": "1999-12-17",
+  "venue": "Hampton Colisem",
+  "venue_id": "v_hampton_colisem",
+  "city": "Hampton,VA",
   "setlist": {
     "1": [
       {
-        "song": "Ginseng Sullivan",
-        "confidence": 0.32212164998054504,
-        "gap": 69
-      },
-      {
-        "song": "Carini",
-        "confidence": 0.0006663367385044694,
-        "gap": 5
-      },
-      {
-        "song": "The Inlaw Josie Wales",
-        "confidence": 0.2532273828983307,
-        "gap": 59
-      },
-      {
-        "song": "Back on the Train",
-        "confidence": 0.002298185136169195,
-        "gap": 15
-      },
-      {
-        "song": "Chalk Dust Torture",
-        "confidence": 0.001464600907638669,
-        "gap": 10
-      },
-      {
-        "song": "Set Your Soul Free",
-        "confidence": 0.0006310485769063234,
-        "gap": 9
-      },
-      {
-        "song": "Lonely Trip",
-        "confidence": 0.000808727229014039,
-        "gap": 5
-      },
-      {
-        "song": "I Never Needed You Like This Before",
-        "confidence": 0.0001912078441819176,
-        "gap": 15
-      },
-      {
         "song": "Bathtub Gin",
-        "confidence": 0.0033354482147842646,
+        "confidence": 0.5796376466751099,
         "gap": 10
+      },
+      {
+        "song": "Runaway Jim",
+        "confidence": 0.5212351083755493,
+        "gap": 6
       },
       {
         "song": "Wolfman's Brother",
-        "confidence": 0.0015156455338001251,
+        "confidence": 0.32535862922668457,
         "gap": 5
+      },
+      {
+        "song": "Sample in a Jar",
+        "confidence": 0.4162460267543793,
+        "gap": 9
+      },
+      {
+        "song": "Carini",
+        "confidence": 0.12026592344045639,
+        "gap": 5
+      },
+      {
+        "song": "Farmhouse",
+        "confidence": 0.31596261262893677,
+        "gap": 6
+      },
+      {
+        "song": "Chalk Dust Torture",
+        "confidence": 0.14791008830070496,
+        "gap": 10
+      },
+      {
+        "song": "Back on the Train",
+        "confidence": 0.11515029519796371,
+        "gap": 15
+      },
+      {
+        "song": "Character Zero",
+        "confidence": 0.2829384505748749,
+        "gap": 8
+      },
+      {
+        "song": "Reba",
+        "confidence": 0.32333946228027344,
+        "gap": 7
       }
     ],
     "2": [
       {
-        "song": "Jam",
-        "confidence": 0.4330751299858093,
-        "gap": 65
+        "song": "Simple",
+        "confidence": 0.5854836702346802,
+        "gap": 10
       },
       {
-        "song": "Sand",
-        "confidence": 0.001086686854250729,
+        "song": "Mike's Song",
+        "confidence": 0.534877598285675,
         "gap": 7
       },
       {
-        "song": "Gotta Jibboo",
-        "confidence": 0.006034434773027897,
-        "gap": 21
+        "song": "Sand",
+        "confidence": 0.2839745283126831,
+        "gap": 7
       },
       {
-        "song": "First Tube",
-        "confidence": 0.0032065059058368206,
+        "song": "Also Sprach Zarathustra",
+        "confidence": 0.48811808228492737,
         "gap": 8
       },
       {
-        "song": "The Horse",
-        "confidence": 0.15868322551250458,
-        "gap": 67
+        "song": "Tweezer",
+        "confidence": 0.4284740388393402,
+        "gap": 7
       },
       {
-        "song": "Silent in the Morning",
-        "confidence": 0.001336183282546699,
-        "gap": 52
+        "song": "First Tube",
+        "confidence": 0.29646554589271545,
+        "gap": 8
       },
       {
-        "song": "Heavy Things",
-        "confidence": 0.019553398713469505,
-        "gap": 27
+        "song": "Gotta Jibboo",
+        "confidence": 0.1680123656988144,
+        "gap": 21
       },
       {
-        "song": "About to Run",
-        "confidence": 0.00017909164307639003,
-        "gap": 9
+        "song": "Weekapaug Groove",
+        "confidence": 0.21915654838085175,
+        "gap": 7
       }
     ],
     "encore": [
       {
-        "song": "More",
-        "confidence": 0.0003088464727625251,
-        "gap": 12
+        "song": "Backwards Down the Number Line",
+        "confidence": 0.14195065200328827,
+        "gap": 8
       },
       {
-        "song": "Tweezer Reprise",
-        "confidence": 0.0005353423184715211,
-        "gap": 7
+        "song": "Say It To Me S.A.N.T.O.S.",
+        "confidence": 0.12653471529483795,
+        "gap": 10
       }
     ]
   },
-  "avg_confidence": 0.06051295392608154,
+  "avg_confidence": 0.32105459943413733,
   "model_version": 2024,
   "weights": {
     "xgboost": 0.5,
