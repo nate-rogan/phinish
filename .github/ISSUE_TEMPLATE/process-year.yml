@@ -1,6 +1,6 @@
 name: 🔄 Retrain Models
 description: Re-scrape Phish.net and retrain all models. Idempotent — safe to repeat.
-labels: ["process"]
+labels: ["wf:process"]
 body:
   - type: markdown
     attributes:

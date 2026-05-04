@@ -1,6 +1,6 @@
 name: 🎸 Predict a Show
 description: Get a setlist prediction for a Phish show
-labels: ["predict"]
+labels: ["wf:predict"]
 body:
   - type: markdown
     attributes:
