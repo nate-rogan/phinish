@@ -129,22 +129,48 @@ def _print_summary(summary: dict[str, dict]) -> None:
                   f"F1={m['f1']:.3f}  Opener={m['opener_accuracy']:.3f}")
 
 
-def main() -> None:
-    """Backtest each model on the test holdout and write models/evaluation.json."""
-    shows = load_shows()
-    cover_set = load_cover_set()
-    xgb = load_xgb_model()
-    calibrator = load_calibrator()
-    transition = load_transition_matrix()
-    venue_history = load_venue_history()
-    stats = load_song_stats()
-    gaps = load_song_gaps()
-    markov = markov_score_per_song(transition)
-    gap_scores = gap_score_per_song(stats, gaps)
-    set_openers_1 = transition.set_openers.get("1", {})
-    weights = load_ensemble_weights()
-    w = (weights.w_xgboost, weights.w_markov, weights.w_gap, weights.w_venue)
+def evaluate(
+    shows: list[Show],
+    cover_set: set[str],
+    xgb,
+    calibrator,
+    stats: dict[str, SongStats],
+    markov: dict[str, float],
+    gap_scores: dict[str, float],
+    venue_history: dict[str, VenueHistory],
+    weights: tuple[float, float, float, float],
+    set_openers_1: dict[str, float],
+) -> dict:
+    """Backtest each model on the test holdout.
 
+    Parameters
+    ----------
+    shows
+        Full historical show list (chronological).
+    cover_set
+        Set of song names considered covers.
+    xgb
+        Trained XGBoost classifier.
+    calibrator
+        Optional Platt calibrator (or ``None``).
+    stats
+        Per-song statistics.
+    markov
+        Global Markov score per song.
+    gap_scores
+        Global gap-based score per song.
+    venue_history
+        Per-venue historical song frequencies.
+    weights
+        Normalized ``(w_xgboost, w_markov, w_gap, w_venue)`` weights.
+    set_openers_1
+        Opener probabilities for set 1 from the transition matrix.
+
+    Returns
+    -------
+    dict
+        Evaluation payload with ``test_start_year`` and ``summary``.
+    """
     state = StreamingState()
     results: dict[str, list[dict]] = {m: [] for m in MODEL_NAMES}
     opener_correct = dict.fromkeys(MODEL_NAMES, 0)
@@ -160,7 +186,7 @@ def main() -> None:
             if candidates:
                 rankings = _rank_all_models(
                     state, show, candidates, cover_set,
-                    xgb, calibrator, stats, markov, gap_scores, venue_history, w,
+                    xgb, calibrator, stats, markov, gap_scores, venue_history, weights,
                 )
                 for name, ranked in rankings.items():
                     results[name].append(metrics(ranked, played))
@@ -177,11 +203,31 @@ def main() -> None:
         state.update(show)
 
     summary = _summarize(results, opener_correct, opener_total)
-    save_json(MODELS_DIR / "evaluation.json", {
-        "test_start_year": TEST_START_YEAR,
-        "summary": summary,
-    })
-    _print_summary(summary)
+    return {"test_start_year": TEST_START_YEAR, "summary": summary}
+
+
+def main() -> None:
+    """Console entry point: load artifacts, run backtest, write evaluation to disk."""
+    shows = load_shows()
+    cover_set = load_cover_set()
+    xgb = load_xgb_model()
+    calibrator = load_calibrator()
+    transition = load_transition_matrix()
+    venue_history = load_venue_history()
+    stats = load_song_stats()
+    gaps = load_song_gaps()
+    markov = markov_score_per_song(transition)
+    gap_scores = gap_score_per_song(stats, gaps)
+    set_openers_1 = transition.set_openers.get("1", {})
+    weights_obj = load_ensemble_weights()
+    w = (weights_obj.w_xgboost, weights_obj.w_markov, weights_obj.w_gap, weights_obj.w_venue)
+
+    result = evaluate(
+        shows, cover_set, xgb, calibrator, stats, markov, gap_scores,
+        venue_history, w, set_openers_1,
+    )
+    save_json(MODELS_DIR / "evaluation.json", result)
+    _print_summary(result["summary"])
 
 
 if __name__ == "__main__":

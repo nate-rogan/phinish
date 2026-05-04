@@ -261,8 +261,8 @@ def normalize_venues(rows: list[dict]) -> dict[str, VenueRecord]:
     return venues
 
 
-def main(year: int | None = None) -> None:
-    """Pull setlists/songs/venues from Phish.net and persist to data/processed/.
+def scrape(year: int | None = None) -> None:
+    """Pull setlists/songs/venues from Phish.net and persist to data/source/.
 
     Parameters
     ----------
@@ -329,7 +329,7 @@ def cli() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--year", type=int, default=None, help="Single year (else full pull)")
     args = parser.parse_args()
-    main(args.year)
+    scrape(args.year)
 
 
 if __name__ == "__main__":

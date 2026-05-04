@@ -8,6 +8,8 @@ Writes:
 """
 
 import pickle
+from dataclasses import dataclass
+from typing import Any
 
 import numpy as np
 import structlog
@@ -69,13 +71,31 @@ def build_training_matrix(
     return np.array(rows, dtype=np.float32), np.array(labels, dtype=np.int8), show_dates, state
 
 
-def main() -> None:
-    """Train XGBoost song selector with temporal split and Platt calibration."""
-    if not SETLISTS_PATH.exists():
-        raise SystemExit(f"Missing {SETLISTS_PATH}; run phinish-scrape first.")
-    shows = load_shows()
-    cover_set = load_cover_set()
+@dataclass(slots=True)
+class XGBoostResult:
+    """All outputs of XGBoost training."""
 
+    model: Any
+    calibrator: Any | None
+    state: StreamingState
+    meta: dict
+
+
+def train_xgboost(shows: list[Show], cover_set: set[str]) -> XGBoostResult:
+    """Train XGBoost song selector with temporal split and Platt calibration.
+
+    Parameters
+    ----------
+    shows
+        Full historical show list.
+    cover_set
+        Set of song names considered covers.
+
+    Returns
+    -------
+    XGBoostResult
+        Trained model, calibrator, final streaming state, and metadata.
+    """
     log.info("building_train_matrix", end_year=TRAIN_END_YEAR)
     X_train, y_train, _, _ = build_training_matrix(shows, cover_set, 1983, TRAIN_END_YEAR)
     log.info("train_matrix_built", shape=X_train.shape, positives=int(y_train.sum()))
@@ -85,7 +105,7 @@ def main() -> None:
     log.info("val_matrix_built", shape=X_val.shape, positives=int(y_val.sum()))
 
     if X_train.size == 0:
-        raise SystemExit("No training rows generated. Check data/processed/setlists.json.")
+        raise RuntimeError("No training rows generated. Check setlists data.")
 
     log.info("fitting_xgboost")
     model = XGBClassifier(**XGB_PARAMS)
@@ -100,11 +120,7 @@ def main() -> None:
         calibrator = None
         log.warning("skipping_calibration", reason="no validation rows")
 
-    MODELS_DIR.mkdir(parents=True, exist_ok=True)
-    (MODELS_DIR / "xgboost_song_selector.pkl").write_bytes(pickle.dumps(model))
-    (MODELS_DIR / "calibrator.pkl").write_bytes(pickle.dumps(calibrator))
-    STATE_SNAPSHOT_PATH.write_bytes(pickle.dumps(final_state))
-    save_json(MODELS_DIR / "xgboost_meta.json", {
+    meta = {
         "feature_names": feature_names(),
         "n_train_rows": int(X_train.shape[0]),
         "n_val_rows": int(X_val.shape[0]),
@@ -112,7 +128,20 @@ def main() -> None:
         "min_plays_for_candidate": MIN_PLAYS_FOR_CANDIDATE,
         "train_end_year": TRAIN_END_YEAR,
         "val_year": VAL_YEAR,
-    })
+    }
+    return XGBoostResult(model=model, calibrator=calibrator, state=final_state, meta=meta)
+
+
+def main() -> None:
+    """Console entry point: load data, train XGBoost, write artifacts to disk."""
+    if not SETLISTS_PATH.exists():
+        raise SystemExit(f"Missing {SETLISTS_PATH}; run phinish-scrape first.")
+    result = train_xgboost(load_shows(), load_cover_set())
+    MODELS_DIR.mkdir(parents=True, exist_ok=True)
+    (MODELS_DIR / "xgboost_song_selector.pkl").write_bytes(pickle.dumps(result.model))
+    (MODELS_DIR / "calibrator.pkl").write_bytes(pickle.dumps(result.calibrator))
+    STATE_SNAPSHOT_PATH.write_bytes(pickle.dumps(result.state))
+    save_json(MODELS_DIR / "xgboost_meta.json", result.meta)
     log.info("wrote_xgboost_model", path=str(MODELS_DIR / "xgboost_song_selector.pkl"))
 
 

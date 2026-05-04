@@ -234,23 +234,48 @@ def build_venue_history(shows: list[Show]) -> dict[str, VenueHistory]:
     return out
 
 
+def build_features(
+    shows: list, songs_catalog: list | None = None,
+) -> dict[str, object]:
+    """Build all feature artifacts from setlist data.
+
+    Parameters
+    ----------
+    shows
+        List of ``Show`` structs (the full historical dataset).
+    songs_catalog
+        Optional song catalog for cover detection. ``None`` skips cover tagging.
+
+    Returns
+    -------
+    dict[str, object]
+        Keys ``gaps``, ``stats``, ``transition``, ``venue_history`` mapping to
+        the four feature artifacts.
+    """
+    return {
+        "gaps": build_song_gaps(shows),
+        "stats": build_song_stats(shows, songs_catalog),
+        "transition": build_transition_matrix(shows),
+        "venue_history": build_venue_history(shows),
+    }
+
+
 def main() -> None:
-    """Build all feature artifacts from the canonical setlist data."""
+    """Console entry point: load data, build features, write to disk."""
     # Deferred import to avoid circular dependency: artifacts -> features.types
     # -> features.__init__ -> features.build -> artifacts.
     from phinish.artifacts import load_shows, load_songs_catalog
 
     if not SETLISTS_PATH.exists():
         raise SystemExit(f"Missing {SETLISTS_PATH}; run phinish-scrape first.")
-    shows = load_shows()
-    songs_catalog = load_songs_catalog()
 
+    result = build_features(load_shows(), load_songs_catalog())
     FEATURES_DIR.mkdir(parents=True, exist_ok=True)
-    log.info("building_features", shows=len(shows))
-    save_json(FEATURES_DIR / "song_gaps.json", build_song_gaps(shows))
-    save_json(FEATURES_DIR / "song_stats.json", build_song_stats(shows, songs_catalog))
-    save_json(FEATURES_DIR / "transition_matrix.json", build_transition_matrix(shows))
-    save_json(FEATURES_DIR / "venue_history.json", build_venue_history(shows))
+    log.info("building_features", shows=len(result["gaps"]))
+    save_json(FEATURES_DIR / "song_gaps.json", result["gaps"])
+    save_json(FEATURES_DIR / "song_stats.json", result["stats"])
+    save_json(FEATURES_DIR / "transition_matrix.json", result["transition"])
+    save_json(FEATURES_DIR / "venue_history.json", result["venue_history"])
     log.info("wrote_features", path=str(FEATURES_DIR))
 
 

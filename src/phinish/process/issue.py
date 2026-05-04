@@ -167,7 +167,7 @@ def _persist_outputs(prediction: Prediction, req: _IssueRequest, usage: Usage) -
     append_reasons(prediction, req.issue_number, req.author)
 
 
-def main() -> None:
+def process_issue() -> None:
     """Validate the issue, run predict, post the comment, and persist outputs."""
     req = _read_request()
     fields = parse_issue_form(req.body)
@@ -207,4 +207,4 @@ def main() -> None:
 
 
 if __name__ == "__main__":
-    main()
+    process_issue()

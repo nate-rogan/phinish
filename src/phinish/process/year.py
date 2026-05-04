@@ -133,7 +133,7 @@ def _pipeline_steps(year: int | None) -> list[tuple[str, Callable[[], None]]]:
     """Return the ordered ``(label, callable)`` pairs for the full retrain pipeline."""
     scrape_label = f"scrape year {year}" if year else "scrape (full pull)"
     return [
-        (scrape_label, lambda: scrape.main(year=year)),
+        (scrape_label, lambda: scrape.scrape(year=year)),
         ("build_features", features.main),
         ("train_baseline", train_baseline.main),
         ("train_markov", train_markov.main),
@@ -230,7 +230,7 @@ def _build_current(today: str, n_shows: int, scrape_target: str, summary: dict) 
     }
 
 
-def main() -> None:
+def process_year() -> None:
     """Run the full pipeline (scrape → features → train → evaluate) and post results."""
     gh = _GhContext(
         issue_number=int(os.environ.get("ISSUE_NUMBER", "0")),
@@ -266,4 +266,4 @@ def main() -> None:
 
 
 if __name__ == "__main__":
-    main()
+    process_year()

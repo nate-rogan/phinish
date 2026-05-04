@@ -150,49 +150,74 @@ def _grid_search_weights(
     return best_weights, best_score
 
 
-def _save_weights(
-    weights: tuple[float, float, float, float],
-    score: float | None,
-    n_records: int,
-) -> None:
-    """Persist ensemble weights and validation metadata.
+def train_ensemble(
+    shows: list[Show],
+    cover_set: set[str],
+    xgb,
+    calibrator,
+    venue_history: dict[str, VenueHistory],
+    markov: dict[str, float],
+    gap_scores: dict[str, float],
+) -> dict:
+    """Fit ensemble blending weights via grid search on validation shows.
 
     Parameters
     ----------
-    weights
-        Normalized ``(w_xgboost, w_markov, w_gap, w_venue)`` ensemble weights.
-    score
-        Validation Precision@25 for ``weights``; ``None`` when defaults are
-        written because no validation records were available.
-    n_records
-        Number of validation shows used when computing ``score``.
+    shows
+        Full historical show list (chronological).
+    cover_set
+        Set of song names considered covers.
+    xgb
+        Trained XGBoost classifier.
+    calibrator
+        Optional Platt calibrator (or ``None``).
+    venue_history
+        Per-venue historical song frequencies.
+    markov
+        Global Markov transition prior score per song.
+    gap_scores
+        Global gap-based prior score per song.
+
+    Returns
+    -------
+    dict
+        Ensemble weights payload with keys ``w_xgboost``, ``w_markov``,
+        ``w_gap``, ``w_venue``, ``val_precision_at_25``, ``val_year``,
+        ``n_val_shows``.
     """
-    wx, wm, wg, wv = weights
-    save_json(MODELS_DIR / "ensemble_weights.json", {
-        "w_xgboost": wx,
-        "w_markov": wm,
-        "w_gap": wg,
-        "w_venue": wv,
-        "val_precision_at_25": score,
-        "val_year": VAL_YEAR,
-        "n_val_shows": n_records,
-    })
+    val_records = _build_val_records(
+        shows, cover_set, xgb, calibrator, venue_history, markov, gap_scores,
+    )
+
+    if not val_records:
+        log.warning("no_val_shows", year=VAL_YEAR, action="using default weights")
+        wx, wm, wg, wv = (
+            DEFAULT_WEIGHTS["w_xgboost"], DEFAULT_WEIGHTS["w_markov"],
+            DEFAULT_WEIGHTS["w_gap"], DEFAULT_WEIGHTS["w_venue"],
+        )
+        return {
+            "w_xgboost": wx, "w_markov": wm, "w_gap": wg, "w_venue": wv,
+            "val_precision_at_25": None, "val_year": VAL_YEAR, "n_val_shows": 0,
+        }
+
+    _normalize_per_record(val_records)
+    best_weights, best_score = _grid_search_weights(val_records)
+    wx, wm, wg, wv = best_weights
+    log.info("best_weights", xgb=f"{wx:.2f}", markov=f"{wm:.2f}",
+             gap=f"{wg:.2f}", venue=f"{wv:.2f}", precision_at_25=f"{best_score:.3f}")
+    return {
+        "w_xgboost": wx, "w_markov": wm, "w_gap": wg, "w_venue": wv,
+        "val_precision_at_25": best_score, "val_year": VAL_YEAR,
+        "n_val_shows": len(val_records),
+    }
 
 
 def main() -> None:
-    """Fit and persist ensemble blending weights from validation shows.
-
-    Loads trained artifacts, reconstructs per-show component scores for
-    ``VAL_YEAR``, grid-searches normalized blending weights, and writes the best
-    result to ``models/ensemble_weights.json``. Falls back to project defaults
-    when the validation split has no eligible shows.
-    """
+    """Console entry point: load artifacts, fit ensemble weights, write to disk."""
     shows = load_shows()
     cover_set = load_cover_set()
-
     xgb = load_xgb_model()
     calibrator = load_calibrator()
-
     transition = load_transition_matrix()
     venue_history = load_venue_history()
     stats = load_song_stats()
@@ -200,24 +225,12 @@ def main() -> None:
     markov = markov_score_per_song(transition)
     gap_scores = gap_score_per_song(stats, gaps)
 
-    val_records = _build_val_records(
+    result = train_ensemble(
         shows, cover_set, xgb, calibrator, venue_history, markov, gap_scores,
     )
-
-    if not val_records:
-        log.warning("no_val_shows", year=VAL_YEAR, action="using default weights")
-        defaults = (DEFAULT_WEIGHTS["w_xgboost"], DEFAULT_WEIGHTS["w_markov"],
-                    DEFAULT_WEIGHTS["w_gap"], DEFAULT_WEIGHTS["w_venue"])
-        _save_weights(defaults, None, 0)
-        return
-
-    _normalize_per_record(val_records)
-    best_weights, best_score = _grid_search_weights(val_records)
-    _save_weights(best_weights, best_score, len(val_records))
-
-    wx, wm, wg, wv = best_weights
-    log.info("best_weights", xgb=f"{wx:.2f}", markov=f"{wm:.2f}",
-             gap=f"{wg:.2f}", venue=f"{wv:.2f}", precision_at_25=f"{best_score:.3f}")
+    MODELS_DIR.mkdir(parents=True, exist_ok=True)
+    save_json(MODELS_DIR / "ensemble_weights.json", result)
+    log.info("wrote_ensemble_weights", path=str(MODELS_DIR / "ensemble_weights.json"))
 
 
 if __name__ == "__main__":

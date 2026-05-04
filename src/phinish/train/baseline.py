@@ -19,16 +19,32 @@ def frequency_score(stats: dict[str, SongStats]) -> dict[str, float]:
     return {song: s.lifetime_frequency for song, s in stats.items()}
 
 
-def main() -> None:
-    """Compute baseline reference scores and write models/baselines.json."""
-    stats = load_song_stats()
-    gaps = load_song_gaps()
-    out = {
+def train_baseline(stats: dict[str, SongStats], gaps: dict) -> dict:
+    """Compute baseline reference scores.
+
+    Parameters
+    ----------
+    stats
+        Per-song statistics from ``song_stats.json``.
+    gaps
+        Per-song gap data from ``song_gaps.json``.
+
+    Returns
+    -------
+    dict
+        Baseline scores with keys ``frequency``, ``gap_weighted``, ``config``.
+    """
+    return {
         "frequency": frequency_score(stats),
         "gap_weighted": gap_score_per_song(stats, gaps),
         "config": {"recent_window": 50, "log_offset": 2},
     }
-    save_json(MODELS_DIR / "baselines.json", out)
+
+
+def main() -> None:
+    """Console entry point: load artifacts, train baselines, write to disk."""
+    result = train_baseline(load_song_stats(), load_song_gaps())
+    save_json(MODELS_DIR / "baselines.json", result)
     log.info("wrote_baselines", path=str(MODELS_DIR / "baselines.json"))
 
 
