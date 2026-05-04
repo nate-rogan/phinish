@@ -1,0 +1,13 @@
+{
+  "current": {
+    "trained_at": "2026-05-04T20:08:31",
+    "n_shows": 67,
+    "scrape_target": "year 2021",
+    "metrics": {
+      "precision_at_25": 0.0,
+      "opener_accuracy": 0.0,
+      "n_test_shows": 0
+    }
+  },
+  "previous": null
+}

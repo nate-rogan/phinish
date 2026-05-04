@@ -1,24 +1,15 @@
 # Phinish Model Card
 
-**Status:** Untrained — awaiting first run of `pixi run python scripts/process_year.py` (or end-to-end retrain via the `process` workflow).
+**Status:** Trained — last retrained on 2026-05-04T20:08:31 (year 2021).
 
-## Versions
+## Dataset
 
-| Component | Version | Updated |
-|---|---|---|
-| Dataset | — | — |
-| Gap-weighted baseline | — | — |
-| XGBoost song selector | — | — |
-| Markov chain (order 2) | — | — |
-| Ensemble weights | — | — |
-
-## Training Data
-
-Will be populated after first scrape: ~2,100 Phish shows from 1983–present, sourced from the Phish.net API v5.
+67 shows scraped fresh per retrain. Raw setlist data is not committed
+to the repo (see `.gitignore`); only trained model artifacts are persisted.
 
 ## Metrics
 
-Populated by `scripts/evaluate.py` on temporal holdout (train < 2024, validate = 2024, test ≥ 2025).
+Evaluated on temporal holdout (test ≥ 2025).
 
 | Model | Precision@25 | Recall | F1 | Opener Acc | Pair Match |
 |---|---|---|---|---|---|
@@ -32,9 +23,7 @@ Populated by `scripts/evaluate.py` on temporal holdout (train < 2024, validate =
 
 - **XGBoost:** `max_depth=6`, `learning_rate=0.1`, `n_estimators=300`, `scale_pos_weight=12`
 - **Markov:** order 2, Laplace smoothing `k=0.01`
-- **Calibration:** Platt scaling on validation set
+- **Calibration:** Platt scaling on validation set (2024)
 - **Ensemble:** grid search over `(w_xgb, w_markov, w_gap, w_venue)` optimizing Precision@25
 
-## Changelog
-
-- 2026-05-02: Initial structure committed; no models trained yet.
+See `models/manifest.json` for the full retrain history.
