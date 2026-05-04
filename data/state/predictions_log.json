@@ -7,5 +7,14 @@
     "venue_id": "v_boston_garden",
     "avg_confidence": 0.032916772184756894,
     "generated_at": "2026-05-04"
+  },
+  {
+    "issue_number": 24,
+    "author": "ffma-nate-rogan",
+    "date": "1999-02-02",
+    "venue": "Miami",
+    "venue_id": "v_miami",
+    "avg_confidence": 0.06051295392608154,
+    "generated_at": "2026-05-04"
   }
 ]
