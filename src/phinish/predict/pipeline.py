@@ -18,7 +18,6 @@ from phinish.artifacts import (
     load_calibrator,
     load_cover_set,
     load_ensemble_weights,
-    load_shows,
     load_song_gaps,
     load_song_stats,
     load_transition_matrix,
@@ -54,7 +53,6 @@ OPENER_BLEND = 0.5  # equal weight to opener/closer history vs. base score
 class _Artifacts:
     """All loaded model artifacts and precomputed scores needed for inference."""
 
-    shows: list[Show]
     venues: dict[str, VenueRecord]
     stats: dict[str, SongStats]
     gaps: dict[str, SongGap]
@@ -118,14 +116,15 @@ def _build_state(shows: list[Show]) -> StreamingState:
     return state
 
 
-def _load_or_replay_state(shows: list[Show]) -> StreamingState:
+def _load_or_replay_state() -> StreamingState:
     """Load the pickled state snapshot, falling back to full replay on failure."""
     if STATE_SNAPSHOT_PATH.exists():
         try:
             return pickle.loads(STATE_SNAPSHOT_PATH.read_bytes())
         except Exception as e:
             print(f"warning: state snapshot unreadable ({e!r}); replaying", flush=True)
-    return _build_state(shows)
+    from phinish.artifacts import load_shows
+    return _build_state(load_shows())
 
 
 def _split_by_typical_set(
@@ -188,8 +187,7 @@ def _sequence(
 
 
 def _load_artifacts() -> _Artifacts:
-    """Load all data, features, and model files required for inference."""
-    shows = load_shows()
+    """Load all features and model files required for inference."""
     venues = load_venues()
     stats = load_song_stats()
     gaps = load_song_gaps()
@@ -198,7 +196,6 @@ def _load_artifacts() -> _Artifacts:
     weights = load_ensemble_weights()
 
     return _Artifacts(
-        shows=shows,
         venues=venues,
         stats=stats,
         gaps=gaps,
@@ -311,7 +308,7 @@ def predict(show_date: str, venue: str, city: str | None = None) -> Prediction:
         raise ValueError(f"Invalid date format: {show_date!r} (expected YYYY-MM-DD)")
 
     art = _load_artifacts()
-    state = _load_or_replay_state(art.shows)
+    state = _load_or_replay_state()
     show = synthetic_show(show_date, venue, art.venues)
 
     candidates = [s for s, c in state.plays.items() if c >= MIN_PLAYS_FOR_CANDIDATE]

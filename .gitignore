@@ -27,10 +27,6 @@ Thumbs.db
 # Logs
 *.log
 
-# All generated data lives under data/ — only canonical_names.json is committed.
+# Raw API data is not committed (Phish.net ToS).
+# Derived artifacts (features, models) are committed so CI can predict without scraping.
 data/source/
-data/state/
-data/models/
-!data/state/features/.gitkeep
-!data/models/.gitkeep
-!data/models/model_card.md

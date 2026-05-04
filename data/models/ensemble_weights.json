@@ -1,0 +1,9 @@
+{
+  "w_xgboost": 0.5,
+  "w_markov": 0.0,
+  "w_gap": 0.0,
+  "w_venue": 0.5,
+  "val_precision_at_25": 0.25575757575757574,
+  "val_year": 2024,
+  "n_val_shows": 99
+}
