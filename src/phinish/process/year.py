@@ -209,8 +209,8 @@ def _success_comment(current: dict, previous: dict | None, scrape_target: str) -
         f"- Test shows: **{metrics.get('n_test_shows', 0)}** (since 2025)\n"
         f"- Ensemble Precision@25: **{metrics.get('precision_at_25', 0):.1%}**\n"
         f"- Ensemble Opener Accuracy: **{metrics.get('opener_accuracy', 0):.1%}**\n\n"
-        "See [`models/model_card.md`](../blob/main/models/model_card.md) for full "
-        "metrics, or [`models/manifest.json`](../blob/main/models/manifest.json) for "
+        "See [`data/models/model_card.md`](../blob/main/data/models/model_card.md) for full "
+        "metrics, or [`data/models/manifest.json`](../blob/main/data/models/manifest.json) for "
         "retrain history."
     )
 

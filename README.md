@@ -202,7 +202,7 @@ template change before pushing).
 
 - **[SPEC.md](docs/specs/SPEC.md)** — complete system specification: architecture, data schemas, model details, security model, evaluation framework
 - **[PLAN.md](docs/plans/PLAN.md)** — phased build plan
-- **[models/model_card.md](models/model_card.md)** — model version, training data, metrics, changelog
+- **[data/models/model_card.md](data/models/model_card.md)** — model version, training data, metrics
 
 ---
 

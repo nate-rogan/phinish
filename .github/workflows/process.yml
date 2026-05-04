@@ -42,7 +42,7 @@ jobs:
         # data/source/ is .gitignored per Phish.net API ToS.
         # Derived artifacts (features, models) are committed.
         run: |
-          git config user.name "phinish[bot]"
+          git config user.name "awe_some_dude"
           git config user.email "bot@users.noreply.github.com"
           git add data/state/ data/models/
           git diff --staged --quiet || git commit -m "retrain from issue #${{ github.event.issue.number }}"
