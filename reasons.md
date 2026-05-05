@@ -10,3 +10,7 @@ Avg confidence: 6%. Top picks across sets: Ginseng Sullivan, Carini, Jam, Sand, 
 ## #26 — 1999-12-17 @ Hampton Colisem (@ffma-nate-rogan, generated 2026-05-04)
 
 Avg confidence: 32%. Top picks across sets: Bathtub Gin, Runaway Jim, Simple, Mike's Song, Backwards Down the Number Line, Say It To Me S.A.N.T.O.S..
+
+## #27 — 2024-01-01 @ Boston Garden (@ffma-nate-rogan, generated 2026-05-05)
+
+Avg confidence: 7%. Top picks across sets: Ginseng Sullivan, The Inlaw Josie Wales, Sand, Jam, More, Tweezer Reprise.

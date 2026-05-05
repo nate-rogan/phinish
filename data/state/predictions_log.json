@@ -25,5 +25,14 @@
     "venue_id": "v_hampton_colisem",
     "avg_confidence": 0.32105459943413733,
     "generated_at": "2026-05-04"
+  },
+  {
+    "issue_number": 27,
+    "author": "ffma-nate-rogan",
+    "date": "2024-01-01",
+    "venue": "Boston Garden",
+    "venue_id": "v_boston_garden",
+    "avg_confidence": 0.06561359388724668,
+    "generated_at": "2026-05-05"
   }
 ]
