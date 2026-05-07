@@ -373,5 +373,22 @@ def cli() -> None:
     print(_format_text(result))
 
 
+def summarize_cli() -> None:
+    """Run predict + LLM summarize and print the full markdown comment."""
+    from phinish.process.issue import format_comment
+    from phinish.summarize.api import summarize
+
+    parser = argparse.ArgumentParser(description="Predict a setlist with LLM summary")
+    parser.add_argument("--date", required=True, help="YYYY-MM-DD")
+    parser.add_argument("--venue", required=True)
+    parser.add_argument("--city", default=None)
+    parser.add_argument("--voice", default="Full Phan", help="Full Phan or Light Fan")
+    args = parser.parse_args()
+
+    prediction = predict(args.date, args.venue, args.city)
+    summary = summarize(prediction, args.voice)
+    print(format_comment(prediction, summary_text=summary.text))
+
+
 if __name__ == "__main__":
     cli()

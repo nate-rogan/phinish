@@ -14,6 +14,7 @@ phinish-train-xgboost = "phinish.train.xgboost:main"
 phinish-train-ensemble = "phinish.train.ensemble:main"
 phinish-evaluate = "phinish.evaluate.backtest:main"
 phinish-predict = "phinish.predict:cli"
+phinish-summarize = "phinish.predict.pipeline:summarize_cli"
 phinish-process-issue = "phinish.process.issue:process_issue"
 phinish-process-year = "phinish.process.year:process_year"
 
@@ -67,6 +68,7 @@ train-xgboost = "phinish-train-xgboost"
 train-ensemble = "phinish-train-ensemble"
 evaluate = "phinish-evaluate"
 predict = "phinish-predict"                # pass --date YYYY-MM-DD --venue "..."
+summarize = "phinish-summarize"            # predict + LLM summary; pass --date, --venue, --voice
 
 # --- Composed pipelines ---
 train = { depends-on = ["train-baseline", "train-markov", "train-xgboost", "train-ensemble"] }
