@@ -39,12 +39,29 @@ The strongest single predictor is the **rotation gap** — Phish almost never re
 
 ---
 
+## Tech Stack
+
+| Layer | Technology | Role |
+|-------|-----------|------|
+| **ML Models** | XGBoost, order-2 Markov chains, frequency/gap baselines | Song selection, sequential flow, rotation priors |
+| **Ensemble** | Grid-searched blending weights, Platt calibration | Combines 4 models; weights tuned on validation year |
+| **Feature Engineering** | StreamingState, temporal split (train ≤ 2023, val 2024, test 2025+) | Prevents future data leakage; streaming accumulator |
+| **LLM Integration** | Claude Haiku via httpx + stamina (no SDK) | Fan-voiced prediction summaries with selectable voice |
+| **Data Ingestion** | Phish.net API v5, stamina retry (429/5xx), httpx | ~2,100 shows, ~300 candidate songs |
+| **Venue Resolution** | difflib SequenceMatcher, alias table | Fuzzy-matches user input to 1,600+ known venues |
+| **Serialization** | msgspec Structs | Typed, fast JSON serialization throughout |
+| **Environment** | pixi (conda + pip), hatchling, editable install | Reproducible env; single `pixi run bootstrap` setup |
+| **CI/CD** | GitHub Actions (issue-triggered), GitHub Pages | Serverless compute; repo-as-infrastructure |
+| **Code Quality** | ruff (lint + format + NumPy docstrings), pytest, structlog | Enforced style; structured logging; typed library/CLI split |
+
+---
+
 ## Try It
 
 ### Request a Prediction
 
 1. Click [**Request a Prediction**](../../issues/new?assignees=&labels=predict&projects=&template=predict-show.yml)
-2. Enter a show date and venue
+2. Enter a show date, venue, and pick a summary voice (Full Phan or Light Fan)
 3. Submit the issue
 4. Watch the [Actions tab](../../actions) — prediction posts as a comment in ~30 seconds
 5. Issue is automatically labeled `predicted` and closed
@@ -100,23 +117,24 @@ phinish/
 │       ├── predict.yml         # Issue-triggered inference (wraps `pixi run process-issue`)
 │       └── process.yml         # Issue-triggered retrain   (wraps `pixi run process-year`)
 ├── src/phinish/                # Importable package, installed editable via pixi
-│   ├── utils.py                # Generic helpers (json, paths, sanitize, venue resolution)
+│   ├── utils/                  # Generic helpers (json, paths, sanitize, venue resolution)
 │   ├── scrape/                 # api.py, types.py — Phish.net ingestion
 │   ├── features/               # build.py, types.py — gaps / stats / transitions / venue history
 │   ├── train/                  # state.py, baseline.py, markov.py, xgboost.py, ensemble.py, types.py
 │   ├── predict/                # pipeline.py, types.py — inference + CLI
 │   ├── evaluate/               # backtest.py — temporal-holdout metrics
+│   ├── summarize/              # api.py, types.py, prompts/ — LLM prediction summaries
 │   └── process/                # issue.py, year.py, types.py — Actions entry points
 ├── data/
 │   ├── canonical_names.json    # Song-name normalization mapping
-│   └── processed/              # Raw setlists — NOT committed (gitignored per Phish.net API ToS)
-├── models/                     # Trained model artifacts + state snapshot + manifest (committed)
-├── state/features/             # Aggregate features (committed; derived from setlists)
+│   ├── source/                 # Raw setlists — NOT committed (gitignored per Phish.net API ToS)
+│   ├── state/features/         # Aggregate features (committed; derived from setlists)
+│   └── models/                 # Trained model artifacts + state snapshot + manifest (committed)
 ├── docs/
 │   ├── index.html              # Dashboard (GitHub Pages)
-│   ├── plans/PLAN.md           # Phased build plan
-│   └── specs/SPEC.md           # Full system specification
-├── tests/                      # pytest suite (test_features, test_predict, test_integration)
+│   ├── plans/                  # Phased build plans
+│   └── specs/                  # Full system specifications
+├── tests/                      # pytest suite (test_features, test_predict, test_summarize, test_integration)
 ├── pyproject.toml              # pixi config, ruff config, [project.scripts] entry points
 └── CLAUDE.md                   # Project conventions for AI-assisted development
 ```
@@ -142,6 +160,9 @@ Each model captures a different signal. XGBoost learns multi-feature interaction
 
 **Why recompute gaps instead of using the API's pre-computed values?**
 The API gives the *current* gap. Training requires the gap *at the time of each historical show*. To avoid future data leakage, we recompute all gap values from the raw setlist sequence.
+
+**Why Claude Haiku and not a bigger model?**
+The prediction summary is 3–4 sentences of styled prose — a creative writing task, not complex reasoning. Haiku is the cheapest and fastest Claude model, responds in under a second, and handles persona-driven writing well. At a few predictions per day, cost is effectively zero. We call the Anthropic Messages API directly via httpx + stamina rather than using the SDK, since the project already depends on both and a single API call doesn't justify ~15 additional transitive dependencies.
 
 ---
 
