@@ -30,3 +30,14 @@ body:
       placeholder: "New York, NY"
     validations:
       required: false
+  - type: dropdown
+    id: voice
+    attributes:
+      label: Summary Voice
+      description: "Tone for the AI-generated show preview"
+      options:
+        - "Full Phan"
+        - "Light Fan"
+      default: 0
+    validations:
+      required: false
