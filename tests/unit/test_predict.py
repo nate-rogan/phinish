@@ -97,3 +97,33 @@ def test_prediction_setlist_constraints():
             assert 0.0 <= s.confidence <= 1.0
             assert s.song not in seen
             seen.add(s.song)
+
+
+def test_format_comment_includes_vibe_section():
+    prediction = Prediction(
+        date="2026-12-31", venue="MSG", venue_id="v_msg", city="NY",
+        avg_confidence=0.42, model_version=1,
+        weights=PredictionWeights(xgboost=0.5, markov=0.1, gap=0.3, venue=0.1),
+        setlist={
+            "1": [PredictionItem(song="Buried Alive", confidence=0.72, gap=5)],
+            "2": [PredictionItem(song="Tweezer", confidence=0.68, gap=3)],
+            "encore": [PredictionItem(song="Character Zero", confidence=0.55, gap=4)],
+        },
+    )
+    md = format_comment(prediction, summary_text="Tweezer is raging tonight!")
+    assert "### The Vibe" in md
+    assert "> Tweezer is raging tonight!" in md
+    assert "Buried Alive" in md  # tables still present
+
+
+def test_format_comment_no_summary():
+    prediction = Prediction(
+        date="2026-12-31", venue="MSG", venue_id="v_msg", city="NY",
+        avg_confidence=0.42, model_version=1,
+        weights=PredictionWeights(xgboost=0.5, markov=0.1, gap=0.3, venue=0.1),
+        setlist={
+            "1": [PredictionItem(song="Buried Alive", confidence=0.72, gap=5)],
+        },
+    )
+    md = format_comment(prediction)
+    assert "### The Vibe" not in md

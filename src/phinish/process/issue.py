@@ -15,6 +15,7 @@ import msgspec
 from phinish.predict.pipeline import predict
 from phinish.predict.types import Prediction
 from phinish.process.types import Usage
+from phinish.summarize.api import summarize
 from phinish.utils import (
     ROOT,
     SET_DISPLAY,
@@ -70,13 +71,16 @@ def _set_table(items: list) -> list[str]:
     return rows
 
 
-def format_comment(prediction: Prediction) -> str:
+def format_comment(prediction: Prediction, summary_text: str | None = None) -> str:
     """Render a prediction as a markdown comment for posting on a GitHub issue.
 
     Parameters
     ----------
     prediction
         The structured prediction returned by ``phinish.predict.pipeline.predict``.
+    summary_text
+        Optional LLM-generated summary. Inserted as a blockquote section
+        titled "The Vibe" between the setlist tables and the footer.
 
     Returns
     -------
@@ -93,6 +97,8 @@ def format_comment(prediction: Prediction) -> str:
         parts.append(f"\n### {label}\n")
         parts.extend(_set_table(items))
         parts.append("")
+    if summary_text:
+        parts.append(f"\n### The Vibe\n> {summary_text}\n")
     w = prediction.weights
     parts.append(
         f"\n---\n**Avg Confidence:** {prediction.avg_confidence:.0%} • "
@@ -174,6 +180,7 @@ def process_issue() -> None:
     date_str = sanitize(fields.get("show date", ""), 32)
     venue = sanitize(fields.get("venue", ""), 200)
     city = sanitize(fields.get("city", ""), 200) or None
+    voice = sanitize(fields.get("summary voice", ""), 64) or "Full Phan"
 
     if not VALID_DATE.match(date_str):
         _fail(req, f"❌ Invalid or missing date: `{date_str}`. Expected `YYYY-MM-DD`.")
@@ -196,7 +203,8 @@ def process_issue() -> None:
                                req.token)
         raise
 
-    comment_body = format_comment(prediction)
+    summary = summarize(prediction, voice)
+    comment_body = format_comment(prediction, summary_text=summary.text)
     if req.can_post:
         post_issue_comment(req.repo, req.issue_number, comment_body, req.token)
     else:
