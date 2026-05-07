@@ -156,7 +156,7 @@ Setlist prediction is a structured sequence problem with ~2,100 training example
 The system has no sustained load — predictions are requested a few times a day. GitHub Actions provides free on-demand compute triggered by events (issues). Running a 24/7 server to handle occasional requests is wasteful. The repo-as-infrastructure pattern eliminates all ops burden.
 
 **Why ensemble over a single model?**
-Each model captures a different signal. XGBoost learns multi-feature interactions (gap × venue × season). Markov chains capture sequential flow (song A → song B). The gap heuristic provides a strong rotation prior. Combining them with learned weights consistently outperforms any individual model.
+Each model captures a different signal. XGBoost learns multi-feature interactions (gap × venue × season). Markov chains capture sequential flow (song A → song B). The gap heuristic provides a strong rotation prior. Combining them with learned weights should capture more signal than any individual model alone.
 
 **Why recompute gaps instead of using the API's pre-computed values?**
 The API gives the *current* gap. Training requires the gap *at the time of each historical show*. To avoid future data leakage, we recompute all gap values from the raw setlist sequence.
@@ -171,7 +171,7 @@ The prediction summary is 3–4 sentences of styled prose — a creative writing
 Requires [pixi](https://pixi.sh).
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/phinish.git
+git clone https://github.com/nate-rogan/phinish.git
 cd phinish
 pixi install -e dev               # creates .pixi/ + editable-installs the phinish package
 export PHISHNET_API_KEY=...        # required for any task that scrapes
