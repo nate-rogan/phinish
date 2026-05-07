@@ -44,6 +44,13 @@ src/phinish/
 ├── evaluate/             # backtesting
 │   ├── __init__.py       # re-exports evaluate, main
 │   └── backtest.py       # evaluate() + main()
+├── summarize/            # LLM-powered prediction summaries
+│   ├── __init__.py       # re-exports SummaryResult
+│   ├── api.py            # summarize() via Claude Haiku (httpx + stamina, no SDK)
+│   ├── prompts/          # voice prompt templates (markdown + str.format placeholders)
+│   │   ├── full_phan.md  # enthusiastic Phish fan voice
+│   │   └── light_fan.md  # measured music journalist voice
+│   └── types.py          # SummaryResult
 └── process/              # GitHub Actions entry points
     ├── __init__.py
     ├── issue.py          # process_issue (predict-on-issue)
@@ -66,6 +73,7 @@ src/phinish/
 - **CLI surface** is exposed via `[project.scripts]` (`phinish-predict`, `phinish-scrape`, `phinish-process-issue`, etc.). Each pipeline module has a library function (typed in → typed out, no I/O) and a thin `main()` wrapper that handles load/save. Modules with argparse (`scrape/api.py`, `predict/pipeline.py`) use `cli()` instead. Process entry points use descriptive names (`process_issue`, `process_year`) since they are inherently I/O-bound.
 - **Build backend**: hatchling, configured to package `src/phinish`.
 - **Verify before claiming done**: `pixi run -e dev ruff check . && pixi run -e dev pytest` must both pass.
+- **Environment variables**: `PHISHNET_API_KEY` (required for scraping), `ANTHROPIC_API_KEY` (required for LLM summaries; missing key triggers a static fallback, not a crash).
 
 ## No magic dicts, no magic strings
 
