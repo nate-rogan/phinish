@@ -10,14 +10,11 @@ Issues are the API. Actions are the compute. The repo is the database.
 
 ## How It Works
 
-```
-You open a GitHub Issue          →  "Predict: MSG — 2026-12-31"
-                                           ↓
-GitHub Actions fires             →  Loads trained models, scores 300+ songs
-                                           ↓
-Ensemble prediction posted       →  Set 1, Set 2, Encore with confidence %
-                                           ↓
-Issue closed, dashboard updated  →  Results visible on the live dashboard
+```mermaid
+flowchart LR
+    A["Open GitHub Issue<br/><em>Predict: MSG — 2026-12-31</em>"] --> B["GitHub Actions fires<br/>Loads models, scores 300+ songs"]
+    B --> C["Ensemble prediction posted<br/>Set 1, Set 2, Encore + confidence %"]
+    C --> D["Issue closed<br/>Dashboard updated"]
 ```
 
 The entire system — data ingestion, feature engineering, model training, inference, and serving — runs from this repository. No servers. No containers. No cloud accounts.
@@ -63,27 +60,25 @@ The strongest single predictor is the **rotation gap** — Phish almost never re
 
 ## Architecture
 
-```
-┌──────────────────────────────────────────────────────┐
-│                    GitHub Repository                  │
-│                                                      │
-│  src/phinish/        Pipeline code (editable install)│
-│  state/features/     Aggregate feature artifacts     │
-│  models/             Trained models + state snapshot │
-│  docs/               Dashboard (GitHub Pages)        │
-│                                                      │
-│  data/processed/     Raw setlists — NOT committed    │
-│                      (gitignored per Phish.net ToS)  │
-└──────┬──────────────────┬────────────────────────────┘
-       │                  │
-  Issue: predict     Issue: process
-       │                  │
-       ▼                  ▼
-  Load committed     Cache-restore data → scrape
-  state.pkl + models,  requested year → rebuild features →
-  run ensemble,      retrain all → commit
-  post comment,      models + features,
-  close issue        close issue
+```mermaid
+flowchart TB
+    subgraph repo["GitHub Repository"]
+        code["src/phinish/<br/>Pipeline code"]
+        features["data/state/features/<br/>Aggregate features"]
+        models["data/models/<br/>Trained models + state snapshot"]
+        source["data/source/<br/>Raw setlists (gitignored)"]
+    end
+
+    predict_issue["Issue labeled<br/><strong>wf:predict</strong>"] --> predict_flow
+    process_issue["Issue labeled<br/><strong>wf:process</strong>"] --> process_flow
+
+    subgraph predict_flow["Predict Path"]
+        p1["Load state.pkl + models"] --> p2["Run ensemble scorer"] --> p3["Post comment + close issue"]
+    end
+
+    subgraph process_flow["Retrain Path"]
+        r1["Scrape year from Phish.net"] --> r2["Rebuild features"] --> r3["Retrain all models"] --> r4["Commit artifacts + close issue"]
+    end
 ```
 
 The same pipeline can be run locally end-to-end via `pixi run bootstrap`
