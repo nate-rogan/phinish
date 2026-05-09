@@ -22,3 +22,7 @@ Avg confidence: 30%. Top picks across sets: First Tube, Golgi Apparatus, David B
 ## #63 — 2001-04-01 @ The Music Box, Borgata Hotel  Casino (@nate-rogan, generated 2026-05-09)
 
 Avg confidence: 6%. Top picks across sets: Cavern, Character Zero, David Bowie, Gotta Jibboo, Good Times Bad Times, Rocky Top.
+
+## #64 — 2002-03-16 @ MSG (@nate-rogan, generated 2026-05-09)
+
+Avg confidence: 5%. Top picks across sets: Sample in a Jar, Sparkle, Harry Hood, Simple, Auld Lang Syne, Good Times Bad Times.

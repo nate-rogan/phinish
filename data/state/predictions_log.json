@@ -52,5 +52,14 @@
     "venue_id": "v_the_music_box_borgata_hotel_casino",
     "avg_confidence": 0.055136322120758544,
     "generated_at": "2026-05-09"
+  },
+  {
+    "issue_number": 64,
+    "author": "nate-rogan",
+    "date": "2002-03-16",
+    "venue": "MSG",
+    "venue_id": "v_msg",
+    "avg_confidence": 0.04620715432381162,
+    "generated_at": "2026-05-09"
   }
 ]

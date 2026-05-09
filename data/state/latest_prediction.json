@@ -1,117 +1,117 @@
 {
-  "date": "2001-04-01",
-  "venue": "The Music Box, Borgata Hotel  Casino",
-  "venue_id": "v_the_music_box_borgata_hotel_casino",
-  "city": "Atlantic City, NJ",
+  "date": "2002-03-16",
+  "venue": "MSG",
+  "venue_id": "v_msg",
+  "city": "New York, NY",
   "setlist": {
     "1": [
       {
-        "song": "Cavern",
-        "confidence": 0.14728905810065504,
-        "gap": 4
-      },
-      {
-        "song": "Character Zero",
-        "confidence": 0.14918213886577153,
-        "gap": 3
-      },
-      {
-        "song": "Run Like an Antelope",
-        "confidence": 0.18745368570728754,
-        "gap": 2
-      },
-      {
-        "song": "Golgi Apparatus",
-        "confidence": 0.16100496663003774,
-        "gap": 2
-      },
-      {
-        "song": "Possum",
-        "confidence": 0.02026246615262859,
-        "gap": 3
-      },
-      {
-        "song": "It's Ice",
-        "confidence": 0.01440359926110585,
+        "song": "Sample in a Jar",
+        "confidence": 0.09719516897501118,
         "gap": 4
       },
       {
         "song": "Sparkle",
-        "confidence": 0.014798863611501043,
+        "confidence": 0.013532946713791256,
         "gap": 11
       },
       {
+        "song": "Cavern",
+        "confidence": 0.063251912428877,
+        "gap": 4
+      },
+      {
+        "song": "Reba",
+        "confidence": 0.04299381601374999,
+        "gap": 4
+      },
+      {
+        "song": "Possum",
+        "confidence": 0.04451458593070102,
+        "gap": 3
+      },
+      {
+        "song": "Limb By Limb",
+        "confidence": 0.17015291090192566,
+        "gap": 3
+      },
+      {
+        "song": "Runaway Jim",
+        "confidence": 0.04403489263317042,
+        "gap": 6
+      },
+      {
         "song": "Wilson",
-        "confidence": 0.018980488763767168,
+        "confidence": 0.03196339894721753,
         "gap": 8
       },
       {
-        "song": "Dinner and a Movie",
-        "confidence": 0.010507079119907555,
-        "gap": 8
+        "song": "The Divided Sky",
+        "confidence": 0.013541139467743527,
+        "gap": 11
       },
       {
-        "song": "Chalk Dust Torture",
-        "confidence": 0.04518141521461932,
-        "gap": 2
+        "song": "Taste",
+        "confidence": 0.02763553713134868,
+        "gap": 9
       }
     ],
     "2": [
       {
-        "song": "David Bowie",
-        "confidence": 0.13695233678856011,
-        "gap": 1
-      },
-      {
-        "song": "Gotta Jibboo",
-        "confidence": 0.04331893582871671,
-        "gap": 4
-      },
-      {
-        "song": "Also Sprach Zarathustra",
-        "confidence": 0.024265864883824997,
-        "gap": 1
-      },
-      {
-        "song": "Sand",
-        "confidence": 0.017276086678734388,
-        "gap": 2
-      },
-      {
         "song": "Harry Hood",
-        "confidence": 0.015251980053621748,
+        "confidence": 0.07134401088839575,
         "gap": 4
+      },
+      {
+        "song": "Simple",
+        "confidence": 0.049425752884619735,
+        "gap": 7
       },
       {
         "song": "Frankenstein",
-        "confidence": 0.019568456324874698,
+        "confidence": 0.014988829203982456,
         "gap": 8
       },
       {
-        "song": "Halley's Comet",
-        "confidence": 0.014630265315344648,
+        "song": "Piper",
+        "confidence": 0.14506983267768095,
         "gap": 3
       },
       {
-        "song": "Weekapaug Groove",
-        "confidence": 0.015960256867109737,
-        "gap": 1
+        "song": "Prince Caspian",
+        "confidence": 0.01710934455059964,
+        "gap": 15
+      },
+      {
+        "song": "Free",
+        "confidence": 0.01867872326041914,
+        "gap": 11
+      },
+      {
+        "song": "Scent of a Mule",
+        "confidence": 0.011090022509523106,
+        "gap": 12
+      },
+      {
+        "song": "The Squirming Coil",
+        "confidence": 0.025375961077821873,
+        "gap": 19
       }
     ],
     "encore": [
       {
-        "song": "Good Times Bad Times",
-        "confidence": 0.025532366116933963,
-        "gap": 20
+        "song": "Auld Lang Syne",
+        "confidence": 0.010610735505067973,
+        "gap": 59
       },
       {
-        "song": "Rocky Top",
-        "confidence": 0.020906132130168332,
-        "gap": 16
+        "song": "Good Times Bad Times",
+        "confidence": 0.011633564774585447,
+        "gap": 20
       }
     ]
   },
-  "avg_confidence": 0.055136322120758544,
+  "avg_confidence": 0.04620715432381162,
   "model_version": 2000,
   "weights": {
     "xgboost": 0.3333333333333333,
