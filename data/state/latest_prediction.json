@@ -1,117 +1,117 @@
 {
-  "date": "2017-03-16",
+  "date": "2017-04-30",
   "venue": "Boston Garden",
   "venue_id": "v_boston_garden",
-  "city": "Boston, MA",
+  "city": "Boston",
   "setlist": {
     "1": [
       {
         "song": "Maze",
-        "confidence": 0.11406695308337494,
+        "confidence": 0.11660774246065114,
         "gap": 5
       },
       {
         "song": "Stash",
-        "confidence": 0.23850774589208848,
+        "confidence": 0.2288178664885782,
         "gap": 5
       },
       {
         "song": "Runaway Jim",
-        "confidence": 0.1614977753011371,
+        "confidence": 0.2124509640691831,
         "gap": 20
       },
       {
         "song": "Suzy Greenberg",
-        "confidence": 0.12808430944761304,
+        "confidence": 0.15921201210789285,
         "gap": 11
       },
       {
         "song": "The Divided Sky",
-        "confidence": 0.10292349413905955,
+        "confidence": 0.10124530095949533,
         "gap": 6
       },
       {
         "song": "Funky Bitch",
-        "confidence": 0.09041007155820964,
+        "confidence": 0.1290162956327449,
         "gap": 18
       },
       {
         "song": "Rift",
-        "confidence": 0.06557238185744194,
+        "confidence": 0.06920479121473624,
         "gap": 7
       },
       {
         "song": "Run Like an Antelope",
-        "confidence": 0.04577927168597445,
+        "confidence": 0.032518659148375595,
         "gap": 4
       },
       {
         "song": "Golgi Apparatus",
-        "confidence": 0.016780719034298945,
+        "confidence": 0.019954214134132196,
         "gap": 9
       },
       {
         "song": "Sweet Adeline",
-        "confidence": 0.007306650477243759,
+        "confidence": 0.008206194020718465,
         "gap": 158
       }
     ],
     "2": [
       {
         "song": "The Squirming Coil",
-        "confidence": 0.03207203066266412,
+        "confidence": 0.03986888406126107,
         "gap": 22
       },
       {
         "song": "You Enjoy Myself",
-        "confidence": 0.02424798963733135,
+        "confidence": 0.024983873619575537,
         "gap": 5
       },
       {
         "song": "My Sweet One",
-        "confidence": 0.019630682298519643,
+        "confidence": 0.010926047469853442,
         "gap": 16
       },
       {
         "song": "Buffalo Bill",
-        "confidence": 0.00654939228159312,
+        "confidence": 0.006022784451272604,
         "gap": 5
       },
       {
         "song": "Yerushalayim Shel Zahav",
-        "confidence": 0.005171625339358702,
+        "confidence": 0.00516660823790287,
         "gap": 805
       },
       {
         "song": "Weekapaug Groove",
-        "confidence": 0.09477209898873823,
+        "confidence": 0.04674450909404978,
         "gap": 1
       },
       {
         "song": "Harry Hood",
-        "confidence": 0.1531993620867875,
+        "confidence": 0.16857782932270218,
         "gap": 3
       },
       {
         "song": "Slave to the Traffic Light",
-        "confidence": 0.110813898313409,
+        "confidence": 0.10457620731322707,
         "gap": 2
       }
     ],
     "encore": [
       {
         "song": "Amazing Grace",
-        "confidence": 0.005402842298171473,
+        "confidence": 0.005412495072405072,
         "gap": 526
       },
       {
         "song": "Tweezer Reprise",
-        "confidence": 0.04693814652964035,
+        "confidence": 0.04005101882771689,
         "gap": 2
       }
     ]
   },
-  "avg_confidence": 0.07348637204563277,
+  "avg_confidence": 0.07647821488532372,
   "model_version": 2014,
   "weights": {
     "xgboost": 0.4,

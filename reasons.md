@@ -34,3 +34,7 @@ Avg confidence: 7%. Top picks across sets: Maze, Stash, The Squirming Coil, You 
 ## #70 — 2017-03-16 @ Boston Garden (@nate-rogan, generated 2026-05-09)
 
 Avg confidence: 7%. Top picks across sets: Maze, Stash, The Squirming Coil, You Enjoy Myself, Amazing Grace, Tweezer Reprise.
+
+## #71 — 2017-04-30 @ Boston Garden (@nate-rogan, generated 2026-05-09)
+
+Avg confidence: 8%. Top picks across sets: Maze, Stash, The Squirming Coil, You Enjoy Myself, Amazing Grace, Tweezer Reprise.
