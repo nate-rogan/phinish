@@ -1,5 +1,28 @@
 {
   "current": {
+    "trained_at": "2026-05-09T13:45:04",
+    "n_shows": 1293,
+    "scrape_target": "year 2003",
+    "training": {
+      "n_train_rows": 215642,
+      "n_val_rows": 855,
+      "n_val_shows": 3,
+      "val_year": 2002,
+      "val_precision_at_25": 0.17333333333333334,
+      "ensemble_weights": {
+        "xgboost": 0.0,
+        "markov": 0.5,
+        "gap": 0.5,
+        "venue": 0.0
+      }
+    },
+    "metrics": {
+      "precision_at_25": 0.174468085106383,
+      "opener_accuracy": 0.06382978723404255,
+      "n_test_shows": 47
+    }
+  },
+  "previous": {
     "trained_at": "2026-05-09T13:43:59",
     "n_shows": 1246,
     "scrape_target": "year 2002",
@@ -20,29 +43,6 @@
       "precision_at_25": 0.13333333333333333,
       "opener_accuracy": 0.0,
       "n_test_shows": 3
-    }
-  },
-  "previous": {
-    "trained_at": "2026-05-09T13:31:44",
-    "n_shows": 1243,
-    "scrape_target": "year 2001",
-    "training": {
-      "n_train_rows": 198828,
-      "n_val_rows": 16529,
-      "n_val_shows": 58,
-      "val_year": 2000,
-      "val_precision_at_25": 0.4731034482758621,
-      "ensemble_weights": {
-        "xgboost": 0.3333333333333333,
-        "markov": 0.0,
-        "gap": 0.0,
-        "venue": 0.6666666666666666
-      }
-    },
-    "metrics": {
-      "precision_at_25": 0.12,
-      "opener_accuracy": 0.0,
-      "n_test_shows": 1
     }
   }
 }

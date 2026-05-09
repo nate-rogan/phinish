@@ -32,8 +32,8 @@
     "dow_saturday",
     "dow_sunday"
   ],
-  "n_train_rows": 215357,
-  "n_val_rows": 285,
+  "n_train_rows": 215642,
+  "n_val_rows": 855,
   "params": {
     "max_depth": 6,
     "learning_rate": 0.1,
@@ -45,6 +45,6 @@
     "verbosity": 0
   },
   "min_plays_for_candidate": 5,
-  "train_end_year": 2000,
-  "val_year": 2001
+  "train_end_year": 2001,
+  "val_year": 2002
 }
