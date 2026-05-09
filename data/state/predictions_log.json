@@ -61,5 +61,14 @@
     "venue_id": "v_msg",
     "avg_confidence": 0.04620715432381162,
     "generated_at": "2026-05-09"
+  },
+  {
+    "issue_number": 67,
+    "author": "nate-rogan",
+    "date": "2002-10-29",
+    "venue": "Boston Garden",
+    "venue_id": "v_boston_garden",
+    "avg_confidence": 0.06554875351713528,
+    "generated_at": "2026-05-09"
   }
 ]
