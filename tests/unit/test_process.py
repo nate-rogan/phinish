@@ -19,8 +19,14 @@ def training():
 @pytest.fixture()
 def summary():
     return {
-        "ensemble": {"precision_at_25": 0.32, "recall": 0.56, "f1": 0.39, "opener_accuracy": 0.04, "n_shows": 108},
-        "frequency": {"precision_at_25": 0.06, "recall": 0.09, "f1": 0.07, "opener_accuracy": 0.0, "n_shows": 108},
+        "ensemble": {
+            "precision_at_25": 0.32, "recall": 0.56, "f1": 0.39,
+            "opener_accuracy": 0.04, "n_shows": 108,
+        },
+        "frequency": {
+            "precision_at_25": 0.06, "recall": 0.09, "f1": 0.07,
+            "opener_accuracy": 0.0, "n_shows": 108,
+        },
     }
 
 

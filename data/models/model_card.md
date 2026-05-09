@@ -1,17 +1,17 @@
 # Phinish Model Card
 
-**Status:** Trained — last retrained on 2026-05-09T22:36:45 (bootstrap 1983-2000).
+**Status:** Trained — last retrained on 2026-05-09T23:27:48 (bootstrap 1983-2000 (Phish only)).
 
 ## Dataset
 
-1464 shows. Raw setlist data is not committed (see `.gitignore`);
-only trained model artifacts are persisted.
+1242 shows. Setlist data is committed so incremental retrains
+can merge new years into the existing dataset.
 
 ## Training
 
-- **Training examples:** 227,260
-- **Validation shows:** 115 (year 1999)
-- **Val Precision@25:** 35.3%
+- **Training examples:** 179,572
+- **Validation shows:** 69 (year 1999)
+- **Val Precision@25:** 45.9%
 - **Ensemble weights:** xgboost=0.33 / markov=0.00 / gap=0.00 / venue=0.67
 
 ## Test Metrics
@@ -20,17 +20,17 @@ Evaluated on temporal holdout (test >= 2000).
 
 | Model | Precision@25 | Recall | F1 | Opener Acc | Pair Match |
 |---|---|---|---|---|---|
-| Frequency baseline | 6.5% | 9.2% | 7.6% | 0.0% | — |
-| Gap-weighted baseline | 12.5% | 22.6% | 15.0% | 2.8% | — |
-| XGBoost (solo) | 16.9% | 29.5% | 20.8% | 4.6% | — |
-| Markov (solo) | 4.8% | 7.3% | 5.6% | 0.0% | — |
-| **Ensemble** | 31.9% | 56.0% | 39.0% | 3.7% | — |
+| Frequency baseline | 12.1% | 17.0% | 14.1% | 0.0% | — |
+| Gap-weighted baseline | 18.4% | 32.2% | 22.1% | 5.2% | — |
+| XGBoost (solo) | 25.0% | 42.1% | 29.6% | 3.4% | — |
+| Markov (solo) | 8.4% | 11.9% | 9.8% | 0.0% | — |
+| **Ensemble** | 46.6% | 75.5% | 55.4% | 6.9% | — |
 
 ## Hyperparameters
 
 - **XGBoost:** `max_depth=6`, `learning_rate=0.1`, `n_estimators=300`, `scale_pos_weight=12`
 - **Markov:** order 2, Laplace smoothing `k=0.01`
-- **Calibration:** Platt scaling on validation set (2024)
+- **Calibration:** Platt scaling on validation set (1999)
 - **Ensemble:** grid search over `(w_xgb, w_markov, w_gap, w_venue)` optimizing Precision@25
 
 See `models/manifest.json` for the full retrain history.

@@ -121,7 +121,9 @@ def group_into_shows(rows: list[dict], canonical: dict[str, str]) -> list[Show]:
     list[Show]
         One ``Show`` per unique ``showid``, sorted by date.
     """
-    # First pass: accumulate sets as mutable dicts keyed by showid
+    PHISH_ARTIST_ID = "1"
+    rows = [r for r in rows if str(r.get("artistid", "1")) == PHISH_ARTIST_ID]
+
     show_meta: dict[str, ApiSetlistRow] = {}
     sets_acc: dict[str, dict[str, list[SongEntry]]] = defaultdict(lambda: defaultdict(list))
     for raw in rows:

@@ -77,9 +77,9 @@ The strongest single predictor is the **rotation gap** — Phish almost never re
 |-------|-----------|------|
 | **ML Models** | XGBoost, order-2 Markov chains, frequency/gap baselines | Song selection, sequential flow, rotation priors |
 | **Ensemble** | Grid-searched blending weights, Platt calibration | Combines 4 models; weights tuned on validation year |
-| **Feature Engineering** | StreamingState, temporal split (train ≤ 2023, val 2024, test 2025+) | Prevents future data leakage; streaming accumulator |
+| **Feature Engineering** | StreamingState, dynamic temporal split | Prevents future data leakage; splits adapt to dataset |
 | **LLM Integration** | Claude Haiku via httpx + stamina (no SDK) | Fan-voiced prediction summaries with selectable voice |
-| **Data Ingestion** | Phish.net API v5, stamina retry (429/5xx), httpx | ~2,100 shows, ~300 candidate songs |
+| **Data Ingestion** | Phish.net API v5, stamina retry (429/5xx), httpx | Phish-only shows (`artistid=1`), ~1,200+ shows |
 | **Venue Resolution** | difflib SequenceMatcher, alias table | Fuzzy-matches user input to 1,600+ known venues |
 | **Serialization** | msgspec Structs | Typed, fast JSON serialization throughout |
 | **Environment** | pixi (conda + pip), hatchling, editable install | Reproducible env; single `pixi run bootstrap` setup |

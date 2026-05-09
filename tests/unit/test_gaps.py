@@ -1,12 +1,11 @@
 """Tests for gap computation and prediction consistency."""
 
 import pytest
+from conftest import _show
 
 from phinish.features.build import build_song_gaps
 from phinish.train.state import MIN_PLAYS_FOR_CANDIDATE, StreamingState
 from phinish.utils import show_song_set
-
-from conftest import _show
 
 
 def _many_shows() -> list:
