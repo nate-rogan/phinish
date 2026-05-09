@@ -276,10 +276,6 @@ def scrape(year: int | None = None) -> None:
     canonical = load_json(CANONICAL_NAMES_PATH) if CANONICAL_NAMES_PATH.exists() else {}
     DATA_DIR.mkdir(parents=True, exist_ok=True)
 
-    if year is not None and not SETLISTS_PATH.exists():
-        log.warning("no_existing_setlists", year=year, action="falling back to full scrape")
-        year = None
-
     with httpx.Client() as client:
         if year is None:
             years = range(FIRST_YEAR, date.today().year + 1)
