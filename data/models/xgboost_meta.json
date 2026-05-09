@@ -32,7 +32,7 @@
     "dow_saturday",
     "dow_sunday"
   ],
-  "n_train_rows": 91181,
+  "n_train_rows": 135419,
   "n_val_rows": 0,
   "params": {
     "max_depth": 6,
