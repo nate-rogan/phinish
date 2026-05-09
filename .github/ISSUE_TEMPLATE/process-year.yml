@@ -5,20 +5,17 @@ body:
   - type: markdown
     attributes:
       value: |
-        Pulls fresh data from Phish.net, rebuilds features, retrains every model,
-        runs evaluation, and commits the model artifacts. Takes ~3-5 minutes.
+        Scrapes one year from Phish.net, merges it into the existing dataset,
+        rebuilds features, retrains all models, and commits artifacts. ~3-5 min.
 
-        Safe to re-run anytime — picks up new shows and any late corrections to
-        old setlists. The bot's comment will tell you what changed since the
-        previous retrain.
+        Each year builds on the last — the bot's comment shows what changed.
   - type: input
     id: year
     attributes:
-      label: Year (optional)
+      label: Year
       description: |
-        Leave empty for a full scrape from 1983 to present (recommended).
-        Specify a single year (e.g. `2025`) for a quick incremental update —
-        useful when you just want to ingest a few new recent shows.
-      placeholder: "Leave empty for full scrape"
+        The year to add (e.g. `2001`). Merges into the existing dataset.
+        Leave empty for a full scrape from 1983 to present.
+      placeholder: "e.g. 2001"
     validations:
       required: false
