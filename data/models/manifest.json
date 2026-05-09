@@ -1,8 +1,8 @@
 {
   "current": {
-    "trained_at": "2026-05-05T03:46:40",
-    "n_shows": 276,
-    "scrape_target": "year 1998",
+    "trained_at": "2026-05-09T11:27:40",
+    "n_shows": 484,
+    "scrape_target": "year 2001",
     "metrics": {
       "precision_at_25": 0.0,
       "opener_accuracy": 0.0,
@@ -10,7 +10,7 @@
     }
   },
   "previous": {
-    "trained_at": "2026-05-04T20:50:10",
+    "trained_at": "2026-05-05T03:46:40",
     "n_shows": 276,
     "scrape_target": "year 1998",
     "metrics": {

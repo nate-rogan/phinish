@@ -1,117 +1,117 @@
 {
-  "date": "2024-01-01",
-  "venue": "Boston Garden",
-  "venue_id": "v_boston_garden",
-  "city": "Boston, MD",
+  "date": "2001-12-06",
+  "venue": "Lake Placid",
+  "venue_id": "v_lake_placid",
+  "city": "",
   "setlist": {
     "1": [
       {
-        "song": "Ginseng Sullivan",
-        "confidence": 0.37818241119384766,
-        "gap": 69
+        "song": "First Tube",
+        "confidence": 0.421440064907074,
+        "gap": 12
       },
       {
-        "song": "The Inlaw Josie Wales",
-        "confidence": 0.2944928705692291,
-        "gap": 59
+        "song": "Golgi Apparatus",
+        "confidence": 0.3674072325229645,
+        "gap": 13
       },
       {
-        "song": "Carini",
-        "confidence": 0.0017126348102465272,
-        "gap": 5
-      },
-      {
-        "song": "Set Your Soul Free",
-        "confidence": 0.001147161121480167,
-        "gap": 9
+        "song": "Possum",
+        "confidence": 0.3746121823787689,
+        "gap": 7
       },
       {
         "song": "Chalk Dust Torture",
-        "confidence": 0.0014705235371366143,
-        "gap": 10
+        "confidence": 0.24899689853191376,
+        "gap": 13
       },
       {
-        "song": "Back on the Train",
-        "confidence": 0.003256966592743993,
+        "song": "Heavy Things",
+        "confidence": 0.27444183826446533,
+        "gap": 13
+      },
+      {
+        "song": "Limb By Limb",
+        "confidence": 0.2619768977165222,
+        "gap": 14
+      },
+      {
+        "song": "Cavern",
+        "confidence": 0.3194735646247864,
         "gap": 15
       },
       {
-        "song": "My Mind's Got a Mind of its Own",
-        "confidence": 0.17509865760803223,
-        "gap": 77
+        "song": "Run Like an Antelope",
+        "confidence": 0.24728886783123016,
+        "gap": 13
       },
       {
-        "song": "Bathtub Gin",
-        "confidence": 0.005325055215507746,
-        "gap": 10
+        "song": "The Moma Dance",
+        "confidence": 0.30510762333869934,
+        "gap": 13
       },
       {
-        "song": "Wolfman's Brother",
-        "confidence": 0.0036168210208415985,
-        "gap": 5
-      },
-      {
-        "song": "I Never Needed You Like This Before",
-        "confidence": 0.00020744727225974202,
-        "gap": 15
+        "song": "Jam",
+        "confidence": 0.3146781325340271,
+        "gap": 6
       }
     ],
     "2": [
       {
-        "song": "Sand",
-        "confidence": 0.0019057828467339277,
-        "gap": 7
+        "song": "David Bowie",
+        "confidence": 0.42558926343917847,
+        "gap": 12
       },
       {
-        "song": "Jam",
-        "confidence": 0.2254999428987503,
-        "gap": 65
+        "song": "You Enjoy Myself",
+        "confidence": 0.4174908995628357,
+        "gap": 12
+      },
+      {
+        "song": "Piper",
+        "confidence": 0.29847002029418945,
+        "gap": 14
+      },
+      {
+        "song": "Mike's Song",
+        "confidence": 0.2773147225379944,
+        "gap": 12
+      },
+      {
+        "song": "Hydrogen",
+        "confidence": 0.18472920358181,
+        "gap": 12
+      },
+      {
+        "song": "Weekapaug Groove",
+        "confidence": 0.297391802072525,
+        "gap": 12
+      },
+      {
+        "song": "Harry Hood",
+        "confidence": 0.29568302631378174,
+        "gap": 15
       },
       {
         "song": "Gotta Jibboo",
-        "confidence": 0.009337645955383778,
-        "gap": 21
-      },
-      {
-        "song": "Heavy Things",
-        "confidence": 0.02540293149650097,
-        "gap": 27
-      },
-      {
-        "song": "First Tube",
-        "confidence": 0.0038277243729680777,
-        "gap": 8
-      },
-      {
-        "song": "The Horse",
-        "confidence": 0.1790410727262497,
-        "gap": 67
-      },
-      {
-        "song": "Silent in the Morning",
-        "confidence": 0.0016041304916143417,
-        "gap": 52
-      },
-      {
-        "song": "About to Run",
-        "confidence": 0.00026375960442237556,
-        "gap": 9
+        "confidence": 0.17915640771389008,
+        "gap": 15
       }
     ],
     "encore": [
       {
-        "song": "More",
-        "confidence": 0.0005148039781488478,
+        "song": "Tweezer Reprise",
+        "confidence": 0.2507030665874481,
         "gap": 12
       },
       {
-        "song": "Tweezer Reprise",
-        "confidence": 0.00036353443283587694,
-        "gap": 7
+        "song": "Rocky Top",
+        "confidence": 0.2636115849018097,
+        "gap": 28
       }
     ]
   },
-  "avg_confidence": 0.06561359388724668,
+  "avg_confidence": 0.3012781649827957,
   "model_version": 2024,
   "weights": {
     "xgboost": 0.5,

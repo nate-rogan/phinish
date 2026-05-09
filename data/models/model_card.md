@@ -1,10 +1,10 @@
 # Phinish Model Card
 
-**Status:** Trained — last retrained on 2026-05-05T03:46:40 (year 1998).
+**Status:** Trained — last retrained on 2026-05-09T11:27:40 (year 2001).
 
 ## Dataset
 
-276 shows scraped fresh per retrain. Raw setlist data is not committed
+484 shows scraped fresh per retrain. Raw setlist data is not committed
 to the repo (see `.gitignore`); only trained model artifacts are persisted.
 
 ## Metrics
