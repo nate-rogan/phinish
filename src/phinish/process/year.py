@@ -199,32 +199,85 @@ def _diff_line(current_n: int, previous: dict | None) -> str:
     )
 
 
+def _training_section(training: dict) -> str:
+    """Format the training-level metrics section of the success comment."""
+    lines = []
+    n_train = training.get("n_train_rows", 0)
+    if n_train:
+        lines.append(f"- Training examples: **{n_train:,}**")
+    n_val = training.get("n_val_shows", 0)
+    val_p25 = training.get("val_precision_at_25")
+    if n_val:
+        lines.append(f"- Validation shows: **{n_val}** (year 2024)")
+        if val_p25 is not None:
+            lines.append(f"- Val Precision@25: **{val_p25:.1%}**")
+    ew = training.get("ensemble_weights", {})
+    if ew:
+        parts = [f"{k}={v:.2f}" for k, v in ew.items()]
+        lines.append(f"- Ensemble weights: {' / '.join(parts)}")
+    return "\n".join(lines)
+
+
+def _test_section(metrics: dict) -> str:
+    """Format the test-level metrics section of the success comment."""
+    n_test = metrics.get("n_test_shows", 0)
+    if not n_test:
+        return "- Test evaluation: _no 2025+ shows yet — metrics appear after retrain 2025_"
+    return (
+        f"- Test shows: **{n_test}** (since 2025)\n"
+        f"- Ensemble Precision@25: **{metrics['precision_at_25']:.1%}**\n"
+        f"- Ensemble Opener Accuracy: **{metrics['opener_accuracy']:.1%}**"
+    )
+
+
 def _success_comment(
     current: dict, previous: dict | None, scrape_target: str, repo: str,
 ) -> str:
     """Build the markdown body for the success comment posted to the issue."""
     diff = _diff_line(current["n_shows"], previous)
+    training = current.get("training", {})
     metrics = current.get("metrics", {})
     base = f"https://github.com/{repo}/blob/main" if repo else "../blob/main"
     return (
         f"## ✅ Retrain Complete — {scrape_target}\n\n"
         f"{diff}\n\n"
-        f"- Test shows: **{metrics.get('n_test_shows', 0)}** (since 2025)\n"
-        f"- Ensemble Precision@25: **{metrics.get('precision_at_25', 0):.1%}**\n"
-        f"- Ensemble Opener Accuracy: **{metrics.get('opener_accuracy', 0):.1%}**\n\n"
+        f"### Training\n{_training_section(training)}\n\n"
+        f"### Evaluation\n{_test_section(metrics)}\n\n"
         f"See [`data/models/model_card.md`]({base}/data/models/model_card.md) for full "
         f"metrics, or [`data/models/manifest.json`]({base}/data/models/manifest.json) for "
         "retrain history."
     )
 
 
+def _load_training_stats() -> dict:
+    """Read XGBoost meta and ensemble weights for training-level metrics."""
+    xgb_meta_path = MODELS_DIR / "xgboost_meta.json"
+    ew_path = MODELS_DIR / "ensemble_weights.json"
+    xgb_meta = load_json(xgb_meta_path) if xgb_meta_path.exists() else {}
+    ew = load_json(ew_path) if ew_path.exists() else {}
+    return {
+        "n_train_rows": xgb_meta.get("n_train_rows", 0),
+        "n_val_rows": xgb_meta.get("n_val_rows", 0),
+        "n_val_shows": ew.get("n_val_shows", 0),
+        "val_precision_at_25": ew.get("val_precision_at_25"),
+        "ensemble_weights": {
+            "xgboost": ew.get("w_xgboost", 0),
+            "markov": ew.get("w_markov", 0),
+            "gap": ew.get("w_gap", 0),
+            "venue": ew.get("w_venue", 0),
+        },
+    }
+
+
 def _build_current(today: str, n_shows: int, scrape_target: str, summary: dict) -> dict:
     """Assemble the ``current`` manifest entry from this run's results."""
     ensemble = summary.get("ensemble", {})
+    training = _load_training_stats()
     return {
         "trained_at": today,
         "n_shows": n_shows,
         "scrape_target": scrape_target,
+        "training": training,
         "metrics": {
             "precision_at_25": ensemble.get("precision_at_25", 0.0),
             "opener_accuracy": ensemble.get("opener_accuracy", 0.0),
