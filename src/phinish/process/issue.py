@@ -124,9 +124,7 @@ def append_reasons(prediction: Prediction, issue_number: int, author: str) -> No
     REASONS_PATH.parent.mkdir(parents=True, exist_ok=True)
     today = date.today().isoformat()
     top_picks = ", ".join(
-        item.song
-        for set_key, _ in SET_DISPLAY
-        for item in prediction.setlist.get(set_key, [])[:2]
+        item.song for set_key, _ in SET_DISPLAY for item in prediction.setlist.get(set_key, [])[:2]
     )
     line = (
         f"\n## #{issue_number} — {prediction.date} @ {prediction.venue} "
@@ -159,15 +157,17 @@ def _persist_outputs(prediction: Prediction, req: _IssueRequest, usage: Usage) -
     """Write latest prediction, append to log, update usage, and record reasons."""
     save_json(LATEST_PATH, prediction)
     log = load_json(LOG_PATH) if LOG_PATH.exists() else []
-    log.append({
-        "issue_number": req.issue_number,
-        "author": req.author,
-        "date": prediction.date,
-        "venue": prediction.venue,
-        "venue_id": prediction.venue_id,
-        "avg_confidence": prediction.avg_confidence,
-        "generated_at": date.today().isoformat(),
-    })
+    log.append(
+        {
+            "issue_number": req.issue_number,
+            "author": req.author,
+            "date": prediction.date,
+            "venue": prediction.venue,
+            "venue_id": prediction.venue_id,
+            "avg_confidence": prediction.avg_confidence,
+            "generated_at": date.today().isoformat(),
+        }
+    )
     save_json(LOG_PATH, log)
     save_json(USAGE_PATH, update_usage(usage, req.author))
     append_reasons(prediction, req.issue_number, req.author)
@@ -198,9 +198,12 @@ def process_issue() -> None:
     except Exception as e:
         print(traceback.format_exc(), file=sys.stderr)
         if req.can_post:
-            post_issue_comment(req.repo, req.issue_number,
-                               f"❌ Prediction failed: `{type(e).__name__}: {e}`",
-                               req.token)
+            post_issue_comment(
+                req.repo,
+                req.issue_number,
+                f"❌ Prediction failed: `{type(e).__name__}: {e}`",
+                req.token,
+            )
         raise
 
     summary = summarize(prediction, voice)

@@ -55,7 +55,8 @@ def build_song_gaps(shows: list[Show]) -> dict[str, SongGap]:
 
 
 def build_song_stats(
-    shows: list[Show], songs_catalog: list[SongCatalogEntry],
+    shows: list[Show],
+    songs_catalog: list[SongCatalogEntry],
 ) -> dict[str, SongStats]:
     """Aggregate per-song play statistics from the full setlist history.
 
@@ -201,14 +202,17 @@ def build_venue_history(shows: list[Show]) -> dict[str, VenueHistory]:
         vid = show.venue_id
         if not vid:
             continue
-        v = per_venue.setdefault(vid, {
-            "venue_id": vid,
-            "name": show.venue_name,
-            "total_shows": 0,
-            "song_counts": Counter(),
-            "openers": Counter(),
-            "closers": Counter(),
-        })
+        v = per_venue.setdefault(
+            vid,
+            {
+                "venue_id": vid,
+                "name": show.venue_name,
+                "total_shows": 0,
+                "song_counts": Counter(),
+                "openers": Counter(),
+                "closers": Counter(),
+            },
+        )
         v["total_shows"] += 1
         v["song_counts"].update(show_song_set(show))
         set1 = show.sets.get("1", [])
@@ -235,7 +239,8 @@ def build_venue_history(shows: list[Show]) -> dict[str, VenueHistory]:
 
 
 def build_features(
-    shows: list, songs_catalog: list | None = None,
+    shows: list,
+    songs_catalog: list | None = None,
 ) -> dict[str, object]:
     """Build all feature artifacts from setlist data.
 

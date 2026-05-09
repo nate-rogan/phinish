@@ -124,11 +124,13 @@ def _load_or_replay_state() -> StreamingState:
         except Exception as e:
             print(f"warning: state snapshot unreadable ({e!r}); replaying", flush=True)
     from phinish.artifacts import load_shows
+
     return _build_state(load_shows())
 
 
 def _split_by_typical_set(
-    stats: dict[str, SongStats], candidates: list[str],
+    stats: dict[str, SongStats],
+    candidates: list[str],
 ) -> dict[str, list[str]]:
     """Bucket candidate songs into set 1 / set 2 / encore by historical tendency."""
     buckets: dict[str, list[str]] = {"1": [], "2": [], "encore": []}
@@ -158,8 +160,9 @@ def _sequence(
     if not pool:
         return []
 
-    opener = max(pool, key=lambda s: OPENER_BLEND * pool[s]
-                                     + (1 - OPENER_BLEND) * set_openers.get(s, 0.0))
+    opener = max(
+        pool, key=lambda s: OPENER_BLEND * pool[s] + (1 - OPENER_BLEND) * set_openers.get(s, 0.0)
+    )
     sequence = [opener]
     pool.pop(opener)
 
@@ -170,8 +173,11 @@ def _sequence(
         order1 = transition.order_1.get(prev1, {})
 
         scored = [
-            (song, MARKOV_BLEND * order2.get(song, order1.get(song, 0.0))
-                   + (1 - MARKOV_BLEND) * pool_score)
+            (
+                song,
+                MARKOV_BLEND * order2.get(song, order1.get(song, 0.0))
+                + (1 - MARKOV_BLEND) * pool_score,
+            )
             for song, pool_score in pool.items()
         ]
         best, _ = max(scored, key=lambda pair: pair[1])
@@ -179,8 +185,10 @@ def _sequence(
         pool.pop(best)
 
     if pool and target_len >= 2:
-        closer = max(pool, key=lambda s: OPENER_BLEND * pool[s]
-                                         + (1 - OPENER_BLEND) * set_closers.get(s, 0.0))
+        closer = max(
+            pool,
+            key=lambda s: OPENER_BLEND * pool[s] + (1 - OPENER_BLEND) * set_closers.get(s, 0.0),
+        )
         sequence.append(closer)
 
     return sequence[:target_len]
@@ -211,7 +219,10 @@ def _load_artifacts() -> _Artifacts:
 
 
 def _score_candidates(
-    state: StreamingState, show: Show, candidates: list[str], art: _Artifacts,
+    state: StreamingState,
+    show: Show,
+    candidates: list[str],
+    art: _Artifacts,
 ) -> list[dict]:
     """Score every candidate song with the weighted ensemble, sorted descending."""
     X = np.array(
@@ -239,18 +250,22 @@ def _score_candidates(
         if song in last_3:
             ensemble *= LAST_3_PENALTY
         gap_obj = art.gaps.get(song)
-        scored.append({
-            "song": song,
-            "ensemble": ensemble,
-            "confidence": float(xgb_probs[i]),
-            "gap": gap_obj.gap if gap_obj else 0,
-        })
+        scored.append(
+            {
+                "song": song,
+                "ensemble": ensemble,
+                "confidence": float(xgb_probs[i]),
+                "gap": gap_obj.gap if gap_obj else 0,
+            }
+        )
     scored.sort(key=lambda s: s["ensemble"], reverse=True)
     return scored
 
 
 def _assemble_setlist(
-    scored: list[dict], stats: dict[str, SongStats], transition: TransitionMatrix,
+    scored: list[dict],
+    stats: dict[str, SongStats],
+    transition: TransitionMatrix,
 ) -> dict[str, list[PredictionItem]]:
     """Fill set 1 / set 2 / encore from scored candidates with Markov sequencing."""
     buckets = _split_by_typical_set(stats, [s["song"] for s in scored])
@@ -265,7 +280,8 @@ def _assemble_setlist(
         if len(pool) < target * 2:
             in_pool = {p[0] for p in pool}
             extras = [
-                (s["song"], s["ensemble"]) for s in scored
+                (s["song"], s["ensemble"])
+                for s in scored
                 if s["song"] not in used and s["song"] not in in_pool
             ]
             pool.extend(extras[: target * 3])
@@ -318,9 +334,8 @@ def predict(show_date: str, venue: str, city: str | None = None) -> Prediction:
     scored = _score_candidates(state, show, candidates, art)
     setlist = _assemble_setlist(scored, art.stats, art.transition)
 
-    avg_conf = (
-        sum(item.confidence for items in setlist.values() for item in items)
-        / max(1, sum(len(items) for items in setlist.values()))
+    avg_conf = sum(item.confidence for items in setlist.values() for item in items) / max(
+        1, sum(len(items) for items in setlist.values())
     )
     w = art.weights
     return Prediction(
@@ -353,10 +368,7 @@ def _format_text(prediction: Prediction) -> str:
             continue
         lines.append(f"{label}:")
         for i, item in enumerate(items, 1):
-            lines.append(
-                f"  {i:>2}. {item.song:<35s}  "
-                f"{item.confidence:>5.1%}  gap={item.gap}"
-            )
+            lines.append(f"  {i:>2}. {item.song:<35s}  {item.confidence:>5.1%}  gap={item.gap}")
         lines.append("")
     return "\n".join(lines)
 

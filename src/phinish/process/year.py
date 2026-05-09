@@ -193,10 +193,7 @@ def _diff_line(current_n: int, previous: dict | None) -> str:
             "non-determinism."
         )
     sign = "+" if delta > 0 else ""
-    return (
-        f"Re-trained: **{current_n}** shows ({sign}{delta} since {prev_at}, "
-        f"which had {prev_n})."
-    )
+    return f"Re-trained: **{current_n}** shows ({sign}{delta} since {prev_at}, which had {prev_n})."
 
 
 def _training_section(training: dict) -> str:
@@ -231,7 +228,10 @@ def _test_section(metrics: dict) -> str:
 
 
 def _success_comment(
-    current: dict, previous: dict | None, scrape_target: str, repo: str,
+    current: dict,
+    previous: dict | None,
+    scrape_target: str,
+    repo: str,
 ) -> str:
     """Build the markdown body for the success comment posted to the issue."""
     diff = _diff_line(current["n_shows"], previous)

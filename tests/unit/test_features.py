@@ -42,10 +42,17 @@ def test_transition_probabilities_smoothed(tiny_shows):
 def test_song_stats_schema(tiny_shows, songs_catalog):
     stats = build_song_stats(tiny_shows, songs_catalog)
     required = {
-        "total_plays", "lifetime_frequency", "recent_frequency_50",
-        "recent_frequency_20", "avg_set_position", "typical_set",
-        "set_distribution", "opener_frequency", "closer_frequency",
-        "is_cover", "debut_year",
+        "total_plays",
+        "lifetime_frequency",
+        "recent_frequency_50",
+        "recent_frequency_20",
+        "avg_set_position",
+        "typical_set",
+        "set_distribution",
+        "opener_frequency",
+        "closer_frequency",
+        "is_cover",
+        "debut_year",
     }
     for song, s in stats.items():
         actual = {f.name for f in msgspec.structs.fields(s)}
@@ -60,8 +67,14 @@ def test_song_with_zero_plays_excluded(tiny_shows, songs_catalog):
     extended_catalog = [
         *songs_catalog,
         SongCatalogEntry(
-            song_id="g", name="G", slug="g", artist="Phish",
-            is_original=True, debut="", last_played="", times_played=0,
+            song_id="g",
+            name="G",
+            slug="g",
+            artist="Phish",
+            is_original=True,
+            debut="",
+            last_played="",
+            times_played=0,
         ),
     ]
     stats = build_song_stats(tiny_shows, extended_catalog)

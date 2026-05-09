@@ -38,8 +38,9 @@ def main() -> None:
         raise SystemExit(f"Missing {SETLISTS_PATH}; run phinish-scrape first.")
     matrix = train_markov(load_shows())
     save_json(MODELS_DIR / "markov_order2.json", matrix)
-    log.info("wrote_markov", shows=matrix.trained_on_shows,
-             path=str(MODELS_DIR / "markov_order2.json"))
+    log.info(
+        "wrote_markov", shows=matrix.trained_on_shows, path=str(MODELS_DIR / "markov_order2.json")
+    )
 
 
 if __name__ == "__main__":

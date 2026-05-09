@@ -57,12 +57,18 @@ def test_voice_map_covers_dropdown_labels():
 @pytest.fixture()
 def sample_prediction():
     return Prediction(
-        date="2026-12-31", venue="MSG", venue_id="v_msg", city="New York, NY",
-        avg_confidence=0.64, model_version=1,
+        date="2026-12-31",
+        venue="MSG",
+        venue_id="v_msg",
+        city="New York, NY",
+        avg_confidence=0.64,
+        model_version=1,
         weights=PredictionWeights(xgboost=0.5, markov=0.1, gap=0.3, venue=0.1),
         setlist={
-            "1": [PredictionItem(song="Tweezer", confidence=0.72, gap=15),
-                  PredictionItem(song="Divided Sky", confidence=0.60, gap=8)],
+            "1": [
+                PredictionItem(song="Tweezer", confidence=0.72, gap=15),
+                PredictionItem(song="Divided Sky", confidence=0.60, gap=8),
+            ],
             "2": [PredictionItem(song="Disease", confidence=0.55, gap=5)],
             "encore": [PredictionItem(song="Character Zero", confidence=0.50, gap=4)],
         },

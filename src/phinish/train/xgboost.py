@@ -49,7 +49,10 @@ XGB_PARAMS = dict(
 
 
 def build_training_matrix(
-    shows: list[Show], cover_set: set[str], min_year: int, max_year: int,
+    shows: list[Show],
+    cover_set: set[str],
+    min_year: int,
+    max_year: int,
 ) -> tuple[np.ndarray, np.ndarray, list[str], StreamingState]:
     """Replay history and emit (X, y, dates) for shows in ``[min_year, max_year]``."""
     state = StreamingState()

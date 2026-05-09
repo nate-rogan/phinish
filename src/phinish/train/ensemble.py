@@ -137,8 +137,10 @@ def _grid_search_weights(
         precisions = []
         for r in val_records:
             scored = [
-                (s["song"], wx * s["xgb_n"] + wm * s["markov_n"]
-                            + wg * s["gap_n"] + wv * s["venue_n"])
+                (
+                    s["song"],
+                    wx * s["xgb_n"] + wm * s["markov_n"] + wg * s["gap_n"] + wv * s["venue_n"],
+                )
                 for s in r["scores"]
             ]
             scored.sort(key=lambda pair: pair[1], reverse=True)
@@ -186,28 +188,51 @@ def train_ensemble(
         ``n_val_shows``.
     """
     val_records = _build_val_records(
-        shows, cover_set, xgb, calibrator, venue_history, markov, gap_scores,
+        shows,
+        cover_set,
+        xgb,
+        calibrator,
+        venue_history,
+        markov,
+        gap_scores,
     )
 
     if not val_records:
         log.warning("no_val_shows", year=VAL_YEAR, action="using default weights")
         wx, wm, wg, wv = (
-            DEFAULT_WEIGHTS["w_xgboost"], DEFAULT_WEIGHTS["w_markov"],
-            DEFAULT_WEIGHTS["w_gap"], DEFAULT_WEIGHTS["w_venue"],
+            DEFAULT_WEIGHTS["w_xgboost"],
+            DEFAULT_WEIGHTS["w_markov"],
+            DEFAULT_WEIGHTS["w_gap"],
+            DEFAULT_WEIGHTS["w_venue"],
         )
         return {
-            "w_xgboost": wx, "w_markov": wm, "w_gap": wg, "w_venue": wv,
-            "val_precision_at_25": None, "val_year": VAL_YEAR, "n_val_shows": 0,
+            "w_xgboost": wx,
+            "w_markov": wm,
+            "w_gap": wg,
+            "w_venue": wv,
+            "val_precision_at_25": None,
+            "val_year": VAL_YEAR,
+            "n_val_shows": 0,
         }
 
     _normalize_per_record(val_records)
     best_weights, best_score = _grid_search_weights(val_records)
     wx, wm, wg, wv = best_weights
-    log.info("best_weights", xgb=f"{wx:.2f}", markov=f"{wm:.2f}",
-             gap=f"{wg:.2f}", venue=f"{wv:.2f}", precision_at_25=f"{best_score:.3f}")
+    log.info(
+        "best_weights",
+        xgb=f"{wx:.2f}",
+        markov=f"{wm:.2f}",
+        gap=f"{wg:.2f}",
+        venue=f"{wv:.2f}",
+        precision_at_25=f"{best_score:.3f}",
+    )
     return {
-        "w_xgboost": wx, "w_markov": wm, "w_gap": wg, "w_venue": wv,
-        "val_precision_at_25": best_score, "val_year": VAL_YEAR,
+        "w_xgboost": wx,
+        "w_markov": wm,
+        "w_gap": wg,
+        "w_venue": wv,
+        "val_precision_at_25": best_score,
+        "val_year": VAL_YEAR,
         "n_val_shows": len(val_records),
     }
 
@@ -226,7 +251,13 @@ def main() -> None:
     gap_scores = gap_score_per_song(stats, gaps)
 
     result = train_ensemble(
-        shows, cover_set, xgb, calibrator, venue_history, markov, gap_scores,
+        shows,
+        cover_set,
+        xgb,
+        calibrator,
+        venue_history,
+        markov,
+        gap_scores,
     )
     MODELS_DIR.mkdir(parents=True, exist_ok=True)
     save_json(MODELS_DIR / "ensemble_weights.json", result)

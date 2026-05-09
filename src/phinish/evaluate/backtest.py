@@ -68,7 +68,8 @@ def _rank_all_models(
     venue_freq = venue_freq_for_show(venue_history, show.venue_id)
     xgb_pairs = sorted(
         zip(xgb_probs, candidates, strict=True),
-        reverse=True, key=lambda t: t[0],
+        reverse=True,
+        key=lambda t: t[0],
     )
     xgb_n = min_max_normalize(list(xgb_probs))
     m_n = min_max_normalize([markov.get(s, 0.0) for s in candidates])
@@ -77,12 +78,15 @@ def _rank_all_models(
     wx, wm, wg, wv = weights
     ens_pairs = sorted(
         zip(
-            (wx * xgb_n[i] + wm * m_n[i] + wg * g_n[i] + wv * v_n[i]
-             for i in range(len(candidates))),
+            (
+                wx * xgb_n[i] + wm * m_n[i] + wg * g_n[i] + wv * v_n[i]
+                for i in range(len(candidates))
+            ),
             candidates,
             strict=True,
         ),
-        reverse=True, key=lambda t: t[0],
+        reverse=True,
+        key=lambda t: t[0],
     )
     return {
         "frequency": sorted(
@@ -91,7 +95,9 @@ def _rank_all_models(
             reverse=True,
         ),
         "gap_weighted": sorted(
-            candidates, key=lambda s: gap_scores.get(s, 0.0), reverse=True,
+            candidates,
+            key=lambda s: gap_scores.get(s, 0.0),
+            reverse=True,
         ),
         "xgboost": [c for _, c in xgb_pairs],
         "markov": sorted(candidates, key=lambda s: markov.get(s, 0.0), reverse=True),
@@ -125,8 +131,10 @@ def _print_summary(summary: dict[str, dict]) -> None:
     for name in MODEL_NAMES:
         m = summary[name]
         if m.get("n_shows", 0) > 0:
-            print(f"  {name:14s}  P@25={m['precision_at_25']:.3f}  R={m['recall']:.3f}  "
-                  f"F1={m['f1']:.3f}  Opener={m['opener_accuracy']:.3f}")
+            print(
+                f"  {name:14s}  P@25={m['precision_at_25']:.3f}  R={m['recall']:.3f}  "
+                f"F1={m['f1']:.3f}  Opener={m['opener_accuracy']:.3f}"
+            )
 
 
 def evaluate(
@@ -185,8 +193,17 @@ def evaluate(
             candidates = [s for s, c in state.plays.items() if c >= MIN_PLAYS_FOR_CANDIDATE]
             if candidates:
                 rankings = _rank_all_models(
-                    state, show, candidates, cover_set,
-                    xgb, calibrator, stats, markov, gap_scores, venue_history, weights,
+                    state,
+                    show,
+                    candidates,
+                    cover_set,
+                    xgb,
+                    calibrator,
+                    stats,
+                    markov,
+                    gap_scores,
+                    venue_history,
+                    weights,
                 )
                 for name, ranked in rankings.items():
                     results[name].append(metrics(ranked, played))
@@ -223,8 +240,16 @@ def main() -> None:
     w = (weights_obj.w_xgboost, weights_obj.w_markov, weights_obj.w_gap, weights_obj.w_venue)
 
     result = evaluate(
-        shows, cover_set, xgb, calibrator, stats, markov, gap_scores,
-        venue_history, w, set_openers_1,
+        shows,
+        cover_set,
+        xgb,
+        calibrator,
+        stats,
+        markov,
+        gap_scores,
+        venue_history,
+        w,
+        set_openers_1,
     )
     save_json(MODELS_DIR / "evaluation.json", result)
     _print_summary(result["summary"])

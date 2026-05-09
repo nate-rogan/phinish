@@ -138,7 +138,8 @@ def markov_score_per_song(matrix: TransitionMatrix) -> dict[str, float]:
 
 
 def gap_score_per_song(
-    stats: dict[str, SongStats], gaps: dict[str, SongGap],
+    stats: dict[str, SongStats],
+    gaps: dict[str, SongGap],
 ) -> dict[str, float]:
     """Compute the gap-weighted ensemble component per song.
 
@@ -194,7 +195,8 @@ def calibrated_predict_proba(model, calibrator, X: np.ndarray) -> np.ndarray:
 
 
 def venue_freq_for_show(
-    venue_history: dict[str, VenueHistory], venue_id: str,
+    venue_history: dict[str, VenueHistory],
+    venue_id: str,
 ) -> dict[str, float]:
     """Look up per-song frequency for a venue, defaulting to empty."""
     vh = venue_history.get(venue_id)

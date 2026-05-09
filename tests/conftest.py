@@ -57,8 +57,13 @@ def songs_catalog() -> list[SongCatalogEntry]:
     """Minimal song catalog matching the songs used in `tiny_shows`."""
     return [
         SongCatalogEntry(
-            song_id=s.lower(), name=s, slug=s.lower(), artist="Phish",
-            is_original=True, debut="2024-01-01", last_played="",
+            song_id=s.lower(),
+            name=s,
+            slug=s.lower(),
+            artist="Phish",
+            is_original=True,
+            debut="2024-01-01",
+            last_played="",
             times_played=0,
         )
         for s in ("A", "B", "C", "D", "E", "F")

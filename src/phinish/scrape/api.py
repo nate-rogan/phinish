@@ -148,31 +148,30 @@ def group_into_shows(rows: list[dict], canonical: dict[str, str]) -> list[Show]:
     out: list[Show] = []
     for sid, first_row in show_meta.items():
         d = date.fromisoformat(first_row.showdate)
-        sets = {
-            k: sorted(v, key=lambda s: s.position)
-            for k, v in sets_acc[sid].items() if v
-        }
+        sets = {k: sorted(v, key=lambda s: s.position) for k, v in sets_acc[sid].items() if v}
         flags = special_show_flags(d.isoformat(), first_row.tourname)
-        out.append(Show(
-            show_id=sid,
-            date=d.isoformat(),
-            year=d.year,
-            month=d.month,
-            day=d.day,
-            day_of_week=day_of_week(d),
-            venue_id=venue_id(first_row.venue),
-            venue_name=first_row.venue,
-            city=first_row.city,
-            state=first_row.state,
-            country=first_row.country,
-            tour=first_row.tourname,
-            tour_id=first_row.tourid,
-            sets=sets,
-            is_nye=flags.is_nye,
-            is_halloween=flags.is_halloween,
-            is_festival=flags.is_festival,
-            total_songs=sum(len(v) for v in sets.values()),
-        ))
+        out.append(
+            Show(
+                show_id=sid,
+                date=d.isoformat(),
+                year=d.year,
+                month=d.month,
+                day=d.day,
+                day_of_week=day_of_week(d),
+                venue_id=venue_id(first_row.venue),
+                venue_name=first_row.venue,
+                city=first_row.city,
+                state=first_row.state,
+                country=first_row.country,
+                tour=first_row.tourname,
+                tour_id=first_row.tourid,
+                sets=sets,
+                is_nye=flags.is_nye,
+                is_halloween=flags.is_halloween,
+                is_festival=flags.is_festival,
+                total_songs=sum(len(v) for v in sets.values()),
+            )
+        )
     out.sort(key=lambda s: s.date)
     return out
 
@@ -216,16 +215,18 @@ def normalize_songs(rows: list[dict]) -> list[SongCatalogEntry]:
         normalized = {k: (v if k == "times_played" else str(v)) for k, v in raw.items()}
         row = msgspec.convert(normalized, ApiSongRow, strict=False)
         artist = row.resolved_artist
-        out.append(SongCatalogEntry(
-            song_id=row.resolved_id,
-            name=row.resolved_name,
-            slug=row.slug,
-            artist=artist,
-            is_original=artist.lower() == "phish",
-            debut=row.debut,
-            last_played=row.last_played,
-            times_played=row.times_played,
-        ))
+        out.append(
+            SongCatalogEntry(
+                song_id=row.resolved_id,
+                name=row.resolved_name,
+                slug=row.slug,
+                artist=artist,
+                is_original=artist.lower() == "phish",
+                debut=row.debut,
+                last_played=row.last_played,
+                times_played=row.times_played,
+            )
+        )
     return out
 
 

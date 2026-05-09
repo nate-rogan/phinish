@@ -42,14 +42,30 @@ def feature_names() -> list[str]:
         by ``featurize()``.
     """
     base = [
-        "gap", "log_gap", "is_bustout", "lifetime_freq",
-        "recent_freq_50", "recent_freq_20",
-        "avg_set_position", "typical_set",
-        "is_cover", "opener_freq", "closer_freq",
-        "played_last_show", "played_last_3", "times_played_this_tour",
-        "venue_total_shows", "venue_song_freq", "venue_is_new",
-        "days_since_last_show", "tour_position_pct",
-        "month", "is_weekend", "is_nye", "is_halloween", "is_festival",
+        "gap",
+        "log_gap",
+        "is_bustout",
+        "lifetime_freq",
+        "recent_freq_50",
+        "recent_freq_20",
+        "avg_set_position",
+        "typical_set",
+        "is_cover",
+        "opener_freq",
+        "closer_freq",
+        "played_last_show",
+        "played_last_3",
+        "times_played_this_tour",
+        "venue_total_shows",
+        "venue_song_freq",
+        "venue_is_new",
+        "days_since_last_show",
+        "tour_position_pct",
+        "month",
+        "is_weekend",
+        "is_nye",
+        "is_halloween",
+        "is_festival",
     ]
     return base + [f"dow_{d}" for d in DAYS]
 
@@ -75,12 +91,8 @@ class StreamingState:
     last_3_shows: deque[set[str]] = field(default_factory=lambda: deque(maxlen=3))
     last_show_date: str = ""
     venue_shows: Counter[str] = field(default_factory=Counter)
-    venue_song_counts: dict[str, Counter[str]] = field(
-        default_factory=lambda: defaultdict(Counter)
-    )
-    tour_song_plays: dict[str, Counter[str]] = field(
-        default_factory=lambda: defaultdict(Counter)
-    )
+    venue_song_counts: dict[str, Counter[str]] = field(default_factory=lambda: defaultdict(Counter))
+    tour_song_plays: dict[str, Counter[str]] = field(default_factory=lambda: defaultdict(Counter))
     tour_show_count: Counter[str] = field(default_factory=Counter)
 
     def update(self, show: Show) -> None:
