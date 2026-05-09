@@ -76,21 +76,49 @@ def _metric_rows(summary: dict) -> list[str]:
     return rows
 
 
-def _render_card(today: str, n_shows: int, scrape_target: str, rows: list[str]) -> str:
+def _training_card_section(training: dict) -> str:
+    """Format the training stats block for the model card."""
+    lines = []
+    n_train = training.get("n_train_rows", 0)
+    if n_train:
+        lines.append(f"- **Training examples:** {n_train:,}")
+    n_val = training.get("n_val_shows", 0)
+    val_p25 = training.get("val_precision_at_25")
+    if n_val:
+        lines.append(f"- **Validation shows:** {n_val} (year 2024)")
+        if val_p25 is not None:
+            lines.append(f"- **Val Precision@25:** {val_p25:.1%}")
+    else:
+        lines.append("- **Validation:** _no 2024 data yet_")
+    ew = training.get("ensemble_weights", {})
+    if ew:
+        parts = [f"{k}={v:.2f}" for k, v in ew.items()]
+        lines.append(f"- **Ensemble weights:** {' / '.join(parts)}")
+    return "\n".join(lines)
+
+
+def _render_card(
+    today: str, n_shows: int, scrape_target: str, rows: list[str], training: dict,
+) -> str:
     """Return the full markdown body for ``models/model_card.md``."""
     rows_block = "\n".join(rows)
+    training_block = _training_card_section(training)
     return f"""# Phinish Model Card
 
 **Status:** Trained — last retrained on {today} ({scrape_target}).
 
 ## Dataset
 
-{n_shows} shows scraped fresh per retrain. Raw setlist data is not committed
-to the repo (see `.gitignore`); only trained model artifacts are persisted.
+{n_shows} shows. Raw setlist data is not committed (see `.gitignore`);
+only trained model artifacts are persisted.
 
-## Metrics
+## Training
 
-Evaluated on temporal holdout (test ≥ 2025).
+{training_block}
+
+## Test Metrics
+
+Evaluated on temporal holdout (test >= 2025).
 
 | Model | Precision@25 | Recall | F1 | Opener Acc | Pair Match |
 |---|---|---|---|---|---|
@@ -125,7 +153,8 @@ def update_model_card(today: str, n_shows: int, scrape_target: str, summary: dic
         each entry has ``precision_at_25`` / ``recall`` / ``f1`` /
         ``opener_accuracy`` / ``n_shows``.
     """
-    body = _render_card(today, n_shows, scrape_target, _metric_rows(summary))
+    training = _load_training_stats()
+    body = _render_card(today, n_shows, scrape_target, _metric_rows(summary), training)
     MODEL_CARD.write_text(body, encoding="utf-8")
 
 
