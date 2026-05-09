@@ -30,3 +30,7 @@ Avg confidence: 5%. Top picks across sets: Sample in a Jar, Sparkle, Harry Hood,
 ## #67 — 2002-10-29 @ Boston Garden (@nate-rogan, generated 2026-05-09)
 
 Avg confidence: 7%. Top picks across sets: Maze, Stash, The Squirming Coil, You Enjoy Myself, Amazing Grace, Tweezer Reprise.
+
+## #70 — 2017-03-16 @ Boston Garden (@nate-rogan, generated 2026-05-09)
+
+Avg confidence: 7%. Top picks across sets: Maze, Stash, The Squirming Coil, You Enjoy Myself, Amazing Grace, Tweezer Reprise.

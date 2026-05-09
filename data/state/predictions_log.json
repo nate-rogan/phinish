@@ -70,5 +70,14 @@
     "venue_id": "v_boston_garden",
     "avg_confidence": 0.06554875351713528,
     "generated_at": "2026-05-09"
+  },
+  {
+    "issue_number": 70,
+    "author": "nate-rogan",
+    "date": "2017-03-16",
+    "venue": "Boston Garden",
+    "venue_id": "v_boston_garden",
+    "avg_confidence": 0.07348637204563277,
+    "generated_at": "2026-05-09"
   }
 ]
