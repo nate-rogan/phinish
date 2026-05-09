@@ -227243,5 +227243,296 @@
     "is_halloween": false,
     "is_festival": false,
     "total_songs": 3
+  },
+  {
+    "show_id": "1251077390",
+    "date": "2002-12-14",
+    "year": 2002,
+    "month": 12,
+    "day": 14,
+    "day_of_week": "saturday",
+    "venue_id": "v_studio_8h_nbc_studios",
+    "venue_name": "Studio 8H, NBC Studios",
+    "city": "New York",
+    "state": "NY",
+    "country": "USA",
+    "tour": "Not Part of a Tour",
+    "tour_id": "61",
+    "sets": {
+      "1": [
+        {
+          "song": "46 Days",
+          "song_id": "2",
+          "position": 1,
+          "transition": ",",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Chalk Dust Torture",
+          "song_id": "110",
+          "position": 2,
+          "transition": "6",
+          "is_jam": false,
+          "is_reprise": false
+        }
+      ]
+    },
+    "is_nye": false,
+    "is_halloween": false,
+    "is_festival": false,
+    "total_songs": 2
+  },
+  {
+    "show_id": "1251077456",
+    "date": "2002-12-19",
+    "year": 2002,
+    "month": 12,
+    "day": 19,
+    "day_of_week": "thursday",
+    "venue_id": "v_ed_sullivan_theater",
+    "venue_name": "Ed Sullivan Theater",
+    "city": "New York",
+    "state": "NY",
+    "country": "USA",
+    "tour": "Not Part of a Tour",
+    "tour_id": "61",
+    "sets": {
+      "1": [
+        {
+          "song": "All of These Dreams",
+          "song_id": "19",
+          "position": 1,
+          "transition": "6",
+          "is_jam": false,
+          "is_reprise": false
+        }
+      ]
+    },
+    "is_nye": false,
+    "is_halloween": false,
+    "is_festival": false,
+    "total_songs": 1
+  },
+  {
+    "show_id": "1251078210",
+    "date": "2002-12-31",
+    "year": 2002,
+    "month": 12,
+    "day": 31,
+    "day_of_week": "tuesday",
+    "venue_id": "v_msg",
+    "venue_name": "Madison Square Garden",
+    "city": "New York",
+    "state": "NY",
+    "country": "USA",
+    "tour": "2002/2003 Inverted NYE Run",
+    "tour_id": "51",
+    "sets": {
+      "1": [
+        {
+          "song": "Piper",
+          "song_id": "437",
+          "position": 1,
+          "transition": ",",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Guyute",
+          "song_id": "242",
+          "position": 2,
+          "transition": ",",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "NICU",
+          "song_id": "404",
+          "position": 3,
+          "transition": ",",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Horn",
+          "song_id": "269",
+          "position": 4,
+          "transition": ",",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Wilson",
+          "song_id": "679",
+          "position": 5,
+          "transition": ",",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Mound",
+          "song_id": "392",
+          "position": 6,
+          "transition": ",",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "The Squirming Coil",
+          "song_id": "603",
+          "position": 7,
+          "transition": ">",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "David Bowie",
+          "song_id": "148",
+          "position": 8,
+          "transition": "4",
+          "is_jam": false,
+          "is_reprise": false
+        }
+      ],
+      "2": [
+        {
+          "song": "Waves",
+          "song_id": "651",
+          "position": 9,
+          "transition": ">",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "The Divided Sky",
+          "song_id": "161",
+          "position": 10,
+          "transition": ",",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Lawn Boy",
+          "song_id": "329",
+          "position": 11,
+          "transition": ",",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Carini",
+          "song_id": "104",
+          "position": 12,
+          "transition": ",",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Rift",
+          "song_id": "462",
+          "position": 13,
+          "transition": ",",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Harry Hood",
+          "song_id": "250",
+          "position": 14,
+          "transition": ">",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Character Zero",
+          "song_id": "113",
+          "position": 15,
+          "transition": "4",
+          "is_jam": false,
+          "is_reprise": false
+        }
+      ],
+      "3": [
+        {
+          "song": "Sample in a Jar",
+          "song_id": "483",
+          "position": 16,
+          "transition": ",",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Seven Below",
+          "song_id": "499",
+          "position": 17,
+          "transition": ">",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Auld Lang Syne",
+          "song_id": "35",
+          "position": 18,
+          "transition": ">",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Runaway Jim",
+          "song_id": "479",
+          "position": 19,
+          "transition": "->",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Time Loves a Hero",
+          "song_id": "615",
+          "position": 20,
+          "transition": ",",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Taste",
+          "song_id": "558",
+          "position": 21,
+          "transition": ",",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Strange Design",
+          "song_id": "542",
+          "position": 22,
+          "transition": ",",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Walls of the Cave",
+          "song_id": "648",
+          "position": 23,
+          "transition": "5",
+          "is_jam": false,
+          "is_reprise": false
+        }
+      ],
+      "encore": [
+        {
+          "song": "Wading in the Velvet Sea",
+          "song_id": "642",
+          "position": 24,
+          "transition": "6",
+          "is_jam": false,
+          "is_reprise": false
+        }
+      ]
+    },
+    "is_nye": true,
+    "is_halloween": false,
+    "is_festival": false,
+    "total_songs": 24
   }
 ]
