@@ -3,7 +3,7 @@
   "w_markov": 0.0,
   "w_gap": 0.0,
   "w_venue": 0.6666666666666666,
-  "val_precision_at_25": 0.45855072463768115,
-  "val_year": 1999,
-  "n_val_shows": 69
+  "val_precision_at_25": 0.4731034482758621,
+  "val_year": 2000,
+  "n_val_shows": 58
 }

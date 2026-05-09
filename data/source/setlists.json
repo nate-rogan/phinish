@@ -227196,5 +227196,52 @@
     "is_halloween": false,
     "is_festival": false,
     "total_songs": 16
+  },
+  {
+    "show_id": "1251077042",
+    "date": "2001-12-01",
+    "year": 2001,
+    "month": 12,
+    "day": 1,
+    "day_of_week": "saturday",
+    "venue_id": "v_reception_hall_swiss_tel",
+    "venue_name": "Reception Hall, SwissÃ´tel",
+    "city": "Boston",
+    "state": "MA",
+    "country": "USA",
+    "tour": "Not Part of a Tour",
+    "tour_id": "61",
+    "sets": {
+      "1": [
+        {
+          "song": "Wolfman's Brother",
+          "song_id": "683",
+          "position": 1,
+          "transition": ">",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Boogie On Reggae Woman",
+          "song_id": "80",
+          "position": 2,
+          "transition": ",",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Loving Cup",
+          "song_id": "354",
+          "position": 3,
+          "transition": "6",
+          "is_jam": false,
+          "is_reprise": false
+        }
+      ]
+    },
+    "is_nye": false,
+    "is_halloween": false,
+    "is_festival": false,
+    "total_songs": 3
   }
 ]
