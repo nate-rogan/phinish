@@ -262,7 +262,7 @@ def min_max_normalize(values: list[float]) -> list[float]:
 
 
 def check_rate_limit(
-    usage: Usage, user: str, max_per_day: int = 20, max_per_user: int = 3
+    usage: Usage, user: str, max_per_day: int = 100, max_per_user: int = 100
 ) -> tuple[bool, str | None]:
     """Return ``(ok, reason)`` for a prediction request given the day's usage.
 
