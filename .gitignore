@@ -27,6 +27,7 @@ Thumbs.db
 # Logs
 *.log
 
-# Raw API data is not committed (Phish.net ToS).
-# Derived artifacts (features, models) are committed so CI can predict without scraping.
-data/source/
+# Derived artifacts (features, models) and setlists are committed so CI
+# can predict without scraping and incremental retrains can merge new years.
+data/source/songs.json
+data/source/venues.json

@@ -115,8 +115,8 @@ def _render_card(
 
 ## Dataset
 
-{n_shows} shows. Raw setlist data is not committed (see `.gitignore`);
-only trained model artifacts are persisted.
+{n_shows} shows. Setlist data is committed so incremental retrains
+can merge new years into the existing dataset.
 
 ## Training
 
@@ -134,7 +134,7 @@ Evaluated on temporal holdout (test >= {test_year}).
 
 - **XGBoost:** `max_depth=6`, `learning_rate=0.1`, `n_estimators=300`, `scale_pos_weight=12`
 - **Markov:** order 2, Laplace smoothing `k=0.01`
-- **Calibration:** Platt scaling on validation set (2024)
+- **Calibration:** Platt scaling on validation set ({training.get('val_year', '?')})
 - **Ensemble:** grid search over `(w_xgb, w_markov, w_gap, w_venue)` optimizing Precision@25
 
 See `models/manifest.json` for the full retrain history.
