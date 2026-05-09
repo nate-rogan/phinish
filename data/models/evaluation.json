@@ -1,20 +1,40 @@
 {
-  "test_start_year": 2025,
+  "test_start_year": 2000,
   "summary": {
     "frequency": {
-      "n_shows": 0
+      "precision_at_25": 0.06518518518518518,
+      "recall": 0.09208315008323609,
+      "f1": 0.07606494281835115,
+      "opener_accuracy": 0.0,
+      "n_shows": 108
     },
     "gap_weighted": {
-      "n_shows": 0
+      "precision_at_25": 0.12481481481481482,
+      "recall": 0.22565879185568727,
+      "f1": 0.15010200305655588,
+      "opener_accuracy": 0.027777777777777776,
+      "n_shows": 108
     },
     "xgboost": {
-      "n_shows": 0
+      "precision_at_25": 0.1711111111111111,
+      "recall": 0.30923068478108034,
+      "f1": 0.21151978261930746,
+      "opener_accuracy": 0.046296296296296294,
+      "n_shows": 108
     },
     "markov": {
-      "n_shows": 0
+      "precision_at_25": 0.04777777777777778,
+      "recall": 0.07348842482893911,
+      "f1": 0.05647400974073026,
+      "opener_accuracy": 0.0,
+      "n_shows": 108
     },
     "ensemble": {
-      "n_shows": 0
+      "precision_at_25": 0.3148148148148148,
+      "recall": 0.554576461367182,
+      "f1": 0.38599448253633534,
+      "opener_accuracy": 0.037037037037037035,
+      "n_shows": 108
     }
   }
 }

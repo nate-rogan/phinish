@@ -29,7 +29,7 @@ from phinish.artifacts import (
 )
 from phinish.features.types import VenueHistory
 from phinish.scrape.types import Show
-from phinish.train.state import MIN_PLAYS_FOR_CANDIDATE, VAL_YEAR, StreamingState, featurize
+from phinish.train.state import MIN_PLAYS_FOR_CANDIDATE, StreamingState, featurize, split_years
 from phinish.utils import MODELS_DIR, min_max_normalize, save_json, show_song_set
 
 log = structlog.get_logger()
@@ -56,6 +56,7 @@ def _build_val_records(
     venue_history: dict[str, VenueHistory],
     markov: dict[str, float],
     gap_scores: dict[str, float],
+    val_year: int,
 ) -> list[dict]:
     """Replay history and collect candidate score vectors for validation shows.
 
@@ -75,6 +76,8 @@ def _build_val_records(
         Global Markov transition prior score per song.
     gap_scores
         Global gap-based prior score per song.
+    val_year
+        Year to use as the validation holdout.
 
     Returns
     -------
@@ -86,7 +89,7 @@ def _build_val_records(
     val_records: list[dict] = []
     for show in shows:
         played = show_song_set(show)
-        if show.year == VAL_YEAR:
+        if show.year == val_year:
             candidates = [s for s, c in state.plays.items() if c >= MIN_PLAYS_FOR_CANDIDATE]
             if candidates:
                 X = np.array(
@@ -187,6 +190,9 @@ def train_ensemble(
         ``w_gap``, ``w_venue``, ``val_precision_at_25``, ``val_year``,
         ``n_val_shows``.
     """
+    max_year = max(s.year for s in shows)
+    _, val_year, _ = split_years(max_year)
+
     val_records = _build_val_records(
         shows,
         cover_set,
@@ -195,10 +201,11 @@ def train_ensemble(
         venue_history,
         markov,
         gap_scores,
+        val_year,
     )
 
     if not val_records:
-        log.warning("no_val_shows", year=VAL_YEAR, action="using default weights")
+        log.warning("no_val_shows", year=val_year, action="using default weights")
         wx, wm, wg, wv = (
             DEFAULT_WEIGHTS["w_xgboost"],
             DEFAULT_WEIGHTS["w_markov"],
@@ -211,7 +218,7 @@ def train_ensemble(
             "w_gap": wg,
             "w_venue": wv,
             "val_precision_at_25": None,
-            "val_year": VAL_YEAR,
+            "val_year": val_year,
             "n_val_shows": 0,
         }
 
@@ -232,7 +239,7 @@ def train_ensemble(
         "w_gap": wg,
         "w_venue": wv,
         "val_precision_at_25": best_score,
-        "val_year": VAL_YEAR,
+        "val_year": val_year,
         "n_val_shows": len(val_records),
     }
 

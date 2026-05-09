@@ -84,12 +84,13 @@ def _training_card_section(training: dict) -> str:
         lines.append(f"- **Training examples:** {n_train:,}")
     n_val = training.get("n_val_shows", 0)
     val_p25 = training.get("val_precision_at_25")
+    val_year = training.get("val_year", "?")
     if n_val:
-        lines.append(f"- **Validation shows:** {n_val} (year 2024)")
+        lines.append(f"- **Validation shows:** {n_val} (year {val_year})")
         if val_p25 is not None:
             lines.append(f"- **Val Precision@25:** {val_p25:.1%}")
     else:
-        lines.append("- **Validation:** _no 2024 data yet_")
+        lines.append(f"- **Validation:** _no {val_year} data yet_")
     ew = training.get("ensemble_weights", {})
     if ew:
         parts = [f"{k}={v:.2f}" for k, v in ew.items()]
@@ -98,7 +99,12 @@ def _training_card_section(training: dict) -> str:
 
 
 def _render_card(
-    today: str, n_shows: int, scrape_target: str, rows: list[str], training: dict,
+    today: str,
+    n_shows: int,
+    scrape_target: str,
+    rows: list[str],
+    training: dict,
+    test_year: int,
 ) -> str:
     """Return the full markdown body for ``models/model_card.md``."""
     rows_block = "\n".join(rows)
@@ -118,7 +124,7 @@ only trained model artifacts are persisted.
 
 ## Test Metrics
 
-Evaluated on temporal holdout (test >= 2025).
+Evaluated on temporal holdout (test >= {test_year}).
 
 | Model | Precision@25 | Recall | F1 | Opener Acc | Pair Match |
 |---|---|---|---|---|---|
@@ -135,7 +141,9 @@ See `models/manifest.json` for the full retrain history.
 """
 
 
-def update_model_card(today: str, n_shows: int, scrape_target: str, summary: dict) -> None:
+def update_model_card(
+    today: str, n_shows: int, scrape_target: str, summary: dict, test_year: int,
+) -> None:
     """Render and persist ``models/model_card.md`` from the latest evaluation.
 
     Parameters
@@ -152,9 +160,13 @@ def update_model_card(today: str, n_shows: int, scrape_target: str, summary: dic
         Per-model evaluation summary from ``models/evaluation.json``;
         each entry has ``precision_at_25`` / ``recall`` / ``f1`` /
         ``opener_accuracy`` / ``n_shows``.
+    test_year
+        The holdout year used for evaluation metrics.
     """
     training = _load_training_stats()
-    body = _render_card(today, n_shows, scrape_target, _metric_rows(summary), training)
+    body = _render_card(
+        today, n_shows, scrape_target, _metric_rows(summary), training, test_year,
+    )
     MODEL_CARD.write_text(body, encoding="utf-8")
 
 
@@ -233,8 +245,9 @@ def _training_section(training: dict) -> str:
         lines.append(f"- Training examples: **{n_train:,}**")
     n_val = training.get("n_val_shows", 0)
     val_p25 = training.get("val_precision_at_25")
+    val_year = training.get("val_year", "?")
     if n_val:
-        lines.append(f"- Validation shows: **{n_val}** (year 2024)")
+        lines.append(f"- Validation shows: **{n_val}** (year {val_year})")
         if val_p25 is not None:
             lines.append(f"- Val Precision@25: **{val_p25:.1%}**")
     ew = training.get("ensemble_weights", {})
@@ -244,13 +257,13 @@ def _training_section(training: dict) -> str:
     return "\n".join(lines)
 
 
-def _test_section(metrics: dict) -> str:
+def _test_section(metrics: dict, test_year: int) -> str:
     """Format the test-level metrics section of the success comment."""
     n_test = metrics.get("n_test_shows", 0)
     if not n_test:
-        return "- Test evaluation: _no 2025+ shows yet — metrics appear after retrain 2025_"
+        return f"- Test evaluation: _no {test_year}+ shows yet_"
     return (
-        f"- Test shows: **{n_test}** (since 2025)\n"
+        f"- Test shows: **{n_test}** (year {test_year})\n"
         f"- Ensemble Precision@25: **{metrics['precision_at_25']:.1%}**\n"
         f"- Ensemble Opener Accuracy: **{metrics['opener_accuracy']:.1%}**"
     )
@@ -261,6 +274,7 @@ def _success_comment(
     previous: dict | None,
     scrape_target: str,
     repo: str,
+    test_year: int,
 ) -> str:
     """Build the markdown body for the success comment posted to the issue."""
     diff = _diff_line(current["n_shows"], previous)
@@ -271,7 +285,7 @@ def _success_comment(
         f"## ✅ Retrain Complete — {scrape_target}\n\n"
         f"{diff}\n\n"
         f"### Training\n{_training_section(training)}\n\n"
-        f"### Evaluation\n{_test_section(metrics)}\n\n"
+        f"### Evaluation\n{_test_section(metrics, test_year)}\n\n"
         f"See [`data/models/model_card.md`]({base}/data/models/model_card.md) for full "
         f"metrics, or [`data/models/manifest.json`]({base}/data/models/manifest.json) for "
         "retrain history."
@@ -288,6 +302,7 @@ def _load_training_stats() -> dict:
         "n_train_rows": xgb_meta.get("n_train_rows", 0),
         "n_val_rows": xgb_meta.get("n_val_rows", 0),
         "n_val_shows": ew.get("n_val_shows", 0),
+        "val_year": ew.get("val_year", 0),
         "val_precision_at_25": ew.get("val_precision_at_25"),
         "ensemble_weights": {
             "xgboost": ew.get("w_xgboost", 0),
@@ -334,15 +349,17 @@ def process_year() -> None:
         raise
 
     eval_path = MODELS_DIR / "evaluation.json"
-    summary = load_json(eval_path).get("summary", {}) if eval_path.exists() else {}
+    eval_data = load_json(eval_path) if eval_path.exists() else {}
+    summary = eval_data.get("summary", {})
+    test_year = eval_data.get("test_start_year", 0)
     n_shows = len(load_json(SETLISTS_PATH)) if SETLISTS_PATH.exists() else 0
     today = datetime.now().isoformat(timespec="seconds")
 
     current = _build_current(today, n_shows, scrape_target, summary)
     _save_manifest(current, previous)
-    update_model_card(today, n_shows, scrape_target, summary)
+    update_model_card(today, n_shows, scrape_target, summary, test_year)
 
-    comment = _success_comment(current, previous, scrape_target, gh.repo)
+    comment = _success_comment(current, previous, scrape_target, gh.repo, test_year)
     if gh.can_post:
         gh.post(comment)
     else:

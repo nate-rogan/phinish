@@ -20,11 +20,10 @@ from phinish.artifacts import load_cover_set, load_shows
 from phinish.scrape.types import Show
 from phinish.train.state import (
     MIN_PLAYS_FOR_CANDIDATE,
-    TRAIN_END_YEAR,
-    VAL_YEAR,
     StreamingState,
     feature_names,
     featurize,
+    split_years,
 )
 from phinish.utils import (
     MODELS_DIR,
@@ -99,12 +98,15 @@ def train_xgboost(shows: list[Show], cover_set: set[str]) -> XGBoostResult:
     XGBoostResult
         Trained model, calibrator, final streaming state, and metadata.
     """
-    log.info("building_train_matrix", end_year=TRAIN_END_YEAR)
-    X_train, y_train, _, _ = build_training_matrix(shows, cover_set, 1983, TRAIN_END_YEAR)
+    max_year = max(s.year for s in shows)
+    train_end, val_year, _ = split_years(max_year)
+
+    log.info("building_train_matrix", end_year=train_end)
+    X_train, y_train, _, _ = build_training_matrix(shows, cover_set, 1983, train_end)
     log.info("train_matrix_built", shape=X_train.shape, positives=int(y_train.sum()))
 
-    log.info("building_val_matrix", year=VAL_YEAR)
-    X_val, y_val, _, final_state = build_training_matrix(shows, cover_set, VAL_YEAR, VAL_YEAR)
+    log.info("building_val_matrix", year=val_year)
+    X_val, y_val, _, final_state = build_training_matrix(shows, cover_set, val_year, val_year)
     log.info("val_matrix_built", shape=X_val.shape, positives=int(y_val.sum()))
 
     if X_train.size == 0:
@@ -129,8 +131,8 @@ def train_xgboost(shows: list[Show], cover_set: set[str]) -> XGBoostResult:
         "n_val_rows": int(X_val.shape[0]),
         "params": {k: v for k, v in XGB_PARAMS.items() if isinstance(v, (int, float, str, bool))},
         "min_plays_for_candidate": MIN_PLAYS_FOR_CANDIDATE,
-        "train_end_year": TRAIN_END_YEAR,
-        "val_year": VAL_YEAR,
+        "train_end_year": train_end,
+        "val_year": val_year,
     }
     return XGBoostResult(model=model, calibrator=calibrator, state=final_state, meta=meta)
 

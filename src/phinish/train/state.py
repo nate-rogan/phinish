@@ -27,9 +27,23 @@ BUSTOUT_GAP = 50  # ~1 full tour without playing; empirically strong signal
 MIN_PLAYS_FOR_CANDIDATE = 5  # filters one-off teases/debuts with too little history
 NEVER_PLAYED_GAP_PENALTY = 100  # large synthetic gap for songs never seen; exceeds any real gap
 TYPICAL_TOUR_LENGTH = 30.0  # average number of shows in a Phish tour
-TRAIN_END_YEAR = 2023  # last full calendar year of training data
-VAL_YEAR = 2024  # most recent complete year for weight tuning
-TEST_START_YEAR = 2025  # current year; holdout for evaluation only
+
+
+def split_years(max_year: int) -> tuple[int, int, int]:
+    """Compute train/val/test split years relative to available data.
+
+    Parameters
+    ----------
+    max_year
+        The most recent year present in the dataset.
+
+    Returns
+    -------
+    tuple[int, int, int]
+        ``(train_end, val_year, test_start)`` where train covers up to
+        ``max_year - 2``, val is ``max_year - 1``, and test is ``max_year``.
+    """
+    return max_year - 2, max_year - 1, max_year
 
 
 def feature_names() -> list[str]:

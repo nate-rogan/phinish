@@ -22,7 +22,7 @@ from phinish.artifacts import (
 )
 from phinish.features.types import SongStats, VenueHistory
 from phinish.scrape.types import Show
-from phinish.train import MIN_PLAYS_FOR_CANDIDATE, TEST_START_YEAR, StreamingState, featurize
+from phinish.train import MIN_PLAYS_FOR_CANDIDATE, StreamingState, featurize, split_years
 from phinish.utils import (
     MODELS_DIR,
     TOP_K,
@@ -124,10 +124,10 @@ def _summarize(
     return summary
 
 
-def _print_summary(summary: dict[str, dict]) -> None:
+def _print_summary(summary: dict[str, dict], test_start: int) -> None:
     """Print a compact comparison table of all model metrics to stdout."""
     n = summary.get("ensemble", {}).get("n_shows", 0)
-    print(f"\nEvaluation on {n} shows since {TEST_START_YEAR}:\n")
+    print(f"\nEvaluation on {n} shows since {test_start}:\n")
     for name in MODEL_NAMES:
         m = summary[name]
         if m.get("n_shows", 0) > 0:
@@ -179,6 +179,9 @@ def evaluate(
     dict
         Evaluation payload with ``test_start_year`` and ``summary``.
     """
+    max_year = max(s.year for s in shows)
+    _, _, test_start = split_years(max_year)
+
     state = StreamingState()
     results: dict[str, list[dict]] = {m: [] for m in MODEL_NAMES}
     opener_correct = dict.fromkeys(MODEL_NAMES, 0)
@@ -189,7 +192,7 @@ def evaluate(
         set1 = show.sets.get("1", [])
         actual_opener = set1[0].song if set1 else None
 
-        if show.year >= TEST_START_YEAR:
+        if show.year >= test_start:
             candidates = [s for s, c in state.plays.items() if c >= MIN_PLAYS_FOR_CANDIDATE]
             if candidates:
                 rankings = _rank_all_models(
@@ -220,7 +223,7 @@ def evaluate(
         state.update(show)
 
     summary = _summarize(results, opener_correct, opener_total)
-    return {"test_start_year": TEST_START_YEAR, "summary": summary}
+    return {"test_start_year": test_start, "summary": summary}
 
 
 def main() -> None:
@@ -252,7 +255,7 @@ def main() -> None:
         set_openers_1,
     )
     save_json(MODELS_DIR / "evaluation.json", result)
-    _print_summary(result["summary"])
+    _print_summary(result["summary"], result["test_start_year"])
 
 
 if __name__ == "__main__":
