@@ -1,23 +1,30 @@
 # Phinish Model Card
 
-**Status:** Trained — last retrained on 2026-05-09T11:55:54 (year 2003).
+**Status:** Trained — last retrained on 2026-05-09T22:36:45 (bootstrap 1983-2000).
 
 ## Dataset
 
-598 shows scraped fresh per retrain. Raw setlist data is not committed
-to the repo (see `.gitignore`); only trained model artifacts are persisted.
+1464 shows. Raw setlist data is not committed (see `.gitignore`);
+only trained model artifacts are persisted.
 
-## Metrics
+## Training
 
-Evaluated on temporal holdout (test ≥ 2025).
+- **Training examples:** 227,260
+- **Validation shows:** 115 (year 1999)
+- **Val Precision@25:** 35.3%
+- **Ensemble weights:** xgboost=0.33 / markov=0.00 / gap=0.00 / venue=0.67
+
+## Test Metrics
+
+Evaluated on temporal holdout (test >= 2000).
 
 | Model | Precision@25 | Recall | F1 | Opener Acc | Pair Match |
 |---|---|---|---|---|---|
-| Frequency baseline | — | — | — | — | — |
-| Gap-weighted baseline | — | — | — | — | — |
-| XGBoost (solo) | — | — | — | — | — |
-| Markov (solo) | — | — | — | — | — |
-| **Ensemble** | — | — | — | — | — |
+| Frequency baseline | 6.5% | 9.2% | 7.6% | 0.0% | — |
+| Gap-weighted baseline | 12.5% | 22.6% | 15.0% | 2.8% | — |
+| XGBoost (solo) | 16.9% | 29.5% | 20.8% | 4.6% | — |
+| Markov (solo) | 4.8% | 7.3% | 5.6% | 0.0% | — |
+| **Ensemble** | 31.9% | 56.0% | 39.0% | 3.7% | — |
 
 ## Hyperparameters
 

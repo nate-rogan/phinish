@@ -41,6 +41,7 @@ Every workflow can be triggered via a GitHub issue or run locally with pixi. The
 | **How** | Open a [Process Year issue](../../issues/new?assignees=&labels=wf%3Aprocess&template=process-year.yml) | `pixi run scrape --year 2025 && pixi run retrain` |
 | **What happens** | Scrapes year from Phish.net → rebuilds features → retrains all models → commits artifacts | Same pipeline, no commit |
 | **Full bootstrap** | Not available (use local) | `pixi run bootstrap` (scrapes 1983–present, ~5 min) |
+| **Partial bootstrap** | Not available (use local) | `for y in $(seq 1983 2000); do pixi run scrape -- --year $y; done && pixi run retrain` |
 | **Requires** | `PHISHNET_API_KEY` secret | `PHISHNET_API_KEY` in `.env` |
 
 ### Quality Checks
