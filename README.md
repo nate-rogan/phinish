@@ -12,9 +12,9 @@ Issues are the API. Actions are the compute. The repo is the database.
 
 ```mermaid
 flowchart LR
-    A["Open GitHub Issue<br/><em>Predict: MSG — 2026-12-31</em>"] --> B["GitHub Actions fires<br/>Loads models, scores 300+ songs"]
-    B --> C["Ensemble prediction posted<br/>Set 1, Set 2, Encore + confidence %"]
-    C --> D["Issue closed<br/>Dashboard updated"]
+    A["Open Issue"] --> B["Actions Runs"]
+    B --> C["Prediction Posted"]
+    C --> D["Issue Closed"]
 ```
 
 The entire system — data ingestion, feature engineering, model training, inference, and serving — runs from this repository. No servers. No containers. No cloud accounts.
@@ -91,22 +91,21 @@ The strongest single predictor is the **rotation gap** — Phish almost never re
 
 ```mermaid
 flowchart TB
-    subgraph repo["GitHub Repository"]
-        code["src/phinish/<br/>Pipeline code"]
-        features["data/state/features/<br/>Aggregate features"]
-        models["data/models/<br/>Trained models + state snapshot"]
-        source["data/source/<br/>Raw setlists (gitignored)"]
+    subgraph repo["Repository"]
+        code["src/phinish/"]
+        features["data/state/features/"]
+        models["data/models/"]
     end
 
-    predict_issue["Issue labeled<br/><strong>wf:predict</strong>"] --> predict_flow
-    process_issue["Issue labeled<br/><strong>wf:process</strong>"] --> process_flow
+    predict_issue["wf:predict Issue"] --> predict_flow
+    process_issue["wf:process Issue"] --> process_flow
 
-    subgraph predict_flow["Predict Path"]
-        p1["Load state.pkl + models"] --> p2["Run ensemble scorer"] --> p3["Post comment + close issue"]
+    subgraph predict_flow["Predict"]
+        p1["Load Models"] --> p2["Score Songs"] --> p3["Post Comment"]
     end
 
-    subgraph process_flow["Retrain Path"]
-        r1["Scrape year from Phish.net"] --> r2["Rebuild features"] --> r3["Retrain all models"] --> r4["Commit artifacts + close issue"]
+    subgraph process_flow["Retrain"]
+        r1["Scrape"] --> r2["Features"] --> r3["Train"] --> r4["Commit"]
     end
 ```
 
