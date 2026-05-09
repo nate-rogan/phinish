@@ -43,7 +43,7 @@ jobs:
       - name: Update labels and close
         if: success()
         run: |
-          gh issue edit ${{ github.event.issue.number }} --remove-label "wf:predict" --add-label "wf:done"
+          gh issue edit ${{ github.event.issue.number }} --remove-label "wf:predict" --add-label "wf:done:predict"
           gh issue close ${{ github.event.issue.number }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -1,7 +1,7 @@
 blank_issues_enabled: false
 contact_links:
   - name: Browse all predictions
-    url: ../../issues?q=label%3Awf%3Adone
+    url: ../../issues?q=label%3Awf%3Adone%3Apredict
     about: See past predictions and their outcomes
   - name: View live workflow runs
     url: ../../actions

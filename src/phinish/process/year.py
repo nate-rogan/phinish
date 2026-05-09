@@ -199,18 +199,21 @@ def _diff_line(current_n: int, previous: dict | None) -> str:
     )
 
 
-def _success_comment(current: dict, previous: dict | None, scrape_target: str) -> str:
+def _success_comment(
+    current: dict, previous: dict | None, scrape_target: str, repo: str,
+) -> str:
     """Build the markdown body for the success comment posted to the issue."""
     diff = _diff_line(current["n_shows"], previous)
     metrics = current.get("metrics", {})
+    base = f"https://github.com/{repo}/blob/main" if repo else "../blob/main"
     return (
         f"## ✅ Retrain Complete — {scrape_target}\n\n"
         f"{diff}\n\n"
         f"- Test shows: **{metrics.get('n_test_shows', 0)}** (since 2025)\n"
         f"- Ensemble Precision@25: **{metrics.get('precision_at_25', 0):.1%}**\n"
         f"- Ensemble Opener Accuracy: **{metrics.get('opener_accuracy', 0):.1%}**\n\n"
-        "See [`data/models/model_card.md`](../blob/main/data/models/model_card.md) for full "
-        "metrics, or [`data/models/manifest.json`](../blob/main/data/models/manifest.json) for "
+        f"See [`data/models/model_card.md`]({base}/data/models/model_card.md) for full "
+        f"metrics, or [`data/models/manifest.json`]({base}/data/models/manifest.json) for "
         "retrain history."
     )
 
@@ -257,7 +260,7 @@ def process_year() -> None:
     _save_manifest(current, previous)
     update_model_card(today, n_shows, scrape_target, summary)
 
-    comment = _success_comment(current, previous, scrape_target)
+    comment = _success_comment(current, previous, scrape_target, gh.repo)
     if gh.can_post:
         gh.post(comment)
     else:

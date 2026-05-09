@@ -4,7 +4,7 @@
 
 Issues are the API. Actions are the compute. The repo is the database.
 
-[**→ Try it: Request a Prediction**](../../issues/new?assignees=&labels=wf%3Apredict&template=predict-show.yml) · [**Browse All Predictions**](../../issues?q=label%3Awf%3Adone) · [**Dashboard**](https://nate-rogan.github.io/phinish)
+[**→ Try it: Request a Prediction**](../../issues/new?assignees=&labels=wf%3Apredict&template=predict-show.yml) · [**Browse All Predictions**](../../issues?q=label%3Awf%3Adone%3Apredict) · [**Dashboard**](https://nate-rogan.github.io/phinish)
 
 ---
 
