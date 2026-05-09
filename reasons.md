@@ -18,3 +18,7 @@ Avg confidence: 7%. Top picks across sets: Ginseng Sullivan, The Inlaw Josie Wal
 ## #42 — 2001-12-06 @ Lake Placid (@nate-rogan, generated 2026-05-09)
 
 Avg confidence: 30%. Top picks across sets: First Tube, Golgi Apparatus, David Bowie, You Enjoy Myself, Tweezer Reprise, Rocky Top.
+
+## #63 — 2001-04-01 @ The Music Box, Borgata Hotel  Casino (@nate-rogan, generated 2026-05-09)
+
+Avg confidence: 6%. Top picks across sets: Cavern, Character Zero, David Bowie, Gotta Jibboo, Good Times Bad Times, Rocky Top.

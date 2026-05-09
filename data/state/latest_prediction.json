@@ -1,122 +1,122 @@
 {
-  "date": "2001-12-06",
-  "venue": "Lake Placid",
-  "venue_id": "v_lake_placid",
-  "city": "",
+  "date": "2001-04-01",
+  "venue": "The Music Box, Borgata Hotel  Casino",
+  "venue_id": "v_the_music_box_borgata_hotel_casino",
+  "city": "Atlantic City, NJ",
   "setlist": {
     "1": [
       {
-        "song": "First Tube",
-        "confidence": 0.421440064907074,
-        "gap": 12
-      },
-      {
-        "song": "Golgi Apparatus",
-        "confidence": 0.3674072325229645,
-        "gap": 13
-      },
-      {
-        "song": "Possum",
-        "confidence": 0.3746121823787689,
-        "gap": 7
-      },
-      {
-        "song": "Chalk Dust Torture",
-        "confidence": 0.24899689853191376,
-        "gap": 13
-      },
-      {
-        "song": "Heavy Things",
-        "confidence": 0.27444183826446533,
-        "gap": 13
-      },
-      {
-        "song": "Limb By Limb",
-        "confidence": 0.2619768977165222,
-        "gap": 14
-      },
-      {
         "song": "Cavern",
-        "confidence": 0.3194735646247864,
-        "gap": 15
+        "confidence": 0.14728905810065504,
+        "gap": 4
+      },
+      {
+        "song": "Character Zero",
+        "confidence": 0.14918213886577153,
+        "gap": 3
       },
       {
         "song": "Run Like an Antelope",
-        "confidence": 0.24728886783123016,
-        "gap": 13
+        "confidence": 0.18745368570728754,
+        "gap": 2
       },
       {
-        "song": "The Moma Dance",
-        "confidence": 0.30510762333869934,
-        "gap": 13
+        "song": "Golgi Apparatus",
+        "confidence": 0.16100496663003774,
+        "gap": 2
       },
       {
-        "song": "Jam",
-        "confidence": 0.3146781325340271,
-        "gap": 6
+        "song": "Possum",
+        "confidence": 0.02026246615262859,
+        "gap": 3
+      },
+      {
+        "song": "It's Ice",
+        "confidence": 0.01440359926110585,
+        "gap": 4
+      },
+      {
+        "song": "Sparkle",
+        "confidence": 0.014798863611501043,
+        "gap": 11
+      },
+      {
+        "song": "Wilson",
+        "confidence": 0.018980488763767168,
+        "gap": 8
+      },
+      {
+        "song": "Dinner and a Movie",
+        "confidence": 0.010507079119907555,
+        "gap": 8
+      },
+      {
+        "song": "Chalk Dust Torture",
+        "confidence": 0.04518141521461932,
+        "gap": 2
       }
     ],
     "2": [
       {
         "song": "David Bowie",
-        "confidence": 0.42558926343917847,
-        "gap": 12
-      },
-      {
-        "song": "You Enjoy Myself",
-        "confidence": 0.4174908995628357,
-        "gap": 12
-      },
-      {
-        "song": "Piper",
-        "confidence": 0.29847002029418945,
-        "gap": 14
-      },
-      {
-        "song": "Mike's Song",
-        "confidence": 0.2773147225379944,
-        "gap": 12
-      },
-      {
-        "song": "Hydrogen",
-        "confidence": 0.18472920358181,
-        "gap": 12
-      },
-      {
-        "song": "Weekapaug Groove",
-        "confidence": 0.297391802072525,
-        "gap": 12
-      },
-      {
-        "song": "Harry Hood",
-        "confidence": 0.29568302631378174,
-        "gap": 15
+        "confidence": 0.13695233678856011,
+        "gap": 1
       },
       {
         "song": "Gotta Jibboo",
-        "confidence": 0.17915640771389008,
-        "gap": 15
+        "confidence": 0.04331893582871671,
+        "gap": 4
+      },
+      {
+        "song": "Also Sprach Zarathustra",
+        "confidence": 0.024265864883824997,
+        "gap": 1
+      },
+      {
+        "song": "Sand",
+        "confidence": 0.017276086678734388,
+        "gap": 2
+      },
+      {
+        "song": "Harry Hood",
+        "confidence": 0.015251980053621748,
+        "gap": 4
+      },
+      {
+        "song": "Frankenstein",
+        "confidence": 0.019568456324874698,
+        "gap": 8
+      },
+      {
+        "song": "Halley's Comet",
+        "confidence": 0.014630265315344648,
+        "gap": 3
+      },
+      {
+        "song": "Weekapaug Groove",
+        "confidence": 0.015960256867109737,
+        "gap": 1
       }
     ],
     "encore": [
       {
-        "song": "Tweezer Reprise",
-        "confidence": 0.2507030665874481,
-        "gap": 12
+        "song": "Good Times Bad Times",
+        "confidence": 0.025532366116933963,
+        "gap": 20
       },
       {
         "song": "Rocky Top",
-        "confidence": 0.2636115849018097,
-        "gap": 28
+        "confidence": 0.020906132130168332,
+        "gap": 16
       }
     ]
   },
-  "avg_confidence": 0.3012781649827957,
-  "model_version": 2024,
+  "avg_confidence": 0.055136322120758544,
+  "model_version": 2000,
   "weights": {
-    "xgboost": 0.5,
-    "markov": 0.1,
-    "gap": 0.3,
-    "venue": 0.1
+    "xgboost": 0.3333333333333333,
+    "markov": 0.0,
+    "gap": 0.0,
+    "venue": 0.6666666666666666
   }
 }

@@ -43,5 +43,14 @@
     "venue_id": "v_lake_placid",
     "avg_confidence": 0.3012781649827957,
     "generated_at": "2026-05-09"
+  },
+  {
+    "issue_number": 63,
+    "author": "nate-rogan",
+    "date": "2001-04-01",
+    "venue": "The Music Box, Borgata Hotel  Casino",
+    "venue_id": "v_the_music_box_borgata_hotel_casino",
+    "avg_confidence": 0.055136322120758544,
+    "generated_at": "2026-05-09"
   }
 ]
