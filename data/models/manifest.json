@@ -1,28 +1,5 @@
 {
   "current": {
-    "trained_at": "2026-05-09T12:44:39",
-    "n_shows": 829,
-    "scrape_target": "year 2002",
-    "training": {
-      "n_train_rows": 197323,
-      "n_val_rows": 0,
-      "n_val_shows": 0,
-      "val_year": 2020,
-      "val_precision_at_25": null,
-      "ensemble_weights": {
-        "xgboost": 0.5,
-        "markov": 0.1,
-        "gap": 0.3,
-        "venue": 0.1
-      }
-    },
-    "metrics": {
-      "precision_at_25": 0.24059701492537314,
-      "opener_accuracy": 0.0,
-      "n_test_shows": 67
-    }
-  },
-  "previous": {
     "trained_at": "2026-05-09T22:36:45",
     "n_shows": 1464,
     "scrape_target": "bootstrap 1983-2000",
@@ -44,5 +21,6 @@
       "opener_accuracy": 0.037037037037037035,
       "n_test_shows": 108
     }
-  }
+  },
+  "previous": null
 }
