@@ -297589,5 +297589,5002 @@
     "is_halloween": false,
     "is_festival": false,
     "total_songs": 26
+  },
+  {
+    "show_id": "1484415207",
+    "date": "2017-01-12",
+    "year": 2017,
+    "month": 1,
+    "day": 12,
+    "day_of_week": "thursday",
+    "venue_id": "v_barcel_maya_beach",
+    "venue_name": "BarcelÃ³ Maya Beach",
+    "city": "Riviera Maya, Quintana Roo",
+    "state": "",
+    "country": "Mexico",
+    "tour": "Not Part of a Tour",
+    "tour_id": "61",
+    "sets": {
+      "1": [
+        {
+          "song": "Jam",
+          "song_id": "311",
+          "position": 1,
+          "transition": ",",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Jam",
+          "song_id": "311",
+          "position": 2,
+          "transition": ",",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Sugar Shack",
+          "song_id": "543",
+          "position": 3,
+          "transition": ",",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "My Soul",
+          "song_id": "402",
+          "position": 4,
+          "transition": "6",
+          "is_jam": false,
+          "is_reprise": false
+        }
+      ]
+    },
+    "is_nye": false,
+    "is_halloween": false,
+    "is_festival": false,
+    "total_songs": 4
+  },
+  {
+    "show_id": "1479253406",
+    "date": "2017-01-13",
+    "year": 2017,
+    "month": 1,
+    "day": 13,
+    "day_of_week": "friday",
+    "venue_id": "v_barcel_maya_beach",
+    "venue_name": "BarcelÃ³ Maya Beach",
+    "city": "Riviera Maya, Quintana Roo",
+    "state": "",
+    "country": "Mexico",
+    "tour": "2017 Mexico",
+    "tour_id": "200",
+    "sets": {
+      "1": [
+        {
+          "song": "Free",
+          "song_id": "215",
+          "position": 1,
+          "transition": ",",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Yarmouth Road",
+          "song_id": "2413",
+          "position": 2,
+          "transition": ",",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Sand",
+          "song_id": "485",
+          "position": 3,
+          "transition": ",",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Theme from the Bottom",
+          "song_id": "609",
+          "position": 4,
+          "transition": ">",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Funky Bitch",
+          "song_id": "220",
+          "position": 5,
+          "transition": ",",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Undermind",
+          "song_id": "634",
+          "position": 6,
+          "transition": ">",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "NICU",
+          "song_id": "404",
+          "position": 7,
+          "transition": ">",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Horn",
+          "song_id": "269",
+          "position": 8,
+          "transition": ",",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Wolfman's Brother",
+          "song_id": "683",
+          "position": 9,
+          "transition": "4",
+          "is_jam": false,
+          "is_reprise": false
+        }
+      ],
+      "2": [
+        {
+          "song": "A Song I Heard the Ocean Sing",
+          "song_id": "7",
+          "position": 10,
+          "transition": ">",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "The Wedge",
+          "song_id": "607",
+          "position": 11,
+          "transition": ">",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Fuego",
+          "song_id": "2418",
+          "position": 12,
+          "transition": ">",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Prince Caspian",
+          "song_id": "442",
+          "position": 13,
+          "transition": "->",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Twist",
+          "song_id": "630",
+          "position": 14,
+          "transition": "->",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Seven Below",
+          "song_id": "499",
+          "position": 15,
+          "transition": ">",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Golgi Apparatus",
+          "song_id": "234",
+          "position": 16,
+          "transition": ">",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Run Like an Antelope",
+          "song_id": "478",
+          "position": 17,
+          "transition": "5",
+          "is_jam": false,
+          "is_reprise": false
+        }
+      ],
+      "encore": [
+        {
+          "song": "Contact",
+          "song_id": "130",
+          "position": 18,
+          "transition": ",",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Bug",
+          "song_id": "94",
+          "position": 19,
+          "transition": "6",
+          "is_jam": false,
+          "is_reprise": false
+        }
+      ]
+    },
+    "is_nye": false,
+    "is_halloween": false,
+    "is_festival": false,
+    "total_songs": 19
+  },
+  {
+    "show_id": "1479253425",
+    "date": "2017-01-14",
+    "year": 2017,
+    "month": 1,
+    "day": 14,
+    "day_of_week": "saturday",
+    "venue_id": "v_barcel_maya_beach",
+    "venue_name": "BarcelÃ³ Maya Beach",
+    "city": "Riviera Maya, Quintana Roo",
+    "state": "",
+    "country": "Mexico",
+    "tour": "2017 Mexico",
+    "tour_id": "200",
+    "sets": {
+      "1": [
+        {
+          "song": "The Curtain With",
+          "song_id": "576",
+          "position": 1,
+          "transition": ",",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "AC/DC Bag",
+          "song_id": "8",
+          "position": 2,
+          "transition": ">",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Breath and Burning",
+          "song_id": "2628",
+          "position": 3,
+          "transition": ",",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Poor Heart",
+          "song_id": "438",
+          "position": 4,
+          "transition": ",",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Halfway to the Moon",
+          "song_id": "892",
+          "position": 5,
+          "transition": ",",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "The Line",
+          "song_id": "2419",
+          "position": 6,
+          "transition": ",",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Waking Up Dead",
+          "song_id": "2630",
+          "position": 7,
+          "transition": ",",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Tube",
+          "song_id": "622",
+          "position": 8,
+          "transition": ">",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Fast Enough for You",
+          "song_id": "194",
+          "position": 9,
+          "transition": ",",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Ocelot",
+          "song_id": "420",
+          "position": 10,
+          "transition": ">",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Chalk Dust Torture",
+          "song_id": "110",
+          "position": 11,
+          "transition": "4",
+          "is_jam": false,
+          "is_reprise": false
+        }
+      ],
+      "2": [
+        {
+          "song": "Crosseyed and Painless",
+          "song_id": "139",
+          "position": 12,
+          "transition": ">",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Blaze On",
+          "song_id": "2570",
+          "position": 13,
+          "transition": ">",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Meatstick",
+          "song_id": "369",
+          "position": 14,
+          "transition": ">",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Winterqueen",
+          "song_id": "1370",
+          "position": 15,
+          "transition": ",",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Mercury",
+          "song_id": "2573",
+          "position": 16,
+          "transition": ">",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Light",
+          "song_id": "339",
+          "position": 17,
+          "transition": ">",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Wading in the Velvet Sea",
+          "song_id": "642",
+          "position": 18,
+          "transition": "5",
+          "is_jam": false,
+          "is_reprise": false
+        }
+      ],
+      "encore": [
+        {
+          "song": "Drowned",
+          "song_id": "178",
+          "position": 19,
+          "transition": ",",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Rocky Top",
+          "song_id": "472",
+          "position": 20,
+          "transition": "6",
+          "is_jam": false,
+          "is_reprise": false
+        }
+      ]
+    },
+    "is_nye": false,
+    "is_halloween": false,
+    "is_festival": false,
+    "total_songs": 20
+  },
+  {
+    "show_id": "1479253444",
+    "date": "2017-01-15",
+    "year": 2017,
+    "month": 1,
+    "day": 15,
+    "day_of_week": "sunday",
+    "venue_id": "v_barcel_maya_beach",
+    "venue_name": "BarcelÃ³ Maya Beach",
+    "city": "Riviera Maya, Quintana Roo",
+    "state": "",
+    "country": "Mexico",
+    "tour": "2017 Mexico",
+    "tour_id": "200",
+    "sets": {
+      "1": [
+        {
+          "song": "Boogie On Reggae Woman",
+          "song_id": "80",
+          "position": 1,
+          "transition": ">",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Simple",
+          "song_id": "508",
+          "position": 2,
+          "transition": "->",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Tweezer",
+          "song_id": "627",
+          "position": 3,
+          "transition": ">",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Roggae",
+          "song_id": "473",
+          "position": 4,
+          "transition": ",",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Nothing",
+          "song_id": "414",
+          "position": 5,
+          "transition": ",",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Ghost",
+          "song_id": "222",
+          "position": 6,
+          "transition": ">",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Ya Mar",
+          "song_id": "686",
+          "position": 7,
+          "transition": ",",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Stealing Time From the Faulty Plan",
+          "song_id": "539",
+          "position": 8,
+          "transition": ",",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Rift",
+          "song_id": "462",
+          "position": 9,
+          "transition": ">",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Fluffhead",
+          "song_id": "208",
+          "position": 10,
+          "transition": "4",
+          "is_jam": false,
+          "is_reprise": false
+        }
+      ],
+      "2": [
+        {
+          "song": "Down with Disease",
+          "song_id": "174",
+          "position": 11,
+          "transition": "->",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "No Men In No Man's Land",
+          "song_id": "2572",
+          "position": 12,
+          "transition": ">",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Sneakin' Sally Thru the Alley",
+          "song_id": "518",
+          "position": 13,
+          "transition": "->",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Possum",
+          "song_id": "440",
+          "position": 14,
+          "transition": ">",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Carini",
+          "song_id": "104",
+          "position": 15,
+          "transition": ">",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "David Bowie",
+          "song_id": "148",
+          "position": 16,
+          "transition": ",",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Harry Hood",
+          "song_id": "250",
+          "position": 17,
+          "transition": "5",
+          "is_jam": false,
+          "is_reprise": false
+        }
+      ],
+      "encore": [
+        {
+          "song": "Slave to the Traffic Light",
+          "song_id": "512",
+          "position": 18,
+          "transition": ">",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Tweezer Reprise",
+          "song_id": "628",
+          "position": 19,
+          "transition": "6",
+          "is_jam": false,
+          "is_reprise": false
+        }
+      ]
+    },
+    "is_nye": false,
+    "is_halloween": false,
+    "is_festival": false,
+    "total_songs": 19
+  },
+  {
+    "show_id": "1491104257",
+    "date": "2017-07-14",
+    "year": 2017,
+    "month": 7,
+    "day": 14,
+    "day_of_week": "friday",
+    "venue_id": "v_huntington_bank_pavilion_at_northerly_island",
+    "venue_name": "Huntington Bank Pavilion at Northerly Island",
+    "city": "Chicago",
+    "state": "IL",
+    "country": "USA",
+    "tour": "2017 Summer Tour",
+    "tour_id": "176",
+    "sets": {
+      "1": [
+        {
+          "song": "What's the Use?",
+          "song_id": "657",
+          "position": 1,
+          "transition": ">",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Breath and Burning",
+          "song_id": "2628",
+          "position": 2,
+          "transition": ">",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Wolfman's Brother",
+          "song_id": "683",
+          "position": 3,
+          "transition": ",",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "In The Good Old Summer Time",
+          "song_id": "2696",
+          "position": 4,
+          "transition": ",",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Everything's Right",
+          "song_id": "2656",
+          "position": 5,
+          "transition": ">",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Limb By Limb",
+          "song_id": "341",
+          "position": 6,
+          "transition": ">",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Nellie Kane",
+          "song_id": "406",
+          "position": 7,
+          "transition": ">",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Theme from the Bottom",
+          "song_id": "609",
+          "position": 8,
+          "transition": ">",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Blaze On",
+          "song_id": "2570",
+          "position": 9,
+          "transition": "4",
+          "is_jam": false,
+          "is_reprise": false
+        }
+      ],
+      "2": [
+        {
+          "song": "No Men In No Man's Land",
+          "song_id": "2572",
+          "position": 10,
+          "transition": ">",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Fuego",
+          "song_id": "2418",
+          "position": 11,
+          "transition": ">",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "My Friend, My Friend",
+          "song_id": "397",
+          "position": 12,
+          "transition": ">",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Your Pet Cat",
+          "song_id": "2501",
+          "position": 13,
+          "transition": "->",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Golden Age",
+          "song_id": "867",
+          "position": 14,
+          "transition": "->",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Your Pet Cat",
+          "song_id": "2501",
+          "position": 15,
+          "transition": ">",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Leaves",
+          "song_id": "2697",
+          "position": 16,
+          "transition": ",",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Harry Hood",
+          "song_id": "250",
+          "position": 17,
+          "transition": ">",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Shine a Light",
+          "song_id": "857",
+          "position": 18,
+          "transition": ">",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Julius",
+          "song_id": "318",
+          "position": 19,
+          "transition": "5",
+          "is_jam": false,
+          "is_reprise": false
+        }
+      ],
+      "encore": [
+        {
+          "song": "Love Is What We Are",
+          "song_id": "2698",
+          "position": 20,
+          "transition": ",",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Golgi Apparatus",
+          "song_id": "234",
+          "position": 21,
+          "transition": "6",
+          "is_jam": false,
+          "is_reprise": false
+        }
+      ]
+    },
+    "is_nye": false,
+    "is_halloween": false,
+    "is_festival": false,
+    "total_songs": 21
+  },
+  {
+    "show_id": "1491104357",
+    "date": "2017-07-15",
+    "year": 2017,
+    "month": 7,
+    "day": 15,
+    "day_of_week": "saturday",
+    "venue_id": "v_huntington_bank_pavilion_at_northerly_island",
+    "venue_name": "Huntington Bank Pavilion at Northerly Island",
+    "city": "Chicago",
+    "state": "IL",
+    "country": "USA",
+    "tour": "2017 Summer Tour",
+    "tour_id": "176",
+    "sets": {
+      "1": [
+        {
+          "song": "Stealing Time From the Faulty Plan",
+          "song_id": "539",
+          "position": 1,
+          "transition": ">",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "The Moma Dance",
+          "song_id": "591",
+          "position": 2,
+          "transition": ">",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "The Wedge",
+          "song_id": "607",
+          "position": 3,
+          "transition": ",",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Halfway to the Moon",
+          "song_id": "892",
+          "position": 4,
+          "transition": ">",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Ya Mar",
+          "song_id": "686",
+          "position": 5,
+          "transition": ",",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Martian Monster",
+          "song_id": "2506",
+          "position": 6,
+          "transition": ",",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Party Time",
+          "song_id": "723",
+          "position": 7,
+          "transition": ",",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Wingsuit",
+          "song_id": "2417",
+          "position": 8,
+          "transition": ">",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Bouncing Around the Room",
+          "song_id": "84",
+          "position": 9,
+          "transition": ",",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "More",
+          "song_id": "2639",
+          "position": 10,
+          "transition": "4",
+          "is_jam": false,
+          "is_reprise": false
+        }
+      ],
+      "2": [
+        {
+          "song": "Corona",
+          "song_id": "2264",
+          "position": 11,
+          "transition": ">",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Simple",
+          "song_id": "508",
+          "position": 12,
+          "transition": ">",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Winterqueen",
+          "song_id": "1370",
+          "position": 13,
+          "transition": ">",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Light",
+          "song_id": "339",
+          "position": 14,
+          "transition": "->",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Scents and Subtle Sounds",
+          "song_id": "491",
+          "position": 15,
+          "transition": "->",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Cities",
+          "song_id": "119",
+          "position": 16,
+          "transition": ">",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Slave to the Traffic Light",
+          "song_id": "512",
+          "position": 17,
+          "transition": "5",
+          "is_jam": false,
+          "is_reprise": false
+        }
+      ],
+      "encore": [
+        {
+          "song": "Loving Cup",
+          "song_id": "354",
+          "position": 18,
+          "transition": "6",
+          "is_jam": false,
+          "is_reprise": false
+        }
+      ]
+    },
+    "is_nye": false,
+    "is_halloween": false,
+    "is_festival": false,
+    "total_songs": 18
+  },
+  {
+    "show_id": "1491104869",
+    "date": "2017-07-16",
+    "year": 2017,
+    "month": 7,
+    "day": 16,
+    "day_of_week": "sunday",
+    "venue_id": "v_huntington_bank_pavilion_at_northerly_island",
+    "venue_name": "Huntington Bank Pavilion at Northerly Island",
+    "city": "Chicago",
+    "state": "IL",
+    "country": "USA",
+    "tour": "2017 Summer Tour",
+    "tour_id": "176",
+    "sets": {
+      "1": [
+        {
+          "song": "Possum",
+          "song_id": "440",
+          "position": 1,
+          "transition": ",",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "555",
+          "song_id": "2424",
+          "position": 2,
+          "transition": ",",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Tube",
+          "song_id": "622",
+          "position": 3,
+          "transition": ",",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Ocelot",
+          "song_id": "420",
+          "position": 4,
+          "transition": ",",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Lawn Boy",
+          "song_id": "329",
+          "position": 5,
+          "transition": ",",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Stash",
+          "song_id": "538",
+          "position": 6,
+          "transition": ",",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "The Line",
+          "song_id": "2419",
+          "position": 7,
+          "transition": ">",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Birds of a Feather",
+          "song_id": "65",
+          "position": 8,
+          "transition": ",",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Funky Bitch",
+          "song_id": "220",
+          "position": 9,
+          "transition": ">",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Run Like an Antelope",
+          "song_id": "478",
+          "position": 10,
+          "transition": "4",
+          "is_jam": false,
+          "is_reprise": false
+        }
+      ],
+      "2": [
+        {
+          "song": "Carini",
+          "song_id": "104",
+          "position": 11,
+          "transition": ">",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Twenty Years Later",
+          "song_id": "629",
+          "position": 12,
+          "transition": ">",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Piper",
+          "song_id": "437",
+          "position": 13,
+          "transition": ">",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Thread",
+          "song_id": "2699",
+          "position": 14,
+          "transition": ",",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Bathtub Gin",
+          "song_id": "48",
+          "position": 15,
+          "transition": ">",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Also Sprach Zarathustra",
+          "song_id": "21",
+          "position": 16,
+          "transition": ">",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Cavern",
+          "song_id": "108",
+          "position": 17,
+          "transition": "5",
+          "is_jam": false,
+          "is_reprise": false
+        }
+      ],
+      "encore": [
+        {
+          "song": "Wilson",
+          "song_id": "679",
+          "position": 18,
+          "transition": ">",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Character Zero",
+          "song_id": "113",
+          "position": 19,
+          "transition": "6",
+          "is_jam": false,
+          "is_reprise": false
+        }
+      ]
+    },
+    "is_nye": false,
+    "is_halloween": false,
+    "is_festival": false,
+    "total_songs": 19
+  },
+  {
+    "show_id": "1491104900",
+    "date": "2017-07-18",
+    "year": 2017,
+    "month": 7,
+    "day": 18,
+    "day_of_week": "tuesday",
+    "venue_id": "v_ervin_j_nutter_center_wright_state_university",
+    "venue_name": "Ervin J. Nutter Center, Wright State University",
+    "city": "Dayton",
+    "state": "OH",
+    "country": "USA",
+    "tour": "2017 Summer Tour",
+    "tour_id": "176",
+    "sets": {
+      "1": [
+        {
+          "song": "Tuesday",
+          "song_id": "960",
+          "position": 1,
+          "transition": ",",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Peaches en Regalia",
+          "song_id": "431",
+          "position": 2,
+          "transition": ">",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Free",
+          "song_id": "215",
+          "position": 3,
+          "transition": ",",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Roggae",
+          "song_id": "473",
+          "position": 4,
+          "transition": ",",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Sugar Shack",
+          "song_id": "543",
+          "position": 5,
+          "transition": ",",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Maze",
+          "song_id": "364",
+          "position": 6,
+          "transition": ",",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Horn",
+          "song_id": "269",
+          "position": 7,
+          "transition": ",",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Crazy Sometimes",
+          "song_id": "2608",
+          "position": 8,
+          "transition": ">",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "46 Days",
+          "song_id": "2",
+          "position": 9,
+          "transition": ">",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Runaway Jim",
+          "song_id": "479",
+          "position": 10,
+          "transition": "4",
+          "is_jam": false,
+          "is_reprise": false
+        }
+      ],
+      "2": [
+        {
+          "song": "Down with Disease",
+          "song_id": "174",
+          "position": 11,
+          "transition": ">",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Mountains in the Mist",
+          "song_id": "393",
+          "position": 12,
+          "transition": ">",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Waves",
+          "song_id": "651",
+          "position": 13,
+          "transition": ">",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Ghost",
+          "song_id": "222",
+          "position": 14,
+          "transition": ">",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Wombat",
+          "song_id": "2421",
+          "position": 15,
+          "transition": ">",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Chalk Dust Torture",
+          "song_id": "110",
+          "position": 16,
+          "transition": "5",
+          "is_jam": false,
+          "is_reprise": false
+        }
+      ],
+      "encore": [
+        {
+          "song": "The Squirming Coil",
+          "song_id": "603",
+          "position": 17,
+          "transition": "6",
+          "is_jam": false,
+          "is_reprise": false
+        }
+      ]
+    },
+    "is_nye": false,
+    "is_halloween": false,
+    "is_festival": false,
+    "total_songs": 17
+  },
+  {
+    "show_id": "1491104932",
+    "date": "2017-07-19",
+    "year": 2017,
+    "month": 7,
+    "day": 19,
+    "day_of_week": "wednesday",
+    "venue_id": "v_petersen_events_center",
+    "venue_name": "Petersen Events Center",
+    "city": "Pittsburgh",
+    "state": "PA",
+    "country": "USA",
+    "tour": "2017 Summer Tour",
+    "tour_id": "176",
+    "sets": {
+      "1": [
+        {
+          "song": "My Soul",
+          "song_id": "402",
+          "position": 1,
+          "transition": ",",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "NICU",
+          "song_id": "404",
+          "position": 2,
+          "transition": ",",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Halley's Comet",
+          "song_id": "246",
+          "position": 3,
+          "transition": ">",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Undermind",
+          "song_id": "634",
+          "position": 4,
+          "transition": ",",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "The Divided Sky",
+          "song_id": "161",
+          "position": 5,
+          "transition": ",",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Marissa",
+          "song_id": "2693",
+          "position": 6,
+          "transition": ",",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Home",
+          "song_id": "2640",
+          "position": 7,
+          "transition": ">",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Prince Caspian",
+          "song_id": "442",
+          "position": 8,
+          "transition": "4",
+          "is_jam": false,
+          "is_reprise": false
+        }
+      ],
+      "2": [
+        {
+          "song": "Punch You in the Eye",
+          "song_id": "447",
+          "position": 9,
+          "transition": ">",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Mr. Completely",
+          "song_id": "380",
+          "position": 10,
+          "transition": ">",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Mercury",
+          "song_id": "2573",
+          "position": 11,
+          "transition": "->",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Rise/Come Together",
+          "song_id": "2659",
+          "position": 12,
+          "transition": ",",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Contact",
+          "song_id": "130",
+          "position": 13,
+          "transition": ",",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Axilla",
+          "song_id": "37",
+          "position": 14,
+          "transition": ">",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Steam",
+          "song_id": "1355",
+          "position": 15,
+          "transition": ">",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Backwards Down the Number Line",
+          "song_id": "46",
+          "position": 16,
+          "transition": "5",
+          "is_jam": false,
+          "is_reprise": false
+        }
+      ],
+      "encore": [
+        {
+          "song": "Things People Do",
+          "song_id": "2629",
+          "position": 17,
+          "transition": ",",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Bug",
+          "song_id": "94",
+          "position": 18,
+          "transition": ">",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Rocky Top",
+          "song_id": "472",
+          "position": 19,
+          "transition": "6",
+          "is_jam": false,
+          "is_reprise": false
+        }
+      ]
+    },
+    "is_nye": false,
+    "is_halloween": false,
+    "is_festival": false,
+    "total_songs": 19
+  },
+  {
+    "show_id": "1485905830",
+    "date": "2017-07-21",
+    "year": 2017,
+    "month": 7,
+    "day": 21,
+    "day_of_week": "friday",
+    "venue_id": "v_msg",
+    "venue_name": "Madison Square Garden",
+    "city": "New York",
+    "state": "NY",
+    "country": "USA",
+    "tour": "2017 Summer Tour",
+    "tour_id": "176",
+    "sets": {
+      "1": [
+        {
+          "song": "Shake Your Coconuts",
+          "song_id": "2701",
+          "position": 1,
+          "transition": ",",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Martian Monster",
+          "song_id": "2506",
+          "position": 2,
+          "transition": ",",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Timber (Jerry the Mule)",
+          "song_id": "613",
+          "position": 3,
+          "transition": ">",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "555",
+          "song_id": "2424",
+          "position": 4,
+          "transition": ",",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Pigtail",
+          "song_id": "952",
+          "position": 5,
+          "transition": ",",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Halfway to the Moon",
+          "song_id": "892",
+          "position": 6,
+          "transition": ",",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Reba",
+          "song_id": "455",
+          "position": 7,
+          "transition": ",",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Moonage Daydream",
+          "song_id": "2643",
+          "position": 8,
+          "transition": ",",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Walls of the Cave",
+          "song_id": "648",
+          "position": 9,
+          "transition": "4",
+          "is_jam": false,
+          "is_reprise": false
+        }
+      ],
+      "2": [
+        {
+          "song": "Tweezer",
+          "song_id": "627",
+          "position": 10,
+          "transition": ">",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Seven Below",
+          "song_id": "499",
+          "position": 11,
+          "transition": ">",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Billy Breathes",
+          "song_id": "64",
+          "position": 12,
+          "transition": ">",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Sparkle",
+          "song_id": "525",
+          "position": 13,
+          "transition": ",",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Everything's Right",
+          "song_id": "2656",
+          "position": 14,
+          "transition": ">",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Slave to the Traffic Light",
+          "song_id": "512",
+          "position": 15,
+          "transition": ">",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Suzy Greenberg",
+          "song_id": "545",
+          "position": 16,
+          "transition": ",",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Coconut",
+          "song_id": "2702",
+          "position": 17,
+          "transition": "5",
+          "is_jam": false,
+          "is_reprise": false
+        }
+      ],
+      "encore": [
+        {
+          "song": "The Mango Song",
+          "song_id": "590",
+          "position": 18,
+          "transition": ">",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Good Times Bad Times",
+          "song_id": "235",
+          "position": 19,
+          "transition": "6",
+          "is_jam": false,
+          "is_reprise": false
+        }
+      ]
+    },
+    "is_nye": false,
+    "is_halloween": false,
+    "is_festival": false,
+    "total_songs": 19
+  },
+  {
+    "show_id": "1485905853",
+    "date": "2017-07-22",
+    "year": 2017,
+    "month": 7,
+    "day": 22,
+    "day_of_week": "saturday",
+    "venue_id": "v_msg",
+    "venue_name": "Madison Square Garden",
+    "city": "New York",
+    "state": "NY",
+    "country": "USA",
+    "tour": "2017 Summer Tour",
+    "tour_id": "176",
+    "sets": {
+      "1": [
+        {
+          "song": "Strawberry Fields Forever",
+          "song_id": "1123",
+          "position": 1,
+          "transition": ",",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Halley's Comet",
+          "song_id": "246",
+          "position": 2,
+          "transition": ">",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "The Moma Dance",
+          "song_id": "591",
+          "position": 3,
+          "transition": ">",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Breath and Burning",
+          "song_id": "2628",
+          "position": 4,
+          "transition": ">",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Funky Bitch",
+          "song_id": "220",
+          "position": 5,
+          "transition": ",",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Mound",
+          "song_id": "392",
+          "position": 6,
+          "transition": ",",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Foam",
+          "song_id": "209",
+          "position": 7,
+          "transition": ",",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Roggae",
+          "song_id": "473",
+          "position": 8,
+          "transition": ",",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "The Squirming Coil",
+          "song_id": "603",
+          "position": 9,
+          "transition": "4",
+          "is_jam": false,
+          "is_reprise": false
+        }
+      ],
+      "2": [
+        {
+          "song": "Down with Disease",
+          "song_id": "174",
+          "position": 10,
+          "transition": ">",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Strawberry Letter 23",
+          "song_id": "2703",
+          "position": 11,
+          "transition": ">",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Birds of a Feather",
+          "song_id": "65",
+          "position": 12,
+          "transition": ",",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "I Always Wanted It This Way",
+          "song_id": "2638",
+          "position": 13,
+          "transition": ">",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "All of These Dreams",
+          "song_id": "19",
+          "position": 14,
+          "transition": ",",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Split Open and Melt",
+          "song_id": "529",
+          "position": 15,
+          "transition": ">",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Down with Disease",
+          "song_id": "174",
+          "position": 16,
+          "transition": ">",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Shine a Light",
+          "song_id": "857",
+          "position": 17,
+          "transition": "5",
+          "is_jam": false,
+          "is_reprise": false
+        }
+      ],
+      "encore": [
+        {
+          "song": "Peaches en Regalia",
+          "song_id": "431",
+          "position": 18,
+          "transition": ">",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Cities",
+          "song_id": "119",
+          "position": 19,
+          "transition": ",",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "My Sweet One",
+          "song_id": "403",
+          "position": 20,
+          "transition": "6",
+          "is_jam": false,
+          "is_reprise": false
+        }
+      ]
+    },
+    "is_nye": false,
+    "is_halloween": false,
+    "is_festival": false,
+    "total_songs": 20
+  },
+  {
+    "show_id": "1485905879",
+    "date": "2017-07-23",
+    "year": 2017,
+    "month": 7,
+    "day": 23,
+    "day_of_week": "sunday",
+    "venue_id": "v_msg",
+    "venue_name": "Madison Square Garden",
+    "city": "New York",
+    "state": "NY",
+    "country": "USA",
+    "tour": "2017 Summer Tour",
+    "tour_id": "176",
+    "sets": {
+      "1": [
+        {
+          "song": "Sunday Morning",
+          "song_id": "2704",
+          "position": 1,
+          "transition": ",",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Axilla",
+          "song_id": "37",
+          "position": 2,
+          "transition": ",",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Your Pet Cat",
+          "song_id": "2501",
+          "position": 3,
+          "transition": ">",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Back on the Train",
+          "song_id": "45",
+          "position": 4,
+          "transition": ",",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "How Many People Are You",
+          "song_id": "2536",
+          "position": 5,
+          "transition": ",",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Glide",
+          "song_id": "227",
+          "position": 6,
+          "transition": ",",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Theme from the Bottom",
+          "song_id": "609",
+          "position": 7,
+          "transition": ">",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "It's Ice",
+          "song_id": "307",
+          "position": 8,
+          "transition": ">",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "More",
+          "song_id": "2639",
+          "position": 9,
+          "transition": "4",
+          "is_jam": false,
+          "is_reprise": false
+        }
+      ],
+      "2": [
+        {
+          "song": "AC/DC Bag",
+          "song_id": "8",
+          "position": 10,
+          "transition": ">",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Wolfman's Brother",
+          "song_id": "683",
+          "position": 11,
+          "transition": ">",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Twist",
+          "song_id": "630",
+          "position": 12,
+          "transition": ">",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Waves",
+          "song_id": "651",
+          "position": 13,
+          "transition": ">",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Miss You",
+          "song_id": "2627",
+          "position": 14,
+          "transition": ",",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Boogie On Reggae Woman",
+          "song_id": "80",
+          "position": 15,
+          "transition": ",",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Wading in the Velvet Sea",
+          "song_id": "642",
+          "position": 16,
+          "transition": "5",
+          "is_jam": false,
+          "is_reprise": false
+        }
+      ],
+      "encore": [
+        {
+          "song": "Sweet Jane",
+          "song_id": "549",
+          "position": 17,
+          "transition": "6",
+          "is_jam": false,
+          "is_reprise": false
+        }
+      ]
+    },
+    "is_nye": false,
+    "is_halloween": false,
+    "is_festival": false,
+    "total_songs": 17
+  },
+  {
+    "show_id": "1485905907",
+    "date": "2017-07-25",
+    "year": 2017,
+    "month": 7,
+    "day": 25,
+    "day_of_week": "tuesday",
+    "venue_id": "v_msg",
+    "venue_name": "Madison Square Garden",
+    "city": "New York",
+    "state": "NY",
+    "country": "USA",
+    "tour": "2017 Summer Tour",
+    "tour_id": "176",
+    "sets": {
+      "1": [
+        {
+          "song": "Sample in a Jar",
+          "song_id": "483",
+          "position": 1,
+          "transition": ",",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Lawn Boy",
+          "song_id": "329",
+          "position": 2,
+          "transition": ">",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "My Friend, My Friend",
+          "song_id": "397",
+          "position": 3,
+          "transition": ">",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Stash",
+          "song_id": "538",
+          "position": 4,
+          "transition": ",",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Bathtub Gin",
+          "song_id": "48",
+          "position": 5,
+          "transition": "4",
+          "is_jam": false,
+          "is_reprise": false
+        }
+      ],
+      "2": [
+        {
+          "song": "Fuego",
+          "song_id": "2418",
+          "position": 6,
+          "transition": ">",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Thread",
+          "song_id": "2699",
+          "position": 7,
+          "transition": ">",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Crosseyed and Painless",
+          "song_id": "139",
+          "position": 8,
+          "transition": ">",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Makisupa Policeman",
+          "song_id": "359",
+          "position": 9,
+          "transition": "->",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "End of Session",
+          "song_id": "744",
+          "position": 10,
+          "transition": ">",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Tuesday",
+          "song_id": "960",
+          "position": 11,
+          "transition": ">",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Cavern",
+          "song_id": "108",
+          "position": 12,
+          "transition": "5",
+          "is_jam": false,
+          "is_reprise": false
+        }
+      ],
+      "encore": [
+        {
+          "song": "Julius",
+          "song_id": "318",
+          "position": 13,
+          "transition": ">",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Lawn Boy",
+          "song_id": "329",
+          "position": 14,
+          "transition": "6",
+          "is_jam": false,
+          "is_reprise": false
+        }
+      ]
+    },
+    "is_nye": false,
+    "is_halloween": false,
+    "is_festival": false,
+    "total_songs": 14
+  },
+  {
+    "show_id": "1485905928",
+    "date": "2017-07-26",
+    "year": 2017,
+    "month": 7,
+    "day": 26,
+    "day_of_week": "wednesday",
+    "venue_id": "v_msg",
+    "venue_name": "Madison Square Garden",
+    "city": "New York",
+    "state": "NY",
+    "country": "USA",
+    "tour": "2017 Summer Tour",
+    "tour_id": "176",
+    "sets": {
+      "1": [
+        {
+          "song": "White Winter Hymnal",
+          "song_id": "2705",
+          "position": 1,
+          "transition": ",",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Cars Trucks Buses",
+          "song_id": "106",
+          "position": 2,
+          "transition": ",",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "My Soul",
+          "song_id": "402",
+          "position": 3,
+          "transition": ",",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Roses Are Free",
+          "song_id": "475",
+          "position": 4,
+          "transition": ">",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "The Very Long Fuse",
+          "song_id": "2498",
+          "position": 5,
+          "transition": ",",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Gumbo",
+          "song_id": "240",
+          "position": 6,
+          "transition": ",",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Yarmouth Road",
+          "song_id": "2413",
+          "position": 7,
+          "transition": ",",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Pebbles and Marbles",
+          "song_id": "432",
+          "position": 8,
+          "transition": ",",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Farmhouse",
+          "song_id": "193",
+          "position": 9,
+          "transition": ",",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Tube",
+          "song_id": "622",
+          "position": 10,
+          "transition": "4",
+          "is_jam": false,
+          "is_reprise": false
+        }
+      ],
+      "2": [
+        {
+          "song": "Carini",
+          "song_id": "104",
+          "position": 11,
+          "transition": "->",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Mr. Completely",
+          "song_id": "380",
+          "position": 12,
+          "transition": ">",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "1999",
+          "song_id": "1",
+          "position": 13,
+          "transition": "->",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Steam",
+          "song_id": "1355",
+          "position": 14,
+          "transition": ">",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "No Quarter",
+          "song_id": "1353",
+          "position": 15,
+          "transition": ",",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Character Zero",
+          "song_id": "113",
+          "position": 16,
+          "transition": "5",
+          "is_jam": false,
+          "is_reprise": false
+        }
+      ],
+      "encore": [
+        {
+          "song": "Powderfinger",
+          "song_id": "1577",
+          "position": 17,
+          "transition": "6",
+          "is_jam": false,
+          "is_reprise": false
+        }
+      ]
+    },
+    "is_nye": false,
+    "is_halloween": false,
+    "is_festival": false,
+    "total_songs": 17
+  },
+  {
+    "show_id": "1485905947",
+    "date": "2017-07-28",
+    "year": 2017,
+    "month": 7,
+    "day": 28,
+    "day_of_week": "friday",
+    "venue_id": "v_msg",
+    "venue_name": "Madison Square Garden",
+    "city": "New York",
+    "state": "NY",
+    "country": "USA",
+    "tour": "2017 Summer Tour",
+    "tour_id": "176",
+    "sets": {
+      "1": [
+        {
+          "song": "Chocolate Rain",
+          "song_id": "2706",
+          "position": 1,
+          "transition": ",",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Ass Handed",
+          "song_id": "2634",
+          "position": 2,
+          "transition": ",",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Free",
+          "song_id": "215",
+          "position": 3,
+          "transition": ",",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Weigh",
+          "song_id": "655",
+          "position": 4,
+          "transition": ">",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Undermind",
+          "song_id": "634",
+          "position": 5,
+          "transition": ">",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "The Oh Kee Pa Ceremony",
+          "song_id": "592",
+          "position": 6,
+          "transition": ",",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "The Dogs",
+          "song_id": "2499",
+          "position": 7,
+          "transition": ">",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Destiny Unbound",
+          "song_id": "154",
+          "position": 8,
+          "transition": ",",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "The Divided Sky",
+          "song_id": "161",
+          "position": 9,
+          "transition": ",",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Things People Do",
+          "song_id": "2629",
+          "position": 10,
+          "transition": ",",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Sand",
+          "song_id": "485",
+          "position": 11,
+          "transition": "4",
+          "is_jam": false,
+          "is_reprise": false
+        }
+      ],
+      "2": [
+        {
+          "song": "Have Mercy",
+          "song_id": "251",
+          "position": 12,
+          "transition": ",",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Chalk Dust Torture",
+          "song_id": "110",
+          "position": 13,
+          "transition": ",",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "You Sexy Thing",
+          "song_id": "2707",
+          "position": 14,
+          "transition": ">",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Mercury",
+          "song_id": "2573",
+          "position": 15,
+          "transition": "->",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "You Sexy Thing",
+          "song_id": "2707",
+          "position": 16,
+          "transition": ">",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Backwards Down the Number Line",
+          "song_id": "46",
+          "position": 17,
+          "transition": ">",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Rock and Roll",
+          "song_id": "466",
+          "position": 18,
+          "transition": "5",
+          "is_jam": false,
+          "is_reprise": false
+        }
+      ],
+      "encore": [
+        {
+          "song": "Fee",
+          "song_id": "195",
+          "position": 19,
+          "transition": ",",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Space Oddity",
+          "song_id": "1121",
+          "position": 20,
+          "transition": "6",
+          "is_jam": false,
+          "is_reprise": false
+        }
+      ]
+    },
+    "is_nye": false,
+    "is_halloween": false,
+    "is_festival": false,
+    "total_songs": 20
+  },
+  {
+    "show_id": "1485905975",
+    "date": "2017-07-29",
+    "year": 2017,
+    "month": 7,
+    "day": 29,
+    "day_of_week": "saturday",
+    "venue_id": "v_msg",
+    "venue_name": "Madison Square Garden",
+    "city": "New York",
+    "state": "NY",
+    "country": "USA",
+    "tour": "2017 Summer Tour",
+    "tour_id": "176",
+    "sets": {
+      "1": [
+        {
+          "song": "Llama",
+          "song_id": "345",
+          "position": 1,
+          "transition": ",",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Wilson",
+          "song_id": "679",
+          "position": 2,
+          "transition": ">",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Stealing Time From the Faulty Plan",
+          "song_id": "539",
+          "position": 3,
+          "transition": ">",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Ya Mar",
+          "song_id": "686",
+          "position": 4,
+          "transition": ",",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Tela",
+          "song_id": "562",
+          "position": 5,
+          "transition": ",",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "The Birds",
+          "song_id": "2505",
+          "position": 6,
+          "transition": ">",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "The Line",
+          "song_id": "2419",
+          "position": 7,
+          "transition": ",",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Water in the Sky",
+          "song_id": "650",
+          "position": 8,
+          "transition": ",",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Vultures",
+          "song_id": "641",
+          "position": 9,
+          "transition": ">",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Train Song",
+          "song_id": "620",
+          "position": 10,
+          "transition": ">",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Horn",
+          "song_id": "269",
+          "position": 11,
+          "transition": ",",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "I Am the Walrus",
+          "song_id": "900",
+          "position": 12,
+          "transition": "4",
+          "is_jam": false,
+          "is_reprise": false
+        }
+      ],
+      "2": [
+        {
+          "song": "Blaze On",
+          "song_id": "2570",
+          "position": 13,
+          "transition": ">",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Twenty Years Later",
+          "song_id": "629",
+          "position": 14,
+          "transition": ">",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Alumni Blues",
+          "song_id": "22",
+          "position": 15,
+          "transition": ">",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Letter to Jimmy Page",
+          "song_id": "335",
+          "position": 16,
+          "transition": ">",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Alumni Blues",
+          "song_id": "22",
+          "position": 17,
+          "transition": ">",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Meatstick",
+          "song_id": "369",
+          "position": 18,
+          "transition": ">",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Dirt",
+          "song_id": "159",
+          "position": 19,
+          "transition": ">",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Harry Hood",
+          "song_id": "250",
+          "position": 20,
+          "transition": "5",
+          "is_jam": false,
+          "is_reprise": false
+        }
+      ],
+      "encore": [
+        {
+          "song": "Cinnamon Girl",
+          "song_id": "118",
+          "position": 21,
+          "transition": "6",
+          "is_jam": false,
+          "is_reprise": false
+        }
+      ]
+    },
+    "is_nye": false,
+    "is_halloween": false,
+    "is_festival": false,
+    "total_songs": 21
+  },
+  {
+    "show_id": "1485905994",
+    "date": "2017-07-30",
+    "year": 2017,
+    "month": 7,
+    "day": 30,
+    "day_of_week": "sunday",
+    "venue_id": "v_msg",
+    "venue_name": "Madison Square Garden",
+    "city": "New York",
+    "state": "NY",
+    "country": "USA",
+    "tour": "2017 Summer Tour",
+    "tour_id": "176",
+    "sets": {
+      "1": [
+        {
+          "song": "The Curtain With",
+          "song_id": "576",
+          "position": 1,
+          "transition": ">",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Runaway Jim",
+          "song_id": "479",
+          "position": 2,
+          "transition": ",",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Waking Up Dead",
+          "song_id": "2630",
+          "position": 3,
+          "transition": ",",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Esther",
+          "song_id": "187",
+          "position": 4,
+          "transition": ",",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Home",
+          "song_id": "2640",
+          "position": 5,
+          "transition": ",",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Brian and Robert",
+          "song_id": "88",
+          "position": 6,
+          "transition": ",",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Nellie Kane",
+          "song_id": "406",
+          "position": 7,
+          "transition": ",",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Colonel Forbin's Ascent",
+          "song_id": "126",
+          "position": 8,
+          "transition": ">",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Fly Famous Mockingbird",
+          "song_id": "695",
+          "position": 9,
+          "transition": ">",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "David Bowie",
+          "song_id": "148",
+          "position": 10,
+          "transition": "4",
+          "is_jam": false,
+          "is_reprise": false
+        }
+      ],
+      "2": [
+        {
+          "song": "Drowned",
+          "song_id": "178",
+          "position": 11,
+          "transition": ">",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "A Song I Heard the Ocean Sing",
+          "song_id": "7",
+          "position": 12,
+          "transition": ",",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Harpua",
+          "song_id": "249",
+          "position": 13,
+          "transition": ">",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Also Sprach Zarathustra",
+          "song_id": "21",
+          "position": 14,
+          "transition": ">",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Golgi Apparatus",
+          "song_id": "234",
+          "position": 15,
+          "transition": ",",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "In The Good Old Summer Time",
+          "song_id": "2696",
+          "position": 16,
+          "transition": "5",
+          "is_jam": false,
+          "is_reprise": false
+        }
+      ],
+      "encore": [
+        {
+          "song": "The Wind Cries Mary",
+          "song_id": "1135",
+          "position": 17,
+          "transition": "6",
+          "is_jam": false,
+          "is_reprise": false
+        }
+      ]
+    },
+    "is_nye": false,
+    "is_halloween": false,
+    "is_festival": false,
+    "total_songs": 17
+  },
+  {
+    "show_id": "1485906014",
+    "date": "2017-08-01",
+    "year": 2017,
+    "month": 8,
+    "day": 1,
+    "day_of_week": "tuesday",
+    "venue_id": "v_msg",
+    "venue_name": "Madison Square Garden",
+    "city": "New York",
+    "state": "NY",
+    "country": "USA",
+    "tour": "2017 Summer Tour",
+    "tour_id": "176",
+    "sets": {
+      "1": [
+        {
+          "song": "O Canada",
+          "song_id": "2708",
+          "position": 1,
+          "transition": ">",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Crowd Control",
+          "song_id": "141",
+          "position": 2,
+          "transition": ",",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Sugar Shack",
+          "song_id": "543",
+          "position": 3,
+          "transition": ",",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "When the Circus Comes",
+          "song_id": "660",
+          "position": 4,
+          "transition": ",",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Daniel Saw the Stone",
+          "song_id": "146",
+          "position": 5,
+          "transition": ",",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Army of One",
+          "song_id": "34",
+          "position": 6,
+          "transition": ",",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "The Wedge",
+          "song_id": "607",
+          "position": 7,
+          "transition": ",",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Guelah Papyrus",
+          "song_id": "239",
+          "position": 8,
+          "transition": ",",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Maple Leaf Rag",
+          "song_id": "2709",
+          "position": 9,
+          "transition": ",",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Guelah Papyrus",
+          "song_id": "239",
+          "position": 10,
+          "transition": ",",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "McGrupp and the Watchful Hosemasters",
+          "song_id": "365",
+          "position": 11,
+          "transition": ">",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Limb By Limb",
+          "song_id": "341",
+          "position": 12,
+          "transition": ">",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Walk Away",
+          "song_id": "646",
+          "position": 13,
+          "transition": "4",
+          "is_jam": false,
+          "is_reprise": false
+        }
+      ],
+      "2": [
+        {
+          "song": "Golden Age",
+          "song_id": "867",
+          "position": 14,
+          "transition": ",",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Leaves",
+          "song_id": "2697",
+          "position": 15,
+          "transition": ",",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Swept Away",
+          "song_id": "551",
+          "position": 16,
+          "transition": ">",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Steep",
+          "song_id": "540",
+          "position": 17,
+          "transition": ">",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "46 Days",
+          "song_id": "2",
+          "position": 18,
+          "transition": ">",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Piper",
+          "song_id": "437",
+          "position": 19,
+          "transition": ">",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Possum",
+          "song_id": "440",
+          "position": 20,
+          "transition": "5",
+          "is_jam": false,
+          "is_reprise": false
+        }
+      ],
+      "encore": [
+        {
+          "song": "Rock 'n' Roll Suicide",
+          "song_id": "2651",
+          "position": 21,
+          "transition": "6",
+          "is_jam": false,
+          "is_reprise": false
+        }
+      ]
+    },
+    "is_nye": false,
+    "is_halloween": false,
+    "is_festival": false,
+    "total_songs": 21
+  },
+  {
+    "show_id": "1485906036",
+    "date": "2017-08-02",
+    "year": 2017,
+    "month": 8,
+    "day": 2,
+    "day_of_week": "wednesday",
+    "venue_id": "v_msg",
+    "venue_name": "Madison Square Garden",
+    "city": "New York",
+    "state": "NY",
+    "country": "USA",
+    "tour": "2017 Summer Tour",
+    "tour_id": "176",
+    "sets": {
+      "1": [
+        {
+          "song": "Way Down in the Hole",
+          "song_id": "2710",
+          "position": 1,
+          "transition": ",",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Buried Alive",
+          "song_id": "96",
+          "position": 2,
+          "transition": ",",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Kill Devil Falls",
+          "song_id": "323",
+          "position": 3,
+          "transition": ",",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Guyute",
+          "song_id": "242",
+          "position": 4,
+          "transition": ",",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "I Didn't Know",
+          "song_id": "276",
+          "position": 5,
+          "transition": ",",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "NICU",
+          "song_id": "404",
+          "position": 6,
+          "transition": ",",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Meat",
+          "song_id": "367",
+          "position": 7,
+          "transition": ">",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Maze",
+          "song_id": "364",
+          "position": 8,
+          "transition": ",",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Ginseng Sullivan",
+          "song_id": "223",
+          "position": 9,
+          "transition": ",",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Waiting All Night",
+          "song_id": "2420",
+          "position": 10,
+          "transition": ",",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Heavy Things",
+          "song_id": "254",
+          "position": 11,
+          "transition": ",",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Run Like an Antelope",
+          "song_id": "478",
+          "position": 12,
+          "transition": "4",
+          "is_jam": false,
+          "is_reprise": false
+        }
+      ],
+      "2": [
+        {
+          "song": "Mike's Song",
+          "song_id": "381",
+          "position": 13,
+          "transition": ">",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "O Holy Night",
+          "song_id": "2711",
+          "position": 14,
+          "transition": ">",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Taste",
+          "song_id": "558",
+          "position": 15,
+          "transition": ">",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Wingsuit",
+          "song_id": "2417",
+          "position": 16,
+          "transition": ">",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Sneakin' Sally Thru the Alley",
+          "song_id": "518",
+          "position": 17,
+          "transition": ">",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Weekapaug Groove",
+          "song_id": "653",
+          "position": 18,
+          "transition": "5",
+          "is_jam": false,
+          "is_reprise": false
+        }
+      ],
+      "encore": [
+        {
+          "song": "A Day in the Life",
+          "song_id": "6",
+          "position": 19,
+          "transition": "6",
+          "is_jam": false,
+          "is_reprise": false
+        }
+      ]
+    },
+    "is_nye": false,
+    "is_halloween": false,
+    "is_festival": false,
+    "total_songs": 19
+  },
+  {
+    "show_id": "1485906066",
+    "date": "2017-08-04",
+    "year": 2017,
+    "month": 8,
+    "day": 4,
+    "day_of_week": "friday",
+    "venue_id": "v_msg",
+    "venue_name": "Madison Square Garden",
+    "city": "New York",
+    "state": "NY",
+    "country": "USA",
+    "tour": "2017 Summer Tour",
+    "tour_id": "176",
+    "sets": {
+      "1": [
+        {
+          "song": "See That My Grave Is Kept Clean",
+          "song_id": "2712",
+          "position": 1,
+          "transition": ",",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Punch You in the Eye",
+          "song_id": "447",
+          "position": 2,
+          "transition": ">",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Party Time",
+          "song_id": "723",
+          "position": 3,
+          "transition": ",",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Big Black Furry Creature from Mars",
+          "song_id": "58",
+          "position": 4,
+          "transition": ",",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Dinner and a Movie",
+          "song_id": "158",
+          "position": 5,
+          "transition": ",",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Ocelot",
+          "song_id": "420",
+          "position": 6,
+          "transition": ",",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Poor Heart",
+          "song_id": "438",
+          "position": 7,
+          "transition": ",",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Winterqueen",
+          "song_id": "1370",
+          "position": 8,
+          "transition": ",",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Bold As Love",
+          "song_id": "79",
+          "position": 9,
+          "transition": ">",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "First Tube",
+          "song_id": "202",
+          "position": 10,
+          "transition": "4",
+          "is_jam": false,
+          "is_reprise": false
+        }
+      ],
+      "2": [
+        {
+          "song": "Dem Bones",
+          "song_id": "2524",
+          "position": 11,
+          "transition": ",",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "No Men In No Man's Land",
+          "song_id": "2572",
+          "position": 12,
+          "transition": ">",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Everything In Its Right Place",
+          "song_id": "2713",
+          "position": 13,
+          "transition": ",",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "What's the Use?",
+          "song_id": "657",
+          "position": 14,
+          "transition": ">",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Scents and Subtle Sounds",
+          "song_id": "491",
+          "position": 15,
+          "transition": ">",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Prince Caspian",
+          "song_id": "442",
+          "position": 16,
+          "transition": ">",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Fluffhead",
+          "song_id": "208",
+          "position": 17,
+          "transition": "5",
+          "is_jam": false,
+          "is_reprise": false
+        }
+      ],
+      "encore": [
+        {
+          "song": "Frankenstein",
+          "song_id": "213",
+          "position": 18,
+          "transition": "6",
+          "is_jam": false,
+          "is_reprise": false
+        }
+      ]
+    },
+    "is_nye": false,
+    "is_halloween": false,
+    "is_festival": false,
+    "total_songs": 18
+  },
+  {
+    "show_id": "1485906086",
+    "date": "2017-08-05",
+    "year": 2017,
+    "month": 8,
+    "day": 5,
+    "day_of_week": "saturday",
+    "venue_id": "v_msg",
+    "venue_name": "Madison Square Garden",
+    "city": "New York",
+    "state": "NY",
+    "country": "USA",
+    "tour": "2017 Summer Tour",
+    "tour_id": "176",
+    "sets": {
+      "1": [
+        {
+          "song": "Soul Shakedown Party",
+          "song_id": "523",
+          "position": 1,
+          "transition": ",",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Uncle Pen",
+          "song_id": "632",
+          "position": 2,
+          "transition": ",",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "The Sloth",
+          "song_id": "602",
+          "position": 3,
+          "transition": ",",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Gotta Jibboo",
+          "song_id": "237",
+          "position": 4,
+          "transition": ",",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Fuck Your Face",
+          "song_id": "219",
+          "position": 5,
+          "transition": ",",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Sunshine of Your Feeling",
+          "song_id": "2716",
+          "position": 6,
+          "transition": ",",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Frost",
+          "song_id": "1374",
+          "position": 7,
+          "transition": ">",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Scent of a Mule",
+          "song_id": "490",
+          "position": 8,
+          "transition": ",",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Fire",
+          "song_id": "199",
+          "position": 9,
+          "transition": ",",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Alaska",
+          "song_id": "14",
+          "position": 10,
+          "transition": ">",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Plasma",
+          "song_id": "1085",
+          "position": 11,
+          "transition": "4",
+          "is_jam": false,
+          "is_reprise": false
+        }
+      ],
+      "2": [
+        {
+          "song": "Ghost",
+          "song_id": "222",
+          "position": 12,
+          "transition": ">",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Petrichor",
+          "song_id": "2495",
+          "position": 13,
+          "transition": ">",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Light",
+          "song_id": "339",
+          "position": 14,
+          "transition": ">",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "The Lizards",
+          "song_id": "586",
+          "position": 15,
+          "transition": ",",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "The Horse",
+          "song_id": "582",
+          "position": 16,
+          "transition": ">",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Silent in the Morning",
+          "song_id": "507",
+          "position": 17,
+          "transition": ">",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Quinn the Eskimo (The Mighty Quinn)",
+          "song_id": "452",
+          "position": 18,
+          "transition": ">",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Rocky Top",
+          "song_id": "472",
+          "position": 19,
+          "transition": "5",
+          "is_jam": false,
+          "is_reprise": false
+        }
+      ],
+      "encore": [
+        {
+          "song": "Joy",
+          "song_id": "316",
+          "position": 20,
+          "transition": "6",
+          "is_jam": false,
+          "is_reprise": false
+        }
+      ]
+    },
+    "is_nye": false,
+    "is_halloween": false,
+    "is_festival": false,
+    "total_songs": 20
+  },
+  {
+    "show_id": "1485906108",
+    "date": "2017-08-06",
+    "year": 2017,
+    "month": 8,
+    "day": 6,
+    "day_of_week": "sunday",
+    "venue_id": "v_msg",
+    "venue_name": "Madison Square Garden",
+    "city": "New York",
+    "state": "NY",
+    "country": "USA",
+    "tour": "2017 Summer Tour",
+    "tour_id": "176",
+    "sets": {
+      "1": [
+        {
+          "song": "Dogs Stole Things",
+          "song_id": "165",
+          "position": 1,
+          "transition": ",",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Rift",
+          "song_id": "462",
+          "position": 2,
+          "transition": ",",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Ha Ha Ha",
+          "song_id": "245",
+          "position": 3,
+          "transition": ",",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Camel Walk",
+          "song_id": "100",
+          "position": 4,
+          "transition": ",",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Crazy Sometimes",
+          "song_id": "2608",
+          "position": 5,
+          "transition": ">",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Saw It Again",
+          "song_id": "282",
+          "position": 6,
+          "transition": ">",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Sanity",
+          "song_id": "486",
+          "position": 7,
+          "transition": ">",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Bouncing Around the Room",
+          "song_id": "84",
+          "position": 8,
+          "transition": ",",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Most Events Aren't Planned",
+          "song_id": "1303",
+          "position": 9,
+          "transition": ",",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Bug",
+          "song_id": "94",
+          "position": 10,
+          "transition": ",",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "I Been Around",
+          "song_id": "709",
+          "position": 11,
+          "transition": ",",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Izabella",
+          "song_id": "309",
+          "position": 12,
+          "transition": "4",
+          "is_jam": false,
+          "is_reprise": false
+        }
+      ],
+      "2": [
+        {
+          "song": "Simple",
+          "song_id": "508",
+          "position": 13,
+          "transition": ">",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Rise/Come Together",
+          "song_id": "2659",
+          "position": 14,
+          "transition": ">",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Starman",
+          "song_id": "2644",
+          "position": 15,
+          "transition": ",",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "You Enjoy Myself",
+          "song_id": "690",
+          "position": 16,
+          "transition": ",",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Loving Cup",
+          "song_id": "354",
+          "position": 17,
+          "transition": "5",
+          "is_jam": false,
+          "is_reprise": false
+        }
+      ],
+      "encore": [
+        {
+          "song": "On the Road Again",
+          "song_id": "1080",
+          "position": 18,
+          "transition": ">",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Lawn Boy",
+          "song_id": "329",
+          "position": 19,
+          "transition": ">",
+          "is_jam": false,
+          "is_reprise": true
+        },
+        {
+          "song": "Tweezer Reprise",
+          "song_id": "628",
+          "position": 20,
+          "transition": "6",
+          "is_jam": false,
+          "is_reprise": false
+        }
+      ]
+    },
+    "is_nye": false,
+    "is_halloween": false,
+    "is_festival": false,
+    "total_songs": 20
+  },
+  {
+    "show_id": "1491105004",
+    "date": "2017-09-01",
+    "year": 2017,
+    "month": 9,
+    "day": 1,
+    "day_of_week": "friday",
+    "venue_id": "v_dick_s_sporting_goods_park",
+    "venue_name": "Dick's Sporting Goods Park",
+    "city": "Commerce City",
+    "state": "CO",
+    "country": "USA",
+    "tour": "2017 Summer Tour",
+    "tour_id": "176",
+    "sets": {
+      "1": [
+        {
+          "song": "Blaze On",
+          "song_id": "2570",
+          "position": 1,
+          "transition": ",",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "555",
+          "song_id": "2424",
+          "position": 2,
+          "transition": ",",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Breath and Burning",
+          "song_id": "2628",
+          "position": 3,
+          "transition": ",",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Theme from the Bottom",
+          "song_id": "609",
+          "position": 4,
+          "transition": ">",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Free",
+          "song_id": "215",
+          "position": 5,
+          "transition": ",",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Tube",
+          "song_id": "622",
+          "position": 6,
+          "transition": ">",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Roggae",
+          "song_id": "473",
+          "position": 7,
+          "transition": ">",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "More",
+          "song_id": "2639",
+          "position": 8,
+          "transition": "4",
+          "is_jam": false,
+          "is_reprise": false
+        }
+      ],
+      "2": [
+        {
+          "song": "No Men In No Man's Land",
+          "song_id": "2572",
+          "position": 9,
+          "transition": ">",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Carini",
+          "song_id": "104",
+          "position": 10,
+          "transition": ">",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Ghost",
+          "song_id": "222",
+          "position": 11,
+          "transition": ">",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Harry Hood",
+          "song_id": "250",
+          "position": 12,
+          "transition": ">",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Cavern",
+          "song_id": "108",
+          "position": 13,
+          "transition": "5",
+          "is_jam": false,
+          "is_reprise": false
+        }
+      ],
+      "encore": [
+        {
+          "song": "The Horse",
+          "song_id": "582",
+          "position": 14,
+          "transition": ">",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Silent in the Morning",
+          "song_id": "507",
+          "position": 15,
+          "transition": ">",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Character Zero",
+          "song_id": "113",
+          "position": 16,
+          "transition": "6",
+          "is_jam": false,
+          "is_reprise": false
+        }
+      ]
+    },
+    "is_nye": false,
+    "is_halloween": false,
+    "is_festival": false,
+    "total_songs": 16
+  },
+  {
+    "show_id": "1491105028",
+    "date": "2017-09-02",
+    "year": 2017,
+    "month": 9,
+    "day": 2,
+    "day_of_week": "saturday",
+    "venue_id": "v_dick_s_sporting_goods_park",
+    "venue_name": "Dick's Sporting Goods Park",
+    "city": "Commerce City",
+    "state": "CO",
+    "country": "USA",
+    "tour": "2017 Summer Tour",
+    "tour_id": "176",
+    "sets": {
+      "1": [
+        {
+          "song": "Simple",
+          "song_id": "508",
+          "position": 1,
+          "transition": ">",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Martian Monster",
+          "song_id": "2506",
+          "position": 2,
+          "transition": ">",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Reba",
+          "song_id": "455",
+          "position": 3,
+          "transition": ",",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Sand",
+          "song_id": "485",
+          "position": 4,
+          "transition": ",",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Crazy Sometimes",
+          "song_id": "2608",
+          "position": 5,
+          "transition": ">",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Limb By Limb",
+          "song_id": "341",
+          "position": 6,
+          "transition": ">",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Wolfman's Brother",
+          "song_id": "683",
+          "position": 7,
+          "transition": ",",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Walls of the Cave",
+          "song_id": "648",
+          "position": 8,
+          "transition": "4",
+          "is_jam": false,
+          "is_reprise": false
+        }
+      ],
+      "2": [
+        {
+          "song": "Everything's Right",
+          "song_id": "2656",
+          "position": 9,
+          "transition": ">",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Fuego",
+          "song_id": "2418",
+          "position": 10,
+          "transition": ">",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Steam",
+          "song_id": "1355",
+          "position": 11,
+          "transition": ">",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Chalk Dust Torture",
+          "song_id": "110",
+          "position": 12,
+          "transition": ">",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Mike's Song",
+          "song_id": "381",
+          "position": 13,
+          "transition": ">",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Winterqueen",
+          "song_id": "1370",
+          "position": 14,
+          "transition": ">",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "What's the Use?",
+          "song_id": "657",
+          "position": 15,
+          "transition": ">",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Weekapaug Groove",
+          "song_id": "653",
+          "position": 16,
+          "transition": ",",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Slave to the Traffic Light",
+          "song_id": "512",
+          "position": 17,
+          "transition": "5",
+          "is_jam": false,
+          "is_reprise": false
+        }
+      ],
+      "encore": [
+        {
+          "song": "The Lizards",
+          "song_id": "586",
+          "position": 18,
+          "transition": ",",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Run Like an Antelope",
+          "song_id": "478",
+          "position": 19,
+          "transition": "6",
+          "is_jam": false,
+          "is_reprise": false
+        }
+      ]
+    },
+    "is_nye": false,
+    "is_halloween": false,
+    "is_festival": false,
+    "total_songs": 19
+  },
+  {
+    "show_id": "1491105076",
+    "date": "2017-09-03",
+    "year": 2017,
+    "month": 9,
+    "day": 3,
+    "day_of_week": "sunday",
+    "venue_id": "v_dick_s_sporting_goods_park",
+    "venue_name": "Dick's Sporting Goods Park",
+    "city": "Commerce City",
+    "state": "CO",
+    "country": "USA",
+    "tour": "2017 Summer Tour",
+    "tour_id": "176",
+    "sets": {
+      "1": [
+        {
+          "song": "Buffalo Bill",
+          "song_id": "93",
+          "position": 1,
+          "transition": ",",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "The Moma Dance",
+          "song_id": "591",
+          "position": 2,
+          "transition": ",",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Birds of a Feather",
+          "song_id": "65",
+          "position": 3,
+          "transition": ",",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Sugar Shack",
+          "song_id": "543",
+          "position": 4,
+          "transition": ",",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Most Events Aren't Planned",
+          "song_id": "1303",
+          "position": 5,
+          "transition": ",",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Back on the Train",
+          "song_id": "45",
+          "position": 6,
+          "transition": ",",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Leaves",
+          "song_id": "2697",
+          "position": 7,
+          "transition": ",",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "The Wedge",
+          "song_id": "607",
+          "position": 8,
+          "transition": ",",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "46 Days",
+          "song_id": "2",
+          "position": 9,
+          "transition": ",",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Bathtub Gin",
+          "song_id": "48",
+          "position": 10,
+          "transition": "4",
+          "is_jam": false,
+          "is_reprise": false
+        }
+      ],
+      "2": [
+        {
+          "song": "Down with Disease",
+          "song_id": "174",
+          "position": 11,
+          "transition": ">",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Light",
+          "song_id": "339",
+          "position": 12,
+          "transition": "->",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Rise/Come Together",
+          "song_id": "2659",
+          "position": 13,
+          "transition": ">",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Piper",
+          "song_id": "437",
+          "position": 14,
+          "transition": ">",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Meatstick",
+          "song_id": "369",
+          "position": 15,
+          "transition": ",",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Also Sprach Zarathustra",
+          "song_id": "21",
+          "position": 16,
+          "transition": ">",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Possum",
+          "song_id": "440",
+          "position": 17,
+          "transition": ">",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Suzy Greenberg",
+          "song_id": "545",
+          "position": 18,
+          "transition": "5",
+          "is_jam": false,
+          "is_reprise": false
+        }
+      ],
+      "encore": [
+        {
+          "song": "Waste",
+          "song_id": "649",
+          "position": 19,
+          "transition": ">",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "First Tube",
+          "song_id": "202",
+          "position": 20,
+          "transition": "6",
+          "is_jam": false,
+          "is_reprise": false
+        }
+      ]
+    },
+    "is_nye": false,
+    "is_halloween": false,
+    "is_festival": false,
+    "total_songs": 20
+  },
+  {
+    "show_id": "1505951718",
+    "date": "2017-12-28",
+    "year": 2017,
+    "month": 12,
+    "day": 28,
+    "day_of_week": "thursday",
+    "venue_id": "v_msg",
+    "venue_name": "Madison Square Garden",
+    "city": "New York",
+    "state": "NY",
+    "country": "USA",
+    "tour": "2017 NYE Run",
+    "tour_id": "178",
+    "sets": {
+      "1": [
+        {
+          "song": "AC/DC Bag",
+          "song_id": "8",
+          "position": 1,
+          "transition": ">",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Wolfman's Brother",
+          "song_id": "683",
+          "position": 2,
+          "transition": ",",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Roggae",
+          "song_id": "473",
+          "position": 3,
+          "transition": ",",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Tube",
+          "song_id": "622",
+          "position": 4,
+          "transition": ">",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Bouncing Around the Room",
+          "song_id": "84",
+          "position": 5,
+          "transition": ",",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Back on the Train",
+          "song_id": "45",
+          "position": 6,
+          "transition": ",",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Your Pet Cat",
+          "song_id": "2501",
+          "position": 7,
+          "transition": ">",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Waking Up Dead",
+          "song_id": "2630",
+          "position": 8,
+          "transition": ">",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Theme from the Bottom",
+          "song_id": "609",
+          "position": 9,
+          "transition": "4",
+          "is_jam": false,
+          "is_reprise": false
+        }
+      ],
+      "2": [
+        {
+          "song": "Wilson",
+          "song_id": "679",
+          "position": 10,
+          "transition": ">",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "No Men In No Man's Land",
+          "song_id": "2572",
+          "position": 11,
+          "transition": ">",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Twist",
+          "song_id": "630",
+          "position": 12,
+          "transition": ">",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Everything's Right",
+          "song_id": "2656",
+          "position": 13,
+          "transition": ">",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Also Sprach Zarathustra",
+          "song_id": "21",
+          "position": 14,
+          "transition": ">",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Harry Hood",
+          "song_id": "250",
+          "position": 15,
+          "transition": "5",
+          "is_jam": false,
+          "is_reprise": false
+        }
+      ],
+      "encore": [
+        {
+          "song": "The Wedge",
+          "song_id": "607",
+          "position": 16,
+          "transition": ",",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Slave to the Traffic Light",
+          "song_id": "512",
+          "position": 17,
+          "transition": "6",
+          "is_jam": false,
+          "is_reprise": false
+        }
+      ]
+    },
+    "is_nye": false,
+    "is_halloween": false,
+    "is_festival": false,
+    "total_songs": 17
+  },
+  {
+    "show_id": "1505951739",
+    "date": "2017-12-29",
+    "year": 2017,
+    "month": 12,
+    "day": 29,
+    "day_of_week": "friday",
+    "venue_id": "v_msg",
+    "venue_name": "Madison Square Garden",
+    "city": "New York",
+    "state": "NY",
+    "country": "USA",
+    "tour": "2017 NYE Run",
+    "tour_id": "178",
+    "sets": {
+      "1": [
+        {
+          "song": "Cavern",
+          "song_id": "108",
+          "position": 1,
+          "transition": ">",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Blaze On",
+          "song_id": "2570",
+          "position": 2,
+          "transition": ",",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "555",
+          "song_id": "2424",
+          "position": 3,
+          "transition": ",",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "I Always Wanted It This Way",
+          "song_id": "2638",
+          "position": 4,
+          "transition": ">",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Martian Monster",
+          "song_id": "2506",
+          "position": 5,
+          "transition": ",",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Heavy Things",
+          "song_id": "254",
+          "position": 6,
+          "transition": ",",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Destiny Unbound",
+          "song_id": "154",
+          "position": 7,
+          "transition": ",",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Ocelot",
+          "song_id": "420",
+          "position": 8,
+          "transition": ",",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Walls of the Cave",
+          "song_id": "648",
+          "position": 9,
+          "transition": "4",
+          "is_jam": false,
+          "is_reprise": false
+        }
+      ],
+      "2": [
+        {
+          "song": "Sand",
+          "song_id": "485",
+          "position": 10,
+          "transition": ">",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Chalk Dust Torture",
+          "song_id": "110",
+          "position": 11,
+          "transition": ">",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Ghost",
+          "song_id": "222",
+          "position": 12,
+          "transition": ">",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Backwards Down the Number Line",
+          "song_id": "46",
+          "position": 13,
+          "transition": ">",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Simple",
+          "song_id": "508",
+          "position": 14,
+          "transition": ">",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Split Open and Melt",
+          "song_id": "529",
+          "position": 15,
+          "transition": "5",
+          "is_jam": false,
+          "is_reprise": false
+        }
+      ],
+      "encore": [
+        {
+          "song": "Julius",
+          "song_id": "318",
+          "position": 16,
+          "transition": "6",
+          "is_jam": false,
+          "is_reprise": false
+        }
+      ]
+    },
+    "is_nye": false,
+    "is_halloween": false,
+    "is_festival": false,
+    "total_songs": 16
+  },
+  {
+    "show_id": "1505951757",
+    "date": "2017-12-30",
+    "year": 2017,
+    "month": 12,
+    "day": 30,
+    "day_of_week": "saturday",
+    "venue_id": "v_msg",
+    "venue_name": "Madison Square Garden",
+    "city": "New York",
+    "state": "NY",
+    "country": "USA",
+    "tour": "2017 NYE Run",
+    "tour_id": "178",
+    "sets": {
+      "1": [
+        {
+          "song": "Mike's Song",
+          "song_id": "381",
+          "position": 1,
+          "transition": ">",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Hydrogen",
+          "song_id": "273",
+          "position": 2,
+          "transition": ">",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Weekapaug Groove",
+          "song_id": "653",
+          "position": 3,
+          "transition": ",",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Tweezer",
+          "song_id": "627",
+          "position": 4,
+          "transition": ">",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Ass Handed",
+          "song_id": "2634",
+          "position": 5,
+          "transition": ",",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Kill Devil Falls",
+          "song_id": "323",
+          "position": 6,
+          "transition": ">",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Bathtub Gin",
+          "song_id": "48",
+          "position": 7,
+          "transition": ",",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Brother",
+          "song_id": "90",
+          "position": 8,
+          "transition": ",",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "More",
+          "song_id": "2639",
+          "position": 9,
+          "transition": "4",
+          "is_jam": false,
+          "is_reprise": false
+        }
+      ],
+      "2": [
+        {
+          "song": "Down with Disease",
+          "song_id": "174",
+          "position": 10,
+          "transition": "->",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Steam",
+          "song_id": "1355",
+          "position": 11,
+          "transition": ">",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Light",
+          "song_id": "339",
+          "position": 12,
+          "transition": ">",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Farmhouse",
+          "song_id": "193",
+          "position": 13,
+          "transition": ",",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Run Like an Antelope",
+          "song_id": "478",
+          "position": 14,
+          "transition": "5",
+          "is_jam": false,
+          "is_reprise": false
+        }
+      ],
+      "encore": [
+        {
+          "song": "Sleeping Monkey",
+          "song_id": "514",
+          "position": 15,
+          "transition": ">",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Tweezer Reprise",
+          "song_id": "628",
+          "position": 16,
+          "transition": "6",
+          "is_jam": false,
+          "is_reprise": false
+        }
+      ]
+    },
+    "is_nye": false,
+    "is_halloween": false,
+    "is_festival": false,
+    "total_songs": 16
+  },
+  {
+    "show_id": "1505951775",
+    "date": "2017-12-31",
+    "year": 2017,
+    "month": 12,
+    "day": 31,
+    "day_of_week": "sunday",
+    "venue_id": "v_msg",
+    "venue_name": "Madison Square Garden",
+    "city": "New York",
+    "state": "NY",
+    "country": "USA",
+    "tour": "2017 NYE Run",
+    "tour_id": "178",
+    "sets": {
+      "1": [
+        {
+          "song": "Carini",
+          "song_id": "104",
+          "position": 1,
+          "transition": ">",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Suzy Greenberg",
+          "song_id": "545",
+          "position": 2,
+          "transition": ">",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "My Friend, My Friend",
+          "song_id": "397",
+          "position": 3,
+          "transition": ",",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Fluffhead",
+          "song_id": "208",
+          "position": 4,
+          "transition": ",",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Reba",
+          "song_id": "455",
+          "position": 5,
+          "transition": ",",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Poor Heart",
+          "song_id": "438",
+          "position": 6,
+          "transition": ">",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "46 Days",
+          "song_id": "2",
+          "position": 7,
+          "transition": ">",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Maze",
+          "song_id": "364",
+          "position": 8,
+          "transition": ">",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Character Zero",
+          "song_id": "113",
+          "position": 9,
+          "transition": "4",
+          "is_jam": false,
+          "is_reprise": false
+        }
+      ],
+      "2": [
+        {
+          "song": "Possum",
+          "song_id": "440",
+          "position": 10,
+          "transition": ">",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Fuego",
+          "song_id": "2418",
+          "position": 11,
+          "transition": ">",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Gotta Jibboo",
+          "song_id": "237",
+          "position": 12,
+          "transition": ">",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Golgi Apparatus",
+          "song_id": "234",
+          "position": 13,
+          "transition": ">",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "What's the Use?",
+          "song_id": "657",
+          "position": 14,
+          "transition": ">",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "You Enjoy Myself",
+          "song_id": "690",
+          "position": 15,
+          "transition": "4",
+          "is_jam": false,
+          "is_reprise": false
+        }
+      ],
+      "3": [
+        {
+          "song": "Soul Planet",
+          "song_id": "2744",
+          "position": 16,
+          "transition": ">",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Auld Lang Syne",
+          "song_id": "35",
+          "position": 17,
+          "transition": ">",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Free",
+          "song_id": "215",
+          "position": 18,
+          "transition": ",",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "A Song I Heard the Ocean Sing",
+          "song_id": "7",
+          "position": 19,
+          "transition": ">",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "The Moma Dance",
+          "song_id": "591",
+          "position": 20,
+          "transition": ">",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Prince Caspian",
+          "song_id": "442",
+          "position": 21,
+          "transition": ">",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "Wading in the Velvet Sea",
+          "song_id": "642",
+          "position": 22,
+          "transition": ">",
+          "is_jam": false,
+          "is_reprise": false
+        },
+        {
+          "song": "First Tube",
+          "song_id": "202",
+          "position": 23,
+          "transition": "5",
+          "is_jam": false,
+          "is_reprise": false
+        }
+      ],
+      "encore": [
+        {
+          "song": "Loving Cup",
+          "song_id": "354",
+          "position": 24,
+          "transition": "6",
+          "is_jam": false,
+          "is_reprise": false
+        }
+      ]
+    },
+    "is_nye": true,
+    "is_halloween": false,
+    "is_festival": false,
+    "total_songs": 24
   }
 ]

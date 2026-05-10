@@ -1,9 +1,9 @@
 {
-  "w_xgboost": 0.4,
-  "w_markov": 0.0,
-  "w_gap": 0.0,
-  "w_venue": 0.6,
-  "val_precision_at_25": 0.5190476190476191,
-  "val_year": 2014,
-  "n_val_shows": 42
+  "w_xgboost": 0.5,
+  "w_markov": 0.1,
+  "w_gap": 0.3,
+  "w_venue": 0.1,
+  "val_precision_at_25": null,
+  "val_year": 2016,
+  "n_val_shows": 0
 }
