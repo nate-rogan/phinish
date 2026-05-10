@@ -88,5 +88,14 @@
     "venue_id": "v_boston_garden",
     "avg_confidence": 0.07647821488532372,
     "generated_at": "2026-05-09"
+  },
+  {
+    "issue_number": 73,
+    "author": "nate-rogan",
+    "date": "2018-04-30",
+    "venue": "Virgina Beach",
+    "venue_id": "v_virgina_beach",
+    "avg_confidence": 0.5714353673160076,
+    "generated_at": "2026-05-10"
   }
 ]

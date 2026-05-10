@@ -38,3 +38,7 @@ Avg confidence: 7%. Top picks across sets: Maze, Stash, The Squirming Coil, You 
 ## #71 — 2017-04-30 @ Boston Garden (@nate-rogan, generated 2026-05-09)
 
 Avg confidence: 8%. Top picks across sets: Maze, Stash, The Squirming Coil, You Enjoy Myself, Amazing Grace, Tweezer Reprise.
+
+## #73 — 2018-04-30 @ Virgina Beach (@nate-rogan, generated 2026-05-10)
+
+Avg confidence: 57%. Top picks across sets: Wolfman's Brother, The Wedge, No Men In No Man's Land, Slave to the Traffic Light, Contact, Rocky Top.
